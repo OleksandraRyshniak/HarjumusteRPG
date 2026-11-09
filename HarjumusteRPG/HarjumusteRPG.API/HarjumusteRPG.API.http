@@ -1,0 +1,6 @@
+@HarjumusteRPG.API_HostAddress = http://localhost:5086
+
+GET {{HarjumusteRPG.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
