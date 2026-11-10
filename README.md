@@ -15,7 +15,7 @@ A gamified habit tracker. Users add habits (every day or on selected weekdays), 
 
 ```
 HarjumusteRPG/HarjumusteRPG.API   Web API
-docs/                             documentation and ER diagram
+
 ```
 
 
