@@ -13,6 +13,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IHabitRepository, HabitRepository>();
 builder.Services.AddScoped<IHabitCompletionRepository, HabitCompletionRepository>();
 builder.Services.AddScoped<IHabitService, HabitService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
