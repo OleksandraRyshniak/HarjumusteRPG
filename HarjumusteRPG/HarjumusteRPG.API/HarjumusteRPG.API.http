@@ -1,6 +1,75 @@
-@HarjumusteRPG.API_HostAddress = http://localhost:5086
+@host = https://localhost:7008
 
-GET {{HarjumusteRPG.API_HostAddress}}/weatherforecast/
-Accept: application/json
+### Register
+POST {{host}}/api/auth/register
+Content-Type: application/json
 
-###
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### Register again (expect 409)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### Login as user (expect 200 and token)
+# @name loginUser
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### Login as admin (expect 200, role Admin)
+# @name loginAdmin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@sproutly.local",
+  "password": "Admin123!"
+}
+
+### Login wrong password (expect 401)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alexa@test.com",
+  "password": "wrong"
+}
+
+### Validation error (expect 400)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "a",
+  "email": "not-an-email",
+  "password": "123"
+}
+
+### Me without token (expect 401)
+GET {{host}}/api/auth/me
+
+### Me with user token (expect 200)
+GET {{host}}/api/auth/me
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Admin check with user token (expect 403)
+GET {{host}}/api/auth/admin-check
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Admin check with admin token (expect 200)
+GET {{host}}/api/auth/admin-check
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
