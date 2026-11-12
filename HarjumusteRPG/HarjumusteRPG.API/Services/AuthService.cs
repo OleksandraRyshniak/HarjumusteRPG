@@ -7,10 +7,12 @@ namespace HarjumusteRPG.API.Services;
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _users;
+    private readonly IJwtTokenService _jwt;
 
-    public AuthService(IUserRepository users)
+    public AuthService(IUserRepository users, IJwtTokenService jwt)
     {
         _users = users;
+        _jwt = jwt;
     }
 
     public async Task<UserDto?> RegisterAsync(RegisterDto dto)
@@ -38,7 +40,7 @@ public class AuthService : IAuthService
         return ToDto(user);
     }
 
-    public async Task<UserDto?> LoginAsync(LoginDto dto)
+    public async Task<AuthResponseDto?> LoginAsync(LoginDto dto)
     {
         var user = await _users.GetByEmailAsync(dto.Email.Trim().ToLowerInvariant());
         if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
@@ -46,7 +48,11 @@ public class AuthService : IAuthService
             return null;
         }
 
-        return ToDto(user);
+        return new AuthResponseDto
+        {
+            Token = _jwt.CreateToken(user),
+            User = ToDto(user)
+        };
     }
 
     private static UserDto ToDto(User u) => new()

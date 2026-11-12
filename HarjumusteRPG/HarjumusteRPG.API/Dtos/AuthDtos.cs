@@ -32,3 +32,9 @@ public class UserDto
     public int Xp { get; set; }
     public int Level { get; set; }
 }
+
+public class AuthResponseDto
+{
+    public string Token { get; set; } = string.Empty;
+    public UserDto User { get; set; } = new();
+}

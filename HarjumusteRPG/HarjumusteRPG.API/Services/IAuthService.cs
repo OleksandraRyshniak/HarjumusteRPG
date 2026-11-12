@@ -8,5 +8,5 @@ public interface IAuthService
     Task<UserDto?> RegisterAsync(RegisterDto dto);
 
     /// <returns>null, если email или пароль неверны.</returns>
-    Task<UserDto?> LoginAsync(LoginDto dto);
+    Task<AuthResponseDto?> LoginAsync(LoginDto dto);
 }
