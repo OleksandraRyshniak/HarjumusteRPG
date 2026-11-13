@@ -20,6 +20,10 @@ builder.Services.AddScoped<IHabitCompletionRepository, HabitCompletionRepository
 builder.Services.AddScoped<IHabitService, HabitService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddScoped<IAchievementService, AchievementService>();
+builder.Services.AddScoped<ICompletionService, CompletionService>();
+builder.Services.AddScoped<IProgressService, ProgressService>();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
