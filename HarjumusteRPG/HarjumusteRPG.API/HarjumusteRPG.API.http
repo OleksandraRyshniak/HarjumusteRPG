@@ -73,3 +73,92 @@ Authorization: Bearer {{loginUser.response.body.$.token}}
 ### Admin check with admin token (expect 200)
 GET {{host}}/api/auth/admin-check
 Authorization: Bearer {{loginAdmin.response.body.$.token}}
+
+
+
+### Habits: create daily (expect 201)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Drink water",
+  "isDaily": true
+}
+
+### Habits: create on weekdays (expect 201)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Read a book",
+  "isDaily": false,
+  "daysOfWeek": [1, 3, 5]
+}
+
+### Habits: duplicate name (expect 409)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "drink water",
+  "isDaily": true
+}
+
+### Habits: validation, short name and no weekdays (expect 400)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "a",
+  "isDaily": false,
+  "daysOfWeek": []
+}
+
+### Habits: invalid weekday (expect 400)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Run",
+  "isDaily": false,
+  "daysOfWeek": [9]
+}
+
+### Habits: list with search, filter, sorting, paging (expect 200)
+GET {{host}}/api/habits?search=d&isActive=true&sortBy=name&descending=false&page=1&pageSize=5
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: bad paging (expect 400)
+GET {{host}}/api/habits?page=0&pageSize=500
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: get one (expect 200, use a real id)
+GET {{host}}/api/habits/1
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: update (expect 200)
+PUT {{host}}/api/habits/1
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Drink 2 liters of water",
+  "isDaily": true,
+  "isActive": true
+}
+
+### Habits: not found (expect 404)
+GET {{host}}/api/habits/9999
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: without token (expect 401)
+GET {{host}}/api/habits
+
+### Habits: delete (expect 204)
+DELETE {{host}}/api/habits/1
+Authorization: Bearer {{loginUser.response.body.$.token}}
