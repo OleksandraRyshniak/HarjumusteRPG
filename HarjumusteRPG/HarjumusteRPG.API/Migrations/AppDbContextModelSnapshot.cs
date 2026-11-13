@@ -41,6 +41,9 @@ namespace HarjumusteRPG.API.Migrations
                     b.Property<int>("RequiredValue")
                         .HasColumnType("int");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Achievements");
@@ -51,35 +54,40 @@ namespace HarjumusteRPG.API.Migrations
                             Id = 1,
                             Description = "Märgi esimene harjumus tehtuks",
                             Name = "Esimene samm",
-                            RequiredValue = 1
+                            RequiredValue = 1,
+                            Type = 0
                         },
                         new
                         {
                             Id = 2,
                             Description = "Hoia seeriat 7 päeva",
                             Name = "7 päeva järjest",
-                            RequiredValue = 7
+                            RequiredValue = 7,
+                            Type = 1
                         },
                         new
                         {
                             Id = 3,
                             Description = "Hoia seeriat 30 päeva",
                             Name = "30 päeva järjest",
-                            RequiredValue = 30
+                            RequiredValue = 30,
+                            Type = 1
                         },
                         new
                         {
                             Id = 4,
                             Description = "Jõua tasemeni 5",
                             Name = "Tase 5",
-                            RequiredValue = 5
+                            RequiredValue = 5,
+                            Type = 2
                         },
                         new
                         {
                             Id = 5,
                             Description = "Märgi 100 harjumust tehtuks",
                             Name = "100 täitmist",
-                            RequiredValue = 100
+                            RequiredValue = 100,
+                            Type = 0
                         });
                 });
 

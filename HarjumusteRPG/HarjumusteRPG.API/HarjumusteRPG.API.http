@@ -162,3 +162,46 @@ GET {{host}}/api/habits
 ### Habits: delete (expect 204)
 DELETE {{host}}/api/habits/1
 Authorization: Bearer {{loginUser.response.body.$.token}}
+
+
+### Completion test: create a daily habit (expect 201, or 409 if it already exists)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Morning run",
+  "isDaily": true
+}
+
+### Completion test: get my daily habits (send this before the requests below)
+# @name listHabits
+GET {{host}}/api/habits?isDaily=true&isActive=true&page=1&pageSize=5
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Complete habit (expect 201, xpEarned 20)
+POST {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Complete again today (expect 409)
+POST {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Complete unknown habit (expect 404)
+POST {{host}}/api/habits/9999/completions
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Completion history (expect 200)
+GET {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions?days=30
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### History with bad days (expect 400)
+GET {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions?days=0
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### My progress (expect 200, streak 1, "Esimene samm" unlocked)
+GET {{host}}/api/me/progress
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Progress without token (expect 401)
+GET {{host}}/api/me/progress

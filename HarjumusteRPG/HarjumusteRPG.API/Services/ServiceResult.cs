@@ -4,7 +4,8 @@ public enum ServiceStatus
 {
     Ok,
     NotFound,
-    Conflict
+    Conflict,
+    Invalid
 }
 
-public record ServiceResult<T>(ServiceStatus Status, T? Value = default);
+public record ServiceResult<T>(ServiceStatus Status, T? Value = default, string? Error = null);
