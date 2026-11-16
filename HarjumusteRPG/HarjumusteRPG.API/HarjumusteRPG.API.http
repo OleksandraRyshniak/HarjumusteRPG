@@ -228,3 +228,24 @@ POST {{host}}/api/auth/login
 Content-Type: application/json
 
 { "email":
+
+### Login as service (Service role)
+# @name loginService
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "service@sproutly.local",
+  "password": "Service123!"
+}
+
+### Streak check as Service (expect 200, list of reset users)
+POST {{host}}/api/streaks/check
+Authorization: Bearer {{loginService.response.body.$.token}}
+
+### Streak check as normal user (expect 403)
+POST {{host}}/api/streaks/check
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Streak check without token (expect 401)
+POST {{host}}/api/streaks/check

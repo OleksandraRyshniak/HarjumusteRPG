@@ -41,6 +41,9 @@ public static class GameRules
         return habit.DaysOfWeek.Split(',').Select(int.Parse).Contains((int)date.DayOfWeek);
     }
 
+    public static bool IsStreakBroken(DateOnly? lastCompleted, DateOnly today, int currentStreak) =>
+        currentStreak > 0 && (lastCompleted is null || lastCompleted < today.AddDays(-1));
+
     public static bool IsEarned(Achievement achievement, int level, int streak, int totalCompletions) =>
         achievement.Type switch
         {
