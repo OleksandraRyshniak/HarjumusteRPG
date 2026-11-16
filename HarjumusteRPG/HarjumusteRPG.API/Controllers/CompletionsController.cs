@@ -35,8 +35,8 @@ public class CompletionsController : ControllerBase
         return result.Status switch
         {
             ServiceStatus.NotFound => NotFound(),
-            ServiceStatus.Invalid => BadRequest(new { message = result.Error }),
-            ServiceStatus.Conflict => Conflict(new { message = result.Error }),
+            ServiceStatus.Invalid => Problem(detail: result.Error, statusCode: StatusCodes.Status400BadRequest),
+            ServiceStatus.Conflict => Problem(detail: result.Error, statusCode: StatusCodes.Status409Conflict),
             _ => CreatedAtAction(nameof(GetHistory), new { habitId }, result.Value)
         };
     }

@@ -205,3 +205,26 @@ Authorization: Bearer {{loginUser.response.body.$.token}}
 
 ### Progress without token (expect 401)
 GET {{host}}/api/me/progress
+
+
+### ProblemDetails: unknown route (expect 404 with JSON body)
+GET {{host}}/api/nope
+
+### ProblemDetails: 401 without token (expect 401 with JSON body)
+GET {{host}}/api/habits
+
+### ProblemDetails: duplicate register (expect 409 with detail)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### ProblemDetails: broken JSON (expect 400)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email":

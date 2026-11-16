@@ -11,10 +11,12 @@ namespace HarjumusteRPG.API.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _auth;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService auth)
+    public AuthController(IAuthService auth, ILogger<AuthController> logger)
     {
         _auth = auth;
+        _logger = logger;
     }
 
     /// <summary>Registers a new user with the User role.</summary>
@@ -27,9 +29,11 @@ public class AuthController : ControllerBase
         var user = await _auth.RegisterAsync(dto);
         if (user is null)
         {
-            return Conflict(new { message = "Email or username is already in use." });
+            _logger.LogWarning("Registration rejected, email or username already in use: {Email}", dto.Email);
+            return Problem(detail: "Email or username is already in use.", statusCode: StatusCodes.Status409Conflict);
         }
 
+        _logger.LogInformation("User registered: {UserId}", user.Id);
         return Created($"/api/users/{user.Id}", user);
     }
 
@@ -42,9 +46,11 @@ public class AuthController : ControllerBase
         var result = await _auth.LoginAsync(dto);
         if (result is null)
         {
-            return Unauthorized(new { message = "Invalid email or password." });
+            _logger.LogWarning("Failed login attempt for {Email}", dto.Email);
+            return Problem(detail: "Invalid email or password.", statusCode: StatusCodes.Status401Unauthorized);
         }
 
+        _logger.LogInformation("User logged in: {UserId}", result.User.Id);
         return Ok(result);
     }
 

@@ -51,7 +51,7 @@ public class HabitsController : ControllerBase
     {
         var result = await _habits.CreateAsync(CurrentUserId, dto);
         if (result.Status == ServiceStatus.Conflict)
-            return Conflict(new { message = "You already have a habit with this name." });
+            return Problem(detail: "You already have a habit with this name.", statusCode: StatusCodes.Status409Conflict);
 
         return CreatedAtAction(nameof(Get), new { id = result.Value!.Id }, result.Value);
     }
@@ -69,7 +69,7 @@ public class HabitsController : ControllerBase
         return result.Status switch
         {
             ServiceStatus.NotFound => NotFound(),
-            ServiceStatus.Conflict => Conflict(new { message = "You already have a habit with this name." }),
+            ServiceStatus.Conflict => Problem(detail: "You already have a habit with this name.", statusCode: StatusCodes.Status409Conflict),
             _ => Ok(result.Value)
         };
     }

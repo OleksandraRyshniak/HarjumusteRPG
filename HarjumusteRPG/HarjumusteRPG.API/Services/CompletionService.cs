@@ -12,19 +12,22 @@ public class CompletionService : ICompletionService
     private readonly IUserRepository _users;
     private readonly IAchievementService _achievements;
     private readonly TimeProvider _time;
+    private readonly ILogger<CompletionService> _logger;
 
     public CompletionService(
         IHabitRepository habits,
         IHabitCompletionRepository completions,
         IUserRepository users,
         IAchievementService achievements,
-        TimeProvider time)
+        TimeProvider time,
+        ILogger<CompletionService> logger)
     {
         _habits = habits;
         _completions = completions;
         _users = users;
         _achievements = achievements;
         _time = time;
+        _logger = logger;
     }
 
     public async Task<ServiceResult<CompleteHabitResultDto>> CompleteAsync(int habitId, int userId)
@@ -78,6 +81,9 @@ public class CompletionService : ICompletionService
             // unique index (HabitId, Date): two simultaneous requests
             return new ServiceResult<CompleteHabitResultDto>(ServiceStatus.Conflict, null, "This habit is already completed today.");
         }
+        _logger.LogInformation(
+           "User {UserId} completed habit {HabitId}: level {Level}, streak {Streak}, new achievements {Count}",
+           userId, habitId, user.Level, user.CurrentStreak, newAchievements.Count);
 
         return new ServiceResult<CompleteHabitResultDto>(ServiceStatus.Ok, new CompleteHabitResultDto
         {
@@ -93,6 +99,7 @@ public class CompletionService : ICompletionService
             LongestStreak = user.LongestStreak,
             NewAchievements = newAchievements
         });
+       
     }
 
     public async Task<List<CompletionDto>?> GetHistoryAsync(int habitId, int userId, int days)
