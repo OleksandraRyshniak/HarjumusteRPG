@@ -39,6 +39,32 @@ public class FriendService : IFriendService
         }).ToList();
     }
 
+    public async Task<List<LeaderboardEntryDto>> GetLeaderboardAsync(int userId)
+    {
+        var accepted = await _friendships.GetAcceptedForUserAsync(userId);
+        var users = accepted.Select(f => f.UserId == userId ? f.Friend! : f.User!).ToList();
+
+        var me = await _users.GetByIdAsync(userId);
+        if (me is not null) users.Add(me);
+
+        return users
+            .OrderByDescending(u => u.Level)
+            .ThenByDescending(u => u.Xp)
+            .ThenByDescending(u => u.CurrentStreak)
+            .ThenBy(u => u.Username)
+            .Select((u, index) => new LeaderboardEntryDto
+            {
+                Rank = index + 1,
+                UserId = u.Id,
+                Username = u.Username,
+                Level = u.Level,
+                Xp = u.Xp,
+                CurrentStreak = u.CurrentStreak,
+                IsMe = u.Id == userId
+            })
+            .ToList();
+    }
+
     public async Task<ServiceResult<FriendRequestDto>> SendRequestAsync(int userId, string username)
     {
         var target = await _users.GetByUsernameAsync(username);

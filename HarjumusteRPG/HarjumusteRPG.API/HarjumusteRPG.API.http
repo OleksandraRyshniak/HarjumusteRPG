@@ -353,3 +353,15 @@ Authorization: Bearer {{loginMari.response.body.$.token}}
 ### Friends: mari declines (expect 204)
 DELETE {{host}}/api/friends/requests/{{listMariRequests2.response.body.$[0].id}}
 Authorization: Bearer {{loginMari.response.body.$.token}}
+
+
+### Leaderboard as alexa (expect alexa + friends, sorted by level and XP)
+GET {{host}}/api/friends/leaderboard
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Leaderboard as mari
+GET {{host}}/api/friends/leaderboard
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Leaderboard without token (expect 401)
+GET {{host}}/api/friends/leaderboard

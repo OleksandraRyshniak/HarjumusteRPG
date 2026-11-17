@@ -43,6 +43,13 @@ public class FriendsController : ControllerBase
     public async Task<ActionResult<List<FriendRequestDto>>> GetRequests() =>
         Ok(await _friends.GetIncomingRequestsAsync(CurrentUserId));
 
+    /// <summary>Returns the leaderboard of the current user and their friends, best first.</summary>
+    [HttpGet("leaderboard")]
+    [ProducesResponseType(typeof(List<LeaderboardEntryDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<List<LeaderboardEntryDto>>> GetLeaderboard() =>
+        Ok(await _friends.GetLeaderboardAsync(CurrentUserId));
+
     /// <summary>Sends a friend request to a user by username.</summary>
     [HttpPost("requests")]
     [ProducesResponseType(typeof(FriendRequestDto), StatusCodes.Status201Created)]

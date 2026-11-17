@@ -26,3 +26,14 @@ public class FriendRequestDto
     public string Username { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }
+
+public class LeaderboardEntryDto
+{
+    public int Rank { get; set; }
+    public int UserId { get; set; }
+    public string Username { get; set; }
+    public int Level { get; set; }
+    public int Xp { get; set; }
+    public int CurrentStreak { get; set; }
+    public bool IsMe { get; set; }
+}

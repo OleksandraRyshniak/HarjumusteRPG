@@ -10,4 +10,5 @@ public interface IFriendService
     Task<ServiceResult<FriendDto>> AcceptAsync(int requestId, int userId);
     Task<ServiceResult<bool>> DeclineAsync(int requestId, int userId);
     Task<ServiceResult<bool>> RemoveFriendAsync(int userId, int friendId);
+    Task<List<LeaderboardEntryDto>> GetLeaderboardAsync(int userId);
 }
