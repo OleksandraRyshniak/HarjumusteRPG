@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using HarjumusteRPG.API.Data;
+using HarjumusteRPG.API.Infrastructure;
 using HarjumusteRPG.API.Repositories;
 using HarjumusteRPG.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,6 +25,9 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<ICompletionService, CompletionService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IStreakService, StreakService>();
+builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
+builder.Services.AddScoped<IFriendService, FriendService>();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -44,8 +48,10 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
-// CORS: browser clients (React admin) may call the API only from these origins.
-// MAUI, Worker and Postman are not affected by CORS.
+// One error format (ProblemDetails) for all errors
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
                      ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
@@ -86,6 +92,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
+app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {

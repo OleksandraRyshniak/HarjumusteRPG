@@ -205,3 +205,163 @@ Authorization: Bearer {{loginUser.response.body.$.token}}
 
 ### Progress without token (expect 401)
 GET {{host}}/api/me/progress
+
+
+### ProblemDetails: unknown route (expect 404 with JSON body)
+GET {{host}}/api/nope
+
+### ProblemDetails: 401 without token (expect 401 with JSON body)
+GET {{host}}/api/habits
+
+### ProblemDetails: duplicate register (expect 409 with detail)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### ProblemDetails: broken JSON (expect 400)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email":
+
+### Login as service (Service role)
+# @name loginService
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "service@sproutly.local",
+  "password": "Service123!"
+}
+
+### Streak check as Service (expect 200, list of reset users)
+POST {{host}}/api/streaks/check
+Authorization: Bearer {{loginService.response.body.$.token}}
+
+### Streak check as normal user (expect 403)
+POST {{host}}/api/streaks/check
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Streak check without token (expect 401)
+POST {{host}}/api/streaks/check
+
+
+### Friends: register second user
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "mari",
+  "email": "mari@test.com",
+  "password": "Test123!"
+}
+
+### Friends: login as mari
+# @name loginMari
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "mari@test.com",
+  "password": "Test123!"
+}
+
+### Friends: alexa sends request to mari (expect 201)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "mari"
+}
+
+### Friends: duplicate request (expect 409)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "mari"
+}
+
+### Friends: request to yourself (expect 400)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "alexa"
+}
+
+### Friends: unknown user (expect 404)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "nobody"
+}
+
+### Friends: mari incoming requests (expect 200, one request)
+# @name listMariRequests
+GET {{host}}/api/friends/requests
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: alexa tries to accept her own request (expect 404)
+POST {{host}}/api/friends/requests/{{listMariRequests.response.body.$[0].id}}/accept
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: mari accepts (expect 200)
+POST {{host}}/api/friends/requests/{{listMariRequests.response.body.$[0].id}}/accept
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: alexa friend list (expect mari)
+GET {{host}}/api/friends
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: mari friend list (expect alexa)
+GET {{host}}/api/friends
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: alexa removes mari (expect 204)
+DELETE {{host}}/api/friends/{{loginMari.response.body.$.user.id}}
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: remove again (expect 404)
+DELETE {{host}}/api/friends/{{loginMari.response.body.$.user.id}}
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: send again, then mari declines
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "mari"
+}
+
+### Friends: mari incoming requests again
+# @name listMariRequests2
+GET {{host}}/api/friends/requests
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: mari declines (expect 204)
+DELETE {{host}}/api/friends/requests/{{listMariRequests2.response.body.$[0].id}}
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+
+### Leaderboard as alexa (expect alexa + friends, sorted by level and XP)
+GET {{host}}/api/friends/leaderboard
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Leaderboard as mari
+GET {{host}}/api/friends/leaderboard
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Leaderboard without token (expect 401)
+GET {{host}}/api/friends/leaderboard
