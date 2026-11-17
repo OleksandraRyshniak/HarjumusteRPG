@@ -105,6 +105,9 @@ namespace HarjumusteRPG.API.Migrations
                     b.Property<int>("FriendId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
