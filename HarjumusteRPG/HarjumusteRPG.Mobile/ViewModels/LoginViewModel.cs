@@ -22,11 +22,26 @@ public partial class LoginViewModel : BaseViewModel
     private string password = string.Empty;
 
     // If a saved session exists, skip the login screen.
+    private bool _restoring;
+
+    // If a saved session exists, skip the login screen.
     [RelayCommand]
     private async Task RestoreSession()
     {
-        if (await _auth.RestoreSessionAsync())
-            await Shell.Current.GoToAsync("//main");
+        // OnAppearing can fire twice on Windows: do not navigate twice at the same time.
+        if (_restoring)
+            return;
+
+        _restoring = true;
+        try
+        {
+            if (await _auth.RestoreSessionAsync())
+                await Shell.Current.GoToAsync("//main");
+        }
+        finally
+        {
+            _restoring = false;
+        }
     }
 
     [RelayCommand]

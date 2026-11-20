@@ -54,13 +54,14 @@ namespace HarjumusteRPG.Mobile
             });
 
             builder.Services.AddSingleton<IAuthService, AuthService>();
+            builder.Services.AddSingleton<IGameApi, GameApi>();
 
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<RegisterPage>();
-            builder.Services.AddTransient<MainViewModel>();
-            builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<TodayViewModel>();
+            builder.Services.AddTransient<TodayPage>();
 
             return builder.Build();
         }

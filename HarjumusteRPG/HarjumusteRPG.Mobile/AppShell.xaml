@@ -8,6 +8,6 @@
 
     <ShellContent Route="login" ContentTemplate="{DataTemplate views:LoginPage}" />
     <ShellContent Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" />
-    <ShellContent Route="main" ContentTemplate="{DataTemplate views:MainPage}" />
+    <ShellContent Route="main" ContentTemplate="{DataTemplate views:TodayPage}" />
 
 </Shell>

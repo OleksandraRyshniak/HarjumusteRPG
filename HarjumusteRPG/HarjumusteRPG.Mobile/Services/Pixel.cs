@@ -17,7 +17,7 @@ public static class Pixel
     public const string TitleFont = "PressStart";
     public const string TextFont = "Pixelify";
 
-    public static Label Heading(string text, double size = 14, bool center = false) => new()
+    public static Label Heading(string text, double size = 16, bool center = false) => new()
     {
         Text = text,
         FontFamily = TitleFont,
@@ -27,7 +27,7 @@ public static class Pixel
         HorizontalTextAlignment = center ? TextAlignment.Center : TextAlignment.Start
     };
 
-    public static Label Body(string text, double size = 16, bool bold = false, Color? color = null, bool center = false) => new()
+    public static Label Body(string text, double size = 18, bool bold = false, Color? color = null, bool center = false) => new()
     {
         Text = text,
         FontFamily = TextFont,
