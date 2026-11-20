@@ -1,4 +1,4 @@
-# Harjumuste RPG (Sproutly)
+# Harjumuste RPG (Pawly)
 
 A gamified habit tracker. Users add habits (every day or on selected weekdays), mark them as done and earn XP, level up, build daily streaks and unlock achievements. Friends are shown on a live leaderboard.
 

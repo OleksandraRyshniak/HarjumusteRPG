@@ -1,6 +1,367 @@
-@HarjumusteRPG.API_HostAddress = http://localhost:5086
+@host = https://localhost:7008
 
-GET {{HarjumusteRPG.API_HostAddress}}/weatherforecast/
-Accept: application/json
+### Register
+POST {{host}}/api/auth/register
+Content-Type: application/json
 
-###
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### Register again (expect 409)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### Login as user (expect 200 and token)
+# @name loginUser
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### Login as admin (expect 200, role Admin)
+# @name loginAdmin
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@sproutly.local",
+  "password": "Admin123!"
+}
+
+### Login wrong password (expect 401)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "alexa@test.com",
+  "password": "wrong"
+}
+
+### Validation error (expect 400)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "a",
+  "email": "not-an-email",
+  "password": "123"
+}
+
+### Me without token (expect 401)
+GET {{host}}/api/auth/me
+
+### Me with user token (expect 200)
+GET {{host}}/api/auth/me
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Admin check with user token (expect 403)
+GET {{host}}/api/auth/admin-check
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Admin check with admin token (expect 200)
+GET {{host}}/api/auth/admin-check
+Authorization: Bearer {{loginAdmin.response.body.$.token}}
+
+
+
+### Habits: create daily (expect 201)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Drink water",
+  "isDaily": true
+}
+
+### Habits: create on weekdays (expect 201)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Read a book",
+  "isDaily": false,
+  "daysOfWeek": [1, 3, 5]
+}
+
+### Habits: duplicate name (expect 409)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "drink water",
+  "isDaily": true
+}
+
+### Habits: validation, short name and no weekdays (expect 400)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "a",
+  "isDaily": false,
+  "daysOfWeek": []
+}
+
+### Habits: invalid weekday (expect 400)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Run",
+  "isDaily": false,
+  "daysOfWeek": [9]
+}
+
+### Habits: list with search, filter, sorting, paging (expect 200)
+GET {{host}}/api/habits?search=d&isActive=true&sortBy=name&descending=false&page=1&pageSize=5
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: bad paging (expect 400)
+GET {{host}}/api/habits?page=0&pageSize=500
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: get one (expect 200, use a real id)
+GET {{host}}/api/habits/1
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: update (expect 200)
+PUT {{host}}/api/habits/1
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Drink 2 liters of water",
+  "isDaily": true,
+  "isActive": true
+}
+
+### Habits: not found (expect 404)
+GET {{host}}/api/habits/9999
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Habits: without token (expect 401)
+GET {{host}}/api/habits
+
+### Habits: delete (expect 204)
+DELETE {{host}}/api/habits/1
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+
+### Completion test: create a daily habit (expect 201, or 409 if it already exists)
+POST {{host}}/api/habits
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "name": "Morning run",
+  "isDaily": true
+}
+
+### Completion test: get my daily habits (send this before the requests below)
+# @name listHabits
+GET {{host}}/api/habits?isDaily=true&isActive=true&page=1&pageSize=5
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Complete habit (expect 201, xpEarned 20)
+POST {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Complete again today (expect 409)
+POST {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Complete unknown habit (expect 404)
+POST {{host}}/api/habits/9999/completions
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Completion history (expect 200)
+GET {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions?days=30
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### History with bad days (expect 400)
+GET {{host}}/api/habits/{{listHabits.response.body.$.items[0].id}}/completions?days=0
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### My progress (expect 200, streak 1, "Esimene samm" unlocked)
+GET {{host}}/api/me/progress
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Progress without token (expect 401)
+GET {{host}}/api/me/progress
+
+
+### ProblemDetails: unknown route (expect 404 with JSON body)
+GET {{host}}/api/nope
+
+### ProblemDetails: 401 without token (expect 401 with JSON body)
+GET {{host}}/api/habits
+
+### ProblemDetails: duplicate register (expect 409 with detail)
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "alexa",
+  "email": "alexa@test.com",
+  "password": "Test123!"
+}
+
+### ProblemDetails: broken JSON (expect 400)
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{ "email":
+
+### Login as service (Service role)
+# @name loginService
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "service@sproutly.local",
+  "password": "Service123!"
+}
+
+### Streak check as Service (expect 200, list of reset users)
+POST {{host}}/api/streaks/check
+Authorization: Bearer {{loginService.response.body.$.token}}
+
+### Streak check as normal user (expect 403)
+POST {{host}}/api/streaks/check
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Streak check without token (expect 401)
+POST {{host}}/api/streaks/check
+
+
+### Friends: register second user
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "mari",
+  "email": "mari@test.com",
+  "password": "Test123!"
+}
+
+### Friends: login as mari
+# @name loginMari
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "mari@test.com",
+  "password": "Test123!"
+}
+
+### Friends: alexa sends request to mari (expect 201)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "mari"
+}
+
+### Friends: duplicate request (expect 409)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "mari"
+}
+
+### Friends: request to yourself (expect 400)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "alexa"
+}
+
+### Friends: unknown user (expect 404)
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "nobody"
+}
+
+### Friends: mari incoming requests (expect 200, one request)
+# @name listMariRequests
+GET {{host}}/api/friends/requests
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: alexa tries to accept her own request (expect 404)
+POST {{host}}/api/friends/requests/{{listMariRequests.response.body.$[0].id}}/accept
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: mari accepts (expect 200)
+POST {{host}}/api/friends/requests/{{listMariRequests.response.body.$[0].id}}/accept
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: alexa friend list (expect mari)
+GET {{host}}/api/friends
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: mari friend list (expect alexa)
+GET {{host}}/api/friends
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: alexa removes mari (expect 204)
+DELETE {{host}}/api/friends/{{loginMari.response.body.$.user.id}}
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: remove again (expect 404)
+DELETE {{host}}/api/friends/{{loginMari.response.body.$.user.id}}
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Friends: send again, then mari declines
+POST {{host}}/api/friends/requests
+Authorization: Bearer {{loginUser.response.body.$.token}}
+Content-Type: application/json
+
+{
+  "username": "mari"
+}
+
+### Friends: mari incoming requests again
+# @name listMariRequests2
+GET {{host}}/api/friends/requests
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Friends: mari declines (expect 204)
+DELETE {{host}}/api/friends/requests/{{listMariRequests2.response.body.$[0].id}}
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+
+### Leaderboard as alexa (expect alexa + friends, sorted by level and XP)
+GET {{host}}/api/friends/leaderboard
+Authorization: Bearer {{loginUser.response.body.$.token}}
+
+### Leaderboard as mari
+GET {{host}}/api/friends/leaderboard
+Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### Leaderboard without token (expect 401)
+GET {{host}}/api/friends/leaderboard

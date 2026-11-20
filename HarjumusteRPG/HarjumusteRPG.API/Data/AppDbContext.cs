@@ -82,10 +82,10 @@ public class AppDbContext : DbContext
             });
 
         b.Entity<Achievement>().HasData(
-            new Achievement { Id = 1, Name = "Esimene samm", Description = "Märgi esimene harjumus tehtuks", RequiredValue = 1 },
-            new Achievement { Id = 2, Name = "7 päeva järjest", Description = "Hoia seeriat 7 päeva", RequiredValue = 7 },
-            new Achievement { Id = 3, Name = "30 päeva järjest", Description = "Hoia seeriat 30 päeva", RequiredValue = 30 },
-            new Achievement { Id = 4, Name = "Tase 5", Description = "Jõua tasemeni 5", RequiredValue = 5 },
-            new Achievement { Id = 5, Name = "100 täitmist", Description = "Märgi 100 harjumust tehtuks", RequiredValue = 100 });
+            new Achievement { Id = 1, Name = "Esimene samm", Description = "Märgi esimene harjumus tehtuks", Type = AchievementType.TotalCompletions, RequiredValue = 1 },
+            new Achievement { Id = 2, Name = "7 päeva järjest", Description = "Hoia seeriat 7 päeva", Type = AchievementType.Streak, RequiredValue = 7 },
+            new Achievement { Id = 3, Name = "30 päeva järjest", Description = "Hoia seeriat 30 päeva", Type = AchievementType.Streak, RequiredValue = 30 },
+            new Achievement { Id = 4, Name = "Tase 5", Description = "Jõua tasemeni 5", Type = AchievementType.Level, RequiredValue = 5 },
+            new Achievement { Id = 5, Name = "100 täitmist", Description = "Märgi 100 harjumust tehtuks", Type = AchievementType.TotalCompletions, RequiredValue = 100 });
     }
 }

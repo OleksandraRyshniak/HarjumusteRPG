@@ -20,4 +20,7 @@ public class HabitCompletionRepository : Repository<HabitCompletion>, IHabitComp
             .OrderByDescending(c => c.Date)
             .ToListAsync();
     }
+
+    public async Task<int> CountForUserAsync(int userId) =>
+        await _set.CountAsync(c => c.Habit!.UserId == userId);
 }
