@@ -61,6 +61,8 @@ public partial class TodayViewModel : BaseViewModel
 
     [ObservableProperty]
     private string petLine = string.Empty;
+    [RelayCommand]
+    private Task ChangePet() => Shell.Current.GoToAsync("//pet");
 
     [ObservableProperty]
     private string sectionTitle = string.Empty;

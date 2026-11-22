@@ -11,5 +11,6 @@
     <ShellContent Route="main" ContentTemplate="{DataTemplate views:TodayPage}" />
     <ShellContent Route="habits" ContentTemplate="{DataTemplate views:HabitsPage}" />
     <ShellContent Route="pet" ContentTemplate="{DataTemplate views:PetSetupPage}" />
+    <ShellContent Route="progress" ContentTemplate="{DataTemplate views:ProgressPage}" />
 
 </Shell>

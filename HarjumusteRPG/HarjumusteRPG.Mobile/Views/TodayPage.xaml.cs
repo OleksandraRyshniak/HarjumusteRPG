@@ -147,7 +147,7 @@ public partial class TodayPage : ContentPage
             HorizontalOptions = LayoutOptions.Center
         };
         _root.Add(new ScrollView { Content = column }, 0, 0);
-        _root.Add(BuildNavBar(), 0, 1);
+        _root.Add(NavBar.Build(0), 0, 1);
 
         Content = _root;
     }

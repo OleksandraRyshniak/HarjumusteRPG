@@ -76,6 +76,22 @@ public class GameApi : IGameApi
         }
     }
 
+    public async Task<ApiResult<List<CompletionInfo>>> GetHistoryAsync(int habitId, int days)
+    {
+        try
+        {
+            var response = await _http.GetAsync($"api/habits/{habitId}/completions?days={days}");
+            if (!response.IsSuccessStatusCode)
+                return new ApiResult<List<CompletionInfo>>(default, ErrorFor(response.StatusCode));
+
+            var items = await response.Content.ReadFromJsonAsync<List<CompletionInfo>>() ?? new();
+            return new ApiResult<List<CompletionInfo>>(items);
+        }
+        catch (Exception ex) when (IsNetworkOrJson(ex))
+        {
+            return new ApiResult<List<CompletionInfo>>(default, ErrorFor(ex));
+        }
+    }
     private async Task<bool> IsDoneTodayAsync(int habitId, DateOnly today)
     {
         var response = await _http.GetAsync($"api/habits/{habitId}/completions?days=1");

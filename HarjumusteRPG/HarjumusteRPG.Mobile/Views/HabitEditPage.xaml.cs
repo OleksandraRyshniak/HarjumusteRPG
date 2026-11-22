@@ -72,6 +72,8 @@ public partial class HabitEditPage : ContentPage
         delete.SetBinding(Button.TextProperty, nameof(HabitEditViewModel.DeleteText));
         delete.SetBinding(Button.CommandProperty, nameof(HabitEditViewModel.DeleteCommand));
         var deleteBox = Ui.WithShadow(delete);
+        var history = Ui.CommandButton("Ajalugu", nameof(HabitEditViewModel.OpenHistoryCommand));
+        history.SetBinding(IsVisibleProperty, nameof(HabitEditViewModel.IsEditing));
         deleteBox.SetBinding(IsVisibleProperty, nameof(HabitEditViewModel.IsEditing));
 
         _column = new VerticalStackLayout
@@ -85,6 +87,7 @@ public partial class HabitEditPage : ContentPage
                 Pixel.Card(form),
                 Pixel.PrimaryButton("Salvesta", nameof(HabitEditViewModel.SaveCommand),
                     enabledPath: nameof(HabitEditViewModel.IsNotBusy)),
+                history,
                 deleteBox,
                 Pixel.LinkButton("Tühista", nameof(HabitEditViewModel.CancelCommand))
             }

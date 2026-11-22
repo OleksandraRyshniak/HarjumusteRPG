@@ -197,6 +197,9 @@ public partial class HabitEditViewModel : BaseViewModel
     [RelayCommand]
     private Task Cancel() => Shell.Current.GoToAsync("..");
 
+    [RelayCommand]
+    private Task OpenHistory() => Shell.Current.GoToAsync($"habit-history?id={HabitId}");
+
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
