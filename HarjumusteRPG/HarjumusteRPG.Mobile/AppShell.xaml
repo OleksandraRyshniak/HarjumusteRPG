@@ -9,5 +9,7 @@
     <ShellContent Route="login" ContentTemplate="{DataTemplate views:LoginPage}" />
     <ShellContent Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" />
     <ShellContent Route="main" ContentTemplate="{DataTemplate views:TodayPage}" />
+    <ShellContent Route="habits" ContentTemplate="{DataTemplate views:HabitsPage}" />
+    <ShellContent Route="pet" ContentTemplate="{DataTemplate views:PetSetupPage}" />
 
 </Shell>

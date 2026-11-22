@@ -48,14 +48,21 @@ namespace HarjumusteRPG.Mobile
             builder.Services.AddSingleton(new HttpClient
             {
                 BaseAddress = new Uri(DeviceInfo.Platform == DevicePlatform.Android
-                    ? "http://10.0.2.2:5086/"
+                    ? "http://localhost:5086/"
                     : "https://localhost:7008/"),
                 Timeout = TimeSpan.FromSeconds(15)
             });
 
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IGameApi, GameApi>();
+            builder.Services.AddSingleton<IHabitApi, HabitApi>();
 
+            builder.Services.AddTransient<HabitsViewModel>();
+            builder.Services.AddTransient<HabitsPage>();
+            builder.Services.AddTransient<HabitEditViewModel>();
+            builder.Services.AddTransient<HabitEditPage>();
+            builder.Services.AddTransient<PetSetupViewModel>();
+            builder.Services.AddTransient<PetSetupPage>();
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<RegisterViewModel>();

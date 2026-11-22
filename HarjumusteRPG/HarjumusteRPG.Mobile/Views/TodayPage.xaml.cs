@@ -34,10 +34,12 @@ public partial class TodayPage : ContentPage
             VerticalOptions = LayoutOptions.Start,
             Children =
             {
-                Chip(nameof(TodayViewModel.CoinsText), Palette.Card),
-                Chip(nameof(TodayViewModel.LevelChip), Mint)
+                Chip(nameof(TodayViewModel.CoinsText), Palette.Card, "ic_mynt.png"),
+                Chip(nameof(TodayViewModel.LevelChip), Mint, "ic_taht.png")
             }
         };
+
+
 
         var header = new Grid
         {
@@ -50,12 +52,13 @@ public partial class TodayPage : ContentPage
         // --- pet card: sprite, mood, streak and XP bar ---
         var pet = new Image
         {
-            Source = "kass_hall.png",
+            
             WidthRequest = 84,
             HeightRequest = 114,
             Aspect = Aspect.AspectFit,
             VerticalOptions = LayoutOptions.Center
         };
+        pet.SetBinding(Image.SourceProperty, nameof(TodayViewModel.PetImage));
 
         var petLine = Pixel.Body(string.Empty, 20, bold: true);
         petLine.SetBinding(Label.TextProperty, nameof(TodayViewModel.PetLine));
@@ -73,7 +76,7 @@ public partial class TodayPage : ContentPage
         {
             Spacing = 6,
             VerticalOptions = LayoutOptions.Center,
-            Children = { petLine, streak, xpText, xpBar }
+            Children = { petLine, IconRow("ic_tuli.png", streak), IconRow("ic_valk.png", xpText), xpBar }
         };
 
         var petGrid = new Grid
@@ -88,7 +91,18 @@ public partial class TodayPage : ContentPage
 
         // --- messages ---
         var section = Pixel.Body(string.Empty, 18, bold: true);
+        section.VerticalOptions = LayoutOptions.Center;
         section.SetBinding(Label.TextProperty, nameof(TodayViewModel.SectionTitle));
+
+        var add = Ui.CommandButton("+", nameof(TodayViewModel.AddHabitCommand), fill: Palette.Hero);
+        add.WidthRequest = 48;
+
+        var sectionRow = new Grid
+        {
+            ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }
+        };
+        sectionRow.Add(section, 0);
+        sectionRow.Add(add, 1);
 
         var reward = Pixel.Body(string.Empty, 17, bold: true);
         reward.SetBinding(Label.TextProperty, nameof(TodayViewModel.RewardMessage));
@@ -113,19 +127,18 @@ public partial class TodayPage : ContentPage
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
             Children =
-            {
-                header,
-                petCard,
-                section,
-                reward,
-                error,
-                busy,
-                list,
-                empty,
-                Pixel.PrimaryButton("Värskenda", nameof(TodayViewModel.LoadCommand), primary: false,
-                    enabledPath: nameof(TodayViewModel.IsNotBusy)),
-                Pixel.PrimaryButton("Logi välja", nameof(TodayViewModel.LogoutCommand), primary: false)
-            }
+    {
+        header,
+        petCard,
+        sectionRow,
+        reward,
+        error,
+        busy,
+        list,
+        empty,
+        Pixel.PrimaryButton("Halda harjumusi", nameof(TodayViewModel.ManageCommand), primary: false),
+        Pixel.PrimaryButton("Logi välja", nameof(TodayViewModel.LogoutCommand), primary: false)
+    }
         };
 
         _root = new Grid
@@ -140,11 +153,35 @@ public partial class TodayPage : ContentPage
     }
 
     // Small box in the header: coins or level.
-    private static Grid Chip(string path, Color fill)
+    // Small box in the header: icon + coins or level.
+    private static Grid Chip(string path, Color fill, string icon)
     {
         var label = Pixel.Body(string.Empty, 18, bold: true, center: true);
+        label.VerticalOptions = LayoutOptions.Center;
         label.SetBinding(Label.TextProperty, path);
-        return Pixel.Card(label, fill, border: 3, shadow: 3, padding: new Thickness(12, 6));
+
+        var content = new HorizontalStackLayout
+        {
+            Spacing = 6,
+            Children =
+        {
+            new Image { Source = icon, WidthRequest = 24, HeightRequest = 24, VerticalOptions = LayoutOptions.Center },
+            label
+        }
+        };
+        return Pixel.Card(content, fill, border: 3, shadow: 3, padding: new Thickness(10, 6));
+    }
+
+    private static Grid IconRow(string icon, View content)
+    {
+        var grid = new Grid
+        {
+            ColumnDefinitions = { new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star) },
+            ColumnSpacing = 6
+        };
+        grid.Add(new Image { Source = icon, WidthRequest = 20, HeightRequest = 20, VerticalOptions = LayoutOptions.Center }, 0);
+        grid.Add(content, 1);
+        return grid;
     }
 
     // One habit card: icon box, name, reward and a checkbox that marks the habit done.
@@ -153,8 +190,21 @@ public partial class TodayPage : ContentPage
         var initial = Pixel.Body(string.Empty, 20, bold: true, center: true);
         initial.VerticalOptions = LayoutOptions.Center;
         initial.SetBinding(Label.TextProperty, nameof(TodayHabitItem.Initial));
+        initial.SetBinding(IsVisibleProperty, nameof(TodayHabitItem.HasNoIcon));
 
-        var icon = Pixel.Card(initial, Palette.Bg, border: 3, shadow: 3, padding: new Thickness(0));
+        var picture = new Image
+        {
+            WidthRequest = 28,
+            HeightRequest = 28,
+            Aspect = Aspect.AspectFit,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
+        };
+        picture.SetBinding(Image.SourceProperty, nameof(TodayHabitItem.IconFile));
+        picture.SetBinding(IsVisibleProperty, nameof(TodayHabitItem.HasIcon));
+
+        var iconContent = new Grid { Children = { initial, picture } };
+        var icon = Pixel.Card(iconContent, Palette.Bg, border: 3, shadow: 3, padding: new Thickness(0));
         icon.WidthRequest = 44;
         icon.HeightRequest = 44;
         icon.VerticalOptions = LayoutOptions.Center;
@@ -216,16 +266,35 @@ public partial class TodayPage : ContentPage
     }
 
     // Bottom menu. Only "Täna" works for now; other tabs get their screens later.
+    // Bottom menu. Only "Täna" works for now; other tabs get their screens later.
     private static View BuildNavBar()
     {
-        var tabs = new[] { "Täna", "Lemmik", "Statistika", "Edetabel", "Pood" };
+        var tabs = new (string Text, string Icon)[]
+        {
+        ("Täna", "ic_kalender.png"),
+        ("Lemmik", "ic_suda.png"),
+        ("Statistika", "ic_statistika.png"),
+        ("Edetabel", "ic_karikas.png"),
+        ("Pood", "ic_pood.png")
+        };
         var inactive = Color.FromArgb("#B9A8D6");
 
-        var grid = new Grid { Padding = new Thickness(6, 14) };
+        var grid = new Grid { Padding = new Thickness(6, 10) };
         for (var i = 0; i < tabs.Length; i++)
         {
+            var active = i == 0;
+            var icon = new Image
+            {
+                Source = tabs[i].Icon,
+                WidthRequest = 28,
+                HeightRequest = 28,
+                HorizontalOptions = LayoutOptions.Center,
+                Opacity = active ? 1 : 0.55
+            };
+            var text = Pixel.Body(tabs[i].Text, 12, bold: true, color: active ? Colors.White : inactive, center: true);
+
             grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-            grid.Add(Pixel.Body(tabs[i], 13, bold: true, color: i == 0 ? Colors.White : inactive, center: true), i, 0);
+            grid.Add(new VerticalStackLayout { Spacing = 4, Children = { icon, text } }, i, 0);
         }
 
         return new Border

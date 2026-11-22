@@ -19,6 +19,10 @@ public partial class TodayHabitItem : ObservableObject
     public int Id { get; }
     public string Name { get; }
     public string Initial => Name.Length == 0 ? "?" : Name[..1].ToUpperInvariant();
+
+    public string? IconFile { get; init; }
+    public bool HasIcon => !string.IsNullOrEmpty(IconFile);
+    public bool HasNoIcon => !HasIcon;
     public string Subtitle => "+20 XP · +5 münti";
 
     [ObservableProperty]
@@ -45,7 +49,7 @@ public partial class TodayViewModel : BaseViewModel
     }
 
     // The pet name is kept on the device (a full pet screen comes later).
-    private static string PetName => Preferences.Default.Get("pet_name", "Muri");
+    private string PetName => PetStore.Name(_auth.Username);
 
     public ObservableCollection<TodayHabitItem> Habits { get; } = new();
 
@@ -95,6 +99,8 @@ public partial class TodayViewModel : BaseViewModel
 
         DateText = DateTime.Today.ToString("dddd, d. MMM", Estonian).ToUpper(Estonian);
         Greeting = $"Tere, {_auth.Username}!";
+        SectionTitle = $"Toida {PetName} harjumustega";
+        PetImage = PetStore.Image(_auth.Username);
         IsBusy = true;
         try
         {
@@ -118,7 +124,10 @@ public partial class TodayViewModel : BaseViewModel
 
             Habits.Clear();
             foreach (var h in today.Value!)
-                Habits.Add(new TodayHabitItem(h.Id, h.Name, h.Done));
+                Habits.Add(new TodayHabitItem(h.Id, h.Name, h.Done)
+                {
+                    IconFile = HabitIcons.GetFile(_auth.Username, h.Id)
+                });
 
             IsEmpty = Habits.Count == 0;
             UpdatePetLine();
@@ -163,6 +172,13 @@ public partial class TodayViewModel : BaseViewModel
         }
     }
 
+
+    [RelayCommand]
+    private Task AddHabit() => Shell.Current.GoToAsync("habit-edit");
+
+    [RelayCommand]
+    private Task Manage() => Shell.Current.GoToAsync("//habits");
+
     [RelayCommand]
     private async Task Logout()
     {
@@ -179,6 +195,9 @@ public partial class TodayViewModel : BaseViewModel
         CoinsText = coins.ToString();
         StreakLine = streak > 0 ? $"{streak} päeva seeria" : "Alusta seeriat täna!";
     }
+
+    [ObservableProperty]
+    private string petImage = "kass_hall.png";
 
     // The pet is happy when all of today's habits are done.
     private void UpdatePetLine()

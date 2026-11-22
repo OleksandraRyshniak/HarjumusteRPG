@@ -46,7 +46,7 @@ public partial class RegisterViewModel : BaseViewModel
 
             Password = string.Empty;
             ConfirmPassword = string.Empty;
-            await Shell.Current.GoToAsync("//main");
+            await Shell.Current.GoToAsync("//pet");
         }
         finally
         {
