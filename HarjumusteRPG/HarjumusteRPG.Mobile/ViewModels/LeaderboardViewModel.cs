@@ -14,11 +14,17 @@ public partial class LeaderboardViewModel : BaseViewModel
 {
     private readonly IAuthService _auth;
     private readonly IFriendApi _api;
+    private readonly IRealtimeService _realtime;
 
-    public LeaderboardViewModel(IAuthService auth, IFriendApi api)
+    // live reload: if a message arrives while a reload is running, reload once more
+    private bool _refreshing;
+    private bool _again;
+
+    public LeaderboardViewModel(IAuthService auth, IFriendApi api, IRealtimeService realtime)
     {
         _auth = auth;
         _api = api;
+        _realtime = realtime;
         Title = "Edetabel";
     }
 
@@ -192,6 +198,47 @@ public partial class LeaderboardViewModel : BaseViewModel
         finally
         {
             IsBusy = false;
+        }
+    }
+
+    // The page calls these when it appears and disappears: the live connection is open only
+    // while the screen is visible.
+    public void StartLive()
+    {
+        _realtime.LeaderboardChanged -= OnLiveChanged;
+        _realtime.LeaderboardChanged += OnLiveChanged;
+        _realtime.Start();
+    }
+
+    public void StopLive()
+    {
+        _realtime.LeaderboardChanged -= OnLiveChanged;
+        _realtime.Stop();
+    }
+
+    private void OnLiveChanged() => _ = LiveReloadAsync();
+
+    private async Task LiveReloadAsync()
+    {
+        if (_refreshing)
+        {
+            _again = true;
+            return;
+        }
+
+        _refreshing = true;
+        try
+        {
+            do
+            {
+                _again = false;
+                await ReloadAsync();
+            }
+            while (_again);
+        }
+        finally
+        {
+            _refreshing = false;
         }
     }
 

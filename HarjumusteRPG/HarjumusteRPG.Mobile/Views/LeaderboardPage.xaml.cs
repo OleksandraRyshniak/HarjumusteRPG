@@ -230,6 +230,17 @@ public partial class LeaderboardPage : ContentPage
         base.OnAppearing();
 
         if (BindingContext is LeaderboardViewModel vm)
+        {
             vm.LoadCommand.Execute(null);
+            vm.StartLive();
+        }
     }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        if (BindingContext is LeaderboardViewModel vm)
+            vm.StopLive();
+    } 
 }

@@ -8,10 +8,14 @@ public class StreakService : IStreakService
     private readonly IUserRepository _users;
     private readonly TimeProvider _time;
     private readonly ILogger<StreakService> _logger;
+    private readonly ILeaderboardNotifier _notifier;
 
-    public StreakService(IUserRepository users, TimeProvider time, ILogger<StreakService> logger)
+    public StreakService(
+        IUserRepository users, ILeaderboardNotifier notifier, 
+        TimeProvider time, ILogger<StreakService> logger)
     {
         _users = users;
+        _notifier = notifier;
         _time = time;
         _logger = logger;
     }
@@ -38,9 +42,11 @@ public class StreakService : IStreakService
             user.CurrentStreak = 0;
             _users.Update(user);
         }
-
         if (changed.Count > 0)
+        {
             await _users.SaveChangesAsync();
+            await _notifier.NotifyAsync(changed.Select(c => c.UserId).ToArray());
+        }
 
         _logger.LogInformation("Streak check for {Today}: {Count} streak(s) reset", today, changed.Count);
         return changed;

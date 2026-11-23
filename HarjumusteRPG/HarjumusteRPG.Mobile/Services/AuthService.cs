@@ -10,6 +10,7 @@ public class AuthService : IAuthService
 {
     private const string TokenKey = "auth_token";
     private const string UsernameKey = "auth_username";
+   
 
     private const string ConnectionError = "Serveriga ei saa ühendust. Kontrolli, et API töötab.";
     private const string UnknownError = "Midagi läks valesti. Proovi uuesti.";
@@ -22,6 +23,8 @@ public class AuthService : IAuthService
     public bool IsLoggedIn => !string.IsNullOrEmpty(_token);
 
     public string? Username { get; private set; }
+    public string? Token => _token;
+
 
     public async Task<bool> RestoreSessionAsync()
     {

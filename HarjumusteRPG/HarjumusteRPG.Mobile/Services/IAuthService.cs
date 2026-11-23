@@ -6,6 +6,7 @@ public interface IAuthService
 {
     bool IsLoggedIn { get; }
     string? Username { get; }
+    string? Token { get; }
 
     Task<bool> RestoreSessionAsync();
     Task<AuthResult> LoginAsync(string email, string password);
