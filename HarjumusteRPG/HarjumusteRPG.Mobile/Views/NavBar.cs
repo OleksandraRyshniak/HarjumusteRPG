@@ -12,7 +12,7 @@ public static class NavBar
         new("Täna", "ic_kalender.png", "//main"),
         new("Lemmik", "ic_suda.png", "//progress"),
         new("Statistika", "ic_statistika.png", null),
-        new("Edetabel", "ic_karikas.png", null),
+        new("Edetabel", "ic_karikas.png", "//leaderboard"),
         new("Pood", "ic_pood.png", null)
     };
 

@@ -56,6 +56,7 @@ namespace HarjumusteRPG.Mobile
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IGameApi, GameApi>();
             builder.Services.AddSingleton<IHabitApi, HabitApi>();
+            builder.Services.AddSingleton<IFriendApi, FriendApi>();
 
             builder.Services.AddTransient<HabitsViewModel>();
             builder.Services.AddTransient<HabitsPage>();
@@ -75,6 +76,8 @@ namespace HarjumusteRPG.Mobile
             builder.Services.AddTransient<HabitHistoryPage>();
             builder.Services.AddTransient<AchievementsViewModel>();
             builder.Services.AddTransient<AchievementsPage>();
+            builder.Services.AddTransient<LeaderboardViewModel>();
+            builder.Services.AddTransient<LeaderboardPage>();
 
             return builder.Build();
         }

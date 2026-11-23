@@ -1,0 +1,256 @@
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HarjumusteRPG.Mobile.Services;
+
+namespace HarjumusteRPG.Mobile.ViewModels;
+
+// One line of the ranking, one friend and one incoming request.
+public record LeaderboardRow(string RankText, string Name, string Details, string Streak, bool IsMe);
+public record FriendRow(int Id, string Name, string Details);
+public record RequestRow(int Id, string Name);
+
+public partial class LeaderboardViewModel : BaseViewModel
+{
+    private readonly IAuthService _auth;
+    private readonly IFriendApi _api;
+
+    public LeaderboardViewModel(IAuthService auth, IFriendApi api)
+    {
+        _auth = auth;
+        _api = api;
+        Title = "Edetabel";
+    }
+
+    public ObservableCollection<LeaderboardRow> Board { get; } = new();
+    public ObservableCollection<FriendRow> Friends { get; } = new();
+    public ObservableCollection<RequestRow> Requests { get; } = new();
+
+    // false = ranking tab, true = friends tab
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowBoard))]
+    private bool showFriends;
+
+    public bool ShowBoard => !ShowFriends;
+
+    [ObservableProperty]
+    private string newFriendName = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasInfo))]
+    private string? infoMessage;
+
+    public bool HasInfo => !string.IsNullOrEmpty(InfoMessage);
+
+    [ObservableProperty]
+    private bool hasRequests;
+
+    [ObservableProperty]
+    private bool noFriends;
+
+    // Only the user itself is in the ranking.
+    [ObservableProperty]
+    private bool onlyMe;
+
+    [RelayCommand]
+    private void ShowBoardTab() => ShowFriends = false;
+
+    [RelayCommand]
+    private void ShowFriendsTab() => ShowFriends = true;
+
+    [RelayCommand]
+    private async Task Load()
+    {
+        if (IsBusy)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            await ReloadAsync();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task SendRequest()
+    {
+        if (IsBusy)
+            return;
+
+        var name = NewFriendName.Trim();
+        if (name.Length < 3)
+        {
+            InfoMessage = null;
+            ErrorMessage = "Sisesta sõbra kasutajanimi (vähemalt 3 märki).";
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            InfoMessage = null;
+
+            var result = await _api.SendRequestAsync(name);
+            if (!result.Success)
+            {
+                await HandleErrorAsync(result.Error!);
+                return;
+            }
+
+            NewFriendName = string.Empty;
+            InfoMessage = $"Kutse saadetud kasutajale {result.Value!.Username}.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task Accept(RequestRow? row)
+    {
+        if (row is null || IsBusy)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            InfoMessage = null;
+
+            var result = await _api.AcceptAsync(row.Id);
+            if (!result.Success)
+            {
+                await HandleErrorAsync(result.Error!);
+                return;
+            }
+
+            InfoMessage = $"{row.Name} on nüüd sinu sõber.";
+            await ReloadAsync();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task Decline(RequestRow? row)
+    {
+        if (row is null || IsBusy)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            InfoMessage = null;
+
+            var result = await _api.DeclineAsync(row.Id);
+            if (!result.Success)
+            {
+                await HandleErrorAsync(result.Error!);
+                return;
+            }
+
+            await ReloadAsync();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task Remove(FriendRow? row)
+    {
+        if (row is null || IsBusy)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            InfoMessage = null;
+
+            var result = await _api.RemoveAsync(row.Id);
+            if (!result.Success)
+            {
+                await HandleErrorAsync(result.Error!);
+                return;
+            }
+
+            InfoMessage = $"{row.Name} eemaldati sõprade hulgast.";
+            await ReloadAsync();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    // Loads the ranking, the friends and the incoming requests.
+    private async Task ReloadAsync()
+    {
+        var board = await _api.GetLeaderboardAsync();
+        if (!board.Success)
+        {
+            await HandleErrorAsync(board.Error!);
+            return;
+        }
+
+        var friends = await _api.GetFriendsAsync();
+        if (!friends.Success)
+        {
+            await HandleErrorAsync(friends.Error!);
+            return;
+        }
+
+        var requests = await _api.GetRequestsAsync();
+        if (!requests.Success)
+        {
+            await HandleErrorAsync(requests.Error!);
+            return;
+        }
+
+        Board.Clear();
+        foreach (var e in board.Value ?? new())
+            Board.Add(new LeaderboardRow(
+                $"{e.Rank}.",
+                e.IsMe ? $"{e.Username} (sina)" : e.Username,
+                $"TASE {e.Level} · {e.Xp} XP",
+                $"{e.CurrentStreak} p",
+                e.IsMe));
+
+        Friends.Clear();
+        foreach (var f in friends.Value ?? new())
+            Friends.Add(new FriendRow(f.Id, f.Username, $"TASE {f.Level} · {f.CurrentStreak} päeva seeria"));
+
+        Requests.Clear();
+        foreach (var r in requests.Value ?? new())
+            Requests.Add(new RequestRow(r.Id, r.Username));
+
+        OnlyMe = Board.Count <= 1;
+        NoFriends = Friends.Count == 0;
+        HasRequests = Requests.Count > 0;
+    }
+
+    // Session expired -> back to login, other errors are shown on the screen.
+    private async Task HandleErrorAsync(string error)
+    {
+        if (error.StartsWith("Sessioon aegus"))
+        {
+            _auth.Logout();
+            await Task.Delay(300);
+            await Shell.Current.GoToAsync("//login");
+            return;
+        }
+        ErrorMessage = error;
+    }
+}
