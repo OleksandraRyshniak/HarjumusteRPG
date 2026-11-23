@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HarjumusteRPG.Mobile.Models;
 using HarjumusteRPG.Mobile.Services;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -48,7 +49,7 @@ public partial class TodayViewModel : BaseViewModel
         PetLine = $"{PetName} ootab sind!";
     }
 
-    // The pet name is kept on the device (a full pet screen comes later).
+    // The pet name is kept on the device.
     private string PetName => PetStore.Name(_auth.Username);
 
     public ObservableCollection<TodayHabitItem> Habits { get; } = new();
@@ -61,6 +62,7 @@ public partial class TodayViewModel : BaseViewModel
 
     [ObservableProperty]
     private string petLine = string.Empty;
+
     [RelayCommand]
     private Task ChangePet() => Shell.Current.GoToAsync("//pet");
 
@@ -91,7 +93,51 @@ public partial class TodayViewModel : BaseViewModel
     [ObservableProperty]
     private bool isEmpty;
 
+    [ObservableProperty]
+    private string petImage = "kass_hall.png";
+
     public bool HasReward => !string.IsNullOrEmpty(RewardMessage);
+
+    // ---- celebration window: level up / new achievement ----
+
+    [ObservableProperty]
+    private bool isCelebrating;
+
+    [ObservableProperty]
+    private string celebrationTitle = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCelebrationLevel))]
+    private string celebrationLevel = string.Empty;
+
+    [ObservableProperty]
+    private string celebrationReward = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasCelebrationAchievements))]
+    private string celebrationAchievements = string.Empty;
+
+    public bool HasCelebrationLevel => !string.IsNullOrEmpty(CelebrationLevel);
+    public bool HasCelebrationAchievements => !string.IsNullOrEmpty(CelebrationAchievements);
+
+    private void ShowCelebration(CompleteResult r)
+    {
+        CelebrationTitle = r.LeveledUp ? "TASE TÕUSIS!" : "UUS SAAVUTUS!";
+        CelebrationLevel = r.LeveledUp ? $"TASE {r.Level}" : string.Empty;
+        CelebrationReward = $"+{r.XpEarned} XP  +{r.CoinsEarned} münti";
+
+        var names = r.NewAchievements ?? new List<AchievementInfo>();
+        CelebrationAchievements = names.Count == 0
+            ? string.Empty
+            : (names.Count == 1 ? "Uus saavutus:" : "Uued saavutused:")
+              + Environment.NewLine
+              + string.Join(Environment.NewLine, names.Select(a => $"- {a.Name}"));
+
+        IsCelebrating = true;
+    }
+
+    [RelayCommand]
+    private void CloseCelebration() => IsCelebrating = false;
 
     [RelayCommand]
     private async Task Load()
@@ -167,13 +213,15 @@ public partial class TodayViewModel : BaseViewModel
             RewardMessage = r.LeveledUp
                 ? $"TASE TÕUSIS! Nüüd tase {r.Level}  +{r.XpEarned} XP  +{r.CoinsEarned} münti"
                 : $"+{r.XpEarned} XP  +{r.CoinsEarned} münti";
+
+            if (r.LeveledUp || (r.NewAchievements?.Count ?? 0) > 0)
+                ShowCelebration(r);
         }
         finally
         {
             IsBusy = false;
         }
     }
-
 
     [RelayCommand]
     private Task AddHabit() => Shell.Current.GoToAsync("habit-edit");
@@ -197,9 +245,6 @@ public partial class TodayViewModel : BaseViewModel
         CoinsText = coins.ToString();
         StreakLine = streak > 0 ? $"{streak} päeva seeria" : "Alusta seeriat täna!";
     }
-
-    [ObservableProperty]
-    private string petImage = "kass_hall.png";
 
     // The pet is happy when all of today's habits are done.
     private void UpdatePetLine()

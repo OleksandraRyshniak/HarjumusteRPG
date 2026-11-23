@@ -15,7 +15,7 @@ public partial class ProgressPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(ProgressViewModel.Title));
 
-        var heading = Pixel.Heading("PROGRESS", 16);
+        var heading = Pixel.Heading("LEMMIK", 16);
 
         // --- pet card: sprite, name, level and XP bar ---
         var pet = new Image
@@ -59,9 +59,11 @@ public partial class ProgressPage : ContentPage
 
         var petCard = Pixel.Card(petGrid, Palette.Hero, padding: new Thickness(14));
 
+        // tap on the pet card -> choose another pet
         var tapPet = new TapGestureRecognizer();
-        tapPet.SetBinding(TapGestureRecognizer.CommandProperty, nameof(TodayViewModel.ChangePetCommand));
+        tapPet.SetBinding(TapGestureRecognizer.CommandProperty, nameof(ProgressViewModel.ChangePetCommand));
         petCard.GestureRecognizers.Add(tapPet);
+
         // --- four numbers ---
         var stats = new Grid
         {
@@ -75,6 +77,10 @@ public partial class ProgressPage : ContentPage
         stats.Add(Tile("ic_kalender.png", nameof(ProgressViewModel.TotalText), "täitmist"), 0, 1);
         stats.Add(Tile("ic_mynt.png", nameof(ProgressViewModel.CoinsText), "münti"), 1, 1);
 
+        // --- achievements: how many earned + button to the full list ---
+        var achievements = Pixel.Body(string.Empty, 16, bold: true);
+        achievements.SetBinding(Label.TextProperty, nameof(ProgressViewModel.AchievementsText));
+
         var error = Pixel.ErrorLabel(nameof(ProgressViewModel.ErrorMessage), nameof(ProgressViewModel.HasError));
 
         var busy = new ActivityIndicator { Color = Palette.Ink };
@@ -85,7 +91,16 @@ public partial class ProgressPage : ContentPage
         {
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
-            Children = { heading, petCard, stats, error, busy }
+            Children =
+            {
+                heading,
+                petCard,
+                stats,
+                achievements,
+                Pixel.PrimaryButton("Saavutused", nameof(ProgressViewModel.OpenAchievementsCommand), primary: false),
+                error,
+                busy
+            }
         };
 
         _root = new Grid
@@ -94,7 +109,7 @@ public partial class ProgressPage : ContentPage
             HorizontalOptions = LayoutOptions.Center
         };
         _root.Add(new ScrollView { Content = column }, 0, 0);
-        _root.Add(NavBar.Build(0), 0, 1);
+        _root.Add(NavBar.Build(1), 0, 1);
 
         Content = _root;
     }

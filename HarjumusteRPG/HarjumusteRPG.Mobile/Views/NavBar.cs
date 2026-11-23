@@ -16,6 +16,8 @@ public static class NavBar
         new("Pood", "ic_pood.png", null)
     };
 
+    private static bool _navigating;
+
     public static View Build(int active)
     {
         var inactive = Color.FromArgb("#B9A8D6");
@@ -50,6 +52,10 @@ public static class NavBar
                     BorderWidth = 0,
                     Command = new Command(async () =>
                     {
+                        if (_navigating)
+                            return;
+
+                        _navigating = true;
                         try
                         {
                             await Shell.Current.GoToAsync(route);
@@ -57,6 +63,12 @@ public static class NavBar
                         catch (Exception ex)
                         {
                             await Shell.Current.DisplayAlertAsync("Viga", ex.Message, "OK");
+                        }
+                        finally
+                        {
+                            // give Shell time to finish the navigation before the next tap
+                            await Task.Delay(400);
+                            _navigating = false;
                         }
                     })
                 };

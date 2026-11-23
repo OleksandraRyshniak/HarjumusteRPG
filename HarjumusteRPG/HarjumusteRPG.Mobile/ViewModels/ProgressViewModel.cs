@@ -13,7 +13,7 @@ public partial class ProgressViewModel : BaseViewModel
     {
         _auth = auth;
         _api = api;
-        Title = "Progress";
+        Title = "Lemmik";
     }
 
     [ObservableProperty] private string petImage = "kass_hall.png";
@@ -26,6 +26,13 @@ public partial class ProgressViewModel : BaseViewModel
     [ObservableProperty] private string longestText = "0";
     [ObservableProperty] private string totalText = "0";
     [ObservableProperty] private string coinsText = "0";
+    [ObservableProperty] private string achievementsText = string.Empty;
+
+    [RelayCommand]
+    private Task OpenAchievements() => Shell.Current.GoToAsync("achievements");
+
+    [RelayCommand]
+    private Task ChangePet() => Shell.Current.GoToAsync("//pet");
 
     [RelayCommand]
     private async Task Load()
@@ -57,6 +64,9 @@ public partial class ProgressViewModel : BaseViewModel
             LongestText = p.LongestStreak.ToString();
             TotalText = p.TotalCompletions.ToString();
             CoinsText = p.Coins.ToString();
+
+            var all = p.Achievements ?? new();
+            AchievementsText = $"Saavutused: {all.Count(a => a.Unlocked)} / {all.Count}";
         }
         finally
         {

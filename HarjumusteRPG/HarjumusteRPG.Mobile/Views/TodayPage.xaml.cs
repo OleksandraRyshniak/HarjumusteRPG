@@ -1,5 +1,4 @@
 using HarjumusteRPG.Mobile.ViewModels;
-using Microsoft.Maui.Controls.Shapes;
 
 namespace HarjumusteRPG.Mobile.Views;
 
@@ -7,8 +6,14 @@ public partial class TodayPage : ContentPage
 {
     private static readonly Color Mint = Color.FromArgb("#A8E6CF");
     private static readonly Color Pink = Color.FromArgb("#F27FA5");
+    private static readonly Color Gold = Color.FromArgb("#FFD966");
+    private static readonly Random Rng = new();
 
     private readonly Grid _root;
+    private Grid _overlay = null!;
+    private View _overlayCard = null!;
+    private Image _star = null!;
+    private AbsoluteLayout _confetti = null!;
 
     public TodayPage(TodayViewModel viewModel)
     {
@@ -39,8 +44,6 @@ public partial class TodayPage : ContentPage
             }
         };
 
-
-
         var header = new Grid
         {
             ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) },
@@ -52,7 +55,6 @@ public partial class TodayPage : ContentPage
         // --- pet card: sprite, mood, streak and XP bar ---
         var pet = new Image
         {
-            
             WidthRequest = 84,
             HeightRequest = 114,
             Aspect = Aspect.AspectFit,
@@ -127,18 +129,19 @@ public partial class TodayPage : ContentPage
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
             Children =
-    {
-        header,
-        petCard,
-        sectionRow,
-        reward,
-        error,
-        busy,
-        list,
-        empty,
-        Pixel.PrimaryButton("Halda harjumusi", nameof(TodayViewModel.ManageCommand), primary: false),
-        Pixel.PrimaryButton("Logi välja", nameof(TodayViewModel.LogoutCommand), primary: false)
-    }
+            {
+                header,
+                petCard,
+                sectionRow,
+                reward,
+                error,
+                busy,
+                list,
+                empty,
+                Pixel.PrimaryButton("Halda harjumusi", nameof(TodayViewModel.ManageCommand), primary: false),
+                Pixel.PrimaryButton("Logi välja", nameof(TodayViewModel.LogoutCommand), primary: false)
+                
+            }
         };
 
         _root = new Grid
@@ -149,10 +152,125 @@ public partial class TodayPage : ContentPage
         _root.Add(new ScrollView { Content = column }, 0, 0);
         _root.Add(NavBar.Build(0), 0, 1);
 
+        // --- level-up / achievement window on top of everything ---
+        _overlay = BuildCelebration();
+        Grid.SetRowSpan(_overlay, 2);
+        _root.Add(_overlay, 0, 0);
+
+        viewModel.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(TodayViewModel.IsCelebrating) && viewModel.IsCelebrating)
+                _ = PlayCelebrationAsync();
+        };
+
         Content = _root;
     }
 
-    // Small box in the header: coins or level.
+    // Dark background, a card with a star, texts and a button, and confetti above.
+    private Grid BuildCelebration()
+    {
+        var dim = new BoxView { Color = Colors.Black, Opacity = 0.55 };
+
+        _star = new Image
+        {
+            Source = "ic_taht.png",
+            WidthRequest = 96,
+            HeightRequest = 96,
+            Aspect = Aspect.AspectFit,
+            HorizontalOptions = LayoutOptions.Center
+        };
+
+        var title = Pixel.Heading(string.Empty, 16, center: true);
+        title.SetBinding(Label.TextProperty, nameof(TodayViewModel.CelebrationTitle));
+
+        var level = Pixel.Heading(string.Empty, 28, center: true);
+        level.SetBinding(Label.TextProperty, nameof(TodayViewModel.CelebrationLevel));
+        level.SetBinding(IsVisibleProperty, nameof(TodayViewModel.HasCelebrationLevel));
+
+        var rewardText = Pixel.Body(string.Empty, 18, bold: true, color: Palette.Sub, center: true);
+        rewardText.SetBinding(Label.TextProperty, nameof(TodayViewModel.CelebrationReward));
+
+        var achievements = Pixel.Body(string.Empty, 17, bold: true, center: true);
+        achievements.SetBinding(Label.TextProperty, nameof(TodayViewModel.CelebrationAchievements));
+        achievements.SetBinding(IsVisibleProperty, nameof(TodayViewModel.HasCelebrationAchievements));
+
+        var close = Pixel.PrimaryButton("Jätka", nameof(TodayViewModel.CloseCelebrationCommand));
+
+        var stack = new VerticalStackLayout
+        {
+            Spacing = 12,
+            Children = { _star, title, level, rewardText, achievements, close }
+        };
+
+        var card = Pixel.Card(stack, Palette.Hero, padding: new Thickness(20));
+        card.WidthRequest = 300;
+        card.HorizontalOptions = LayoutOptions.Center;
+        card.VerticalOptions = LayoutOptions.Center;
+        _overlayCard = card;
+
+        // confetti does not block the button
+        _confetti = new AbsoluteLayout { InputTransparent = true };
+
+        var overlay = new Grid { IsVisible = false };
+        overlay.SetBinding(IsVisibleProperty, nameof(TodayViewModel.IsCelebrating));
+        overlay.Add(dim);
+        overlay.Add(card);
+        overlay.Add(_confetti);
+        return overlay;
+    }
+
+    // Card pops up, the star spins, confetti falls.
+    private async Task PlayCelebrationAsync()
+    {
+        _overlayCard.Scale = 0.3;
+        _overlayCard.Opacity = 0;
+        _star.Rotation = 0;
+        _star.Scale = 1;
+
+        LaunchConfetti();
+
+        await Task.WhenAll(
+            _overlayCard.FadeTo(1, 150),
+            _overlayCard.ScaleTo(1, 450, Easing.SpringOut));
+
+        await _star.RotateTo(360, 700, Easing.CubicInOut);
+        _star.Rotation = 0;
+        await _star.ScaleTo(1.25, 200);
+        await _star.ScaleTo(1, 200);
+    }
+
+    private void LaunchConfetti()
+    {
+        _confetti.Children.Clear();
+
+        var width = _root.Width > 0 ? _root.Width : 360;
+        var height = _root.Height > 0 ? _root.Height : 640;
+        Color[] colors = { Pink, Mint, Palette.Hero, Gold };
+
+        for (var i = 0; i < 28; i++)
+        {
+            var size = Rng.Next(8, 15);
+            var piece = new BoxView
+            {
+                Color = colors[Rng.Next(colors.Length)],
+                WidthRequest = size,
+                HeightRequest = size
+            };
+            AbsoluteLayout.SetLayoutBounds(piece, new Rect(Rng.NextDouble() * (width - size), -20, size, size));
+            _confetti.Children.Add(piece);
+            _ = FallAsync(piece, height);
+        }
+    }
+
+    private static async Task FallAsync(BoxView piece, double height)
+    {
+        await Task.Delay(Rng.Next(0, 600));
+        var duration = (uint)Rng.Next(1400, 2600);
+        await Task.WhenAll(
+            piece.TranslateTo(Rng.Next(-40, 40), height + 40, duration, Easing.CubicIn),
+            piece.RotateTo(Rng.Next(180, 720), duration));
+    }
+
     // Small box in the header: icon + coins or level.
     private static Grid Chip(string path, Color fill, string icon)
     {
@@ -164,10 +282,10 @@ public partial class TodayPage : ContentPage
         {
             Spacing = 6,
             Children =
-        {
-            new Image { Source = icon, WidthRequest = 24, HeightRequest = 24, VerticalOptions = LayoutOptions.Center },
-            label
-        }
+            {
+                new Image { Source = icon, WidthRequest = 24, HeightRequest = 24, VerticalOptions = LayoutOptions.Center },
+                label
+            }
         };
         return Pixel.Card(content, fill, border: 3, shadow: 3, padding: new Thickness(10, 6));
     }
@@ -263,48 +381,6 @@ public partial class TodayPage : ContentPage
         row.Add(checkBox, 2);
 
         return Pixel.Card(row, padding: new Thickness(12));
-    }
-
-    // Bottom menu. Only "Täna" works for now; other tabs get their screens later.
-    // Bottom menu. Only "Täna" works for now; other tabs get their screens later.
-    private static View BuildNavBar()
-    {
-        var tabs = new (string Text, string Icon)[]
-        {
-        ("Täna", "ic_kalender.png"),
-        ("Lemmik", "ic_suda.png"),
-        ("Statistika", "ic_statistika.png"),
-        ("Edetabel", "ic_karikas.png"),
-        ("Pood", "ic_pood.png")
-        };
-        var inactive = Color.FromArgb("#B9A8D6");
-
-        var grid = new Grid { Padding = new Thickness(6, 10) };
-        for (var i = 0; i < tabs.Length; i++)
-        {
-            var active = i == 0;
-            var icon = new Image
-            {
-                Source = tabs[i].Icon,
-                WidthRequest = 28,
-                HeightRequest = 28,
-                HorizontalOptions = LayoutOptions.Center,
-                Opacity = active ? 1 : 0.55
-            };
-            var text = Pixel.Body(tabs[i].Text, 12, bold: true, color: active ? Colors.White : inactive, center: true);
-
-            grid.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-            grid.Add(new VerticalStackLayout { Spacing = 4, Children = { icon, text } }, i, 0);
-        }
-
-        return new Border
-        {
-            BackgroundColor = Palette.Ink,
-            Stroke = Palette.Ink,
-            StrokeShape = new Rectangle(),
-            Margin = new Thickness(12, 4, 12, 12),
-            Content = grid
-        };
     }
 
     protected override void OnSizeAllocated(double width, double height)

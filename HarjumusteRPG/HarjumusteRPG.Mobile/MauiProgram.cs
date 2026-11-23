@@ -73,6 +73,8 @@ namespace HarjumusteRPG.Mobile
             builder.Services.AddTransient<ProgressPage>();
             builder.Services.AddTransient<HabitHistoryViewModel>();
             builder.Services.AddTransient<HabitHistoryPage>();
+            builder.Services.AddTransient<AchievementsViewModel>();
+            builder.Services.AddTransient<AchievementsPage>();
 
             return builder.Build();
         }

@@ -7,10 +7,13 @@ public record PagedHabits(List<HabitInfo> Items, int Page, int PageSize, int Tot
 
 public record CompletionInfo(int Id, int HabitId, DateOnly Date, int XpEarned);
 
+public record AchievementInfo(
+    int Id, string Name, string Description, int RequiredValue, bool Unlocked, DateTime? UnlockedAt);
+
 public record CompleteResult(
     int XpEarned, int CoinsEarned, bool LeveledUp, int Level, int Xp, int XpForNextLevel,
-    int Coins, int CurrentStreak, int LongestStreak);
+    int Coins, int CurrentStreak, int LongestStreak, List<AchievementInfo> NewAchievements);
 
 public record ProgressInfo(
     int Level, int Xp, int XpForNextLevel, int Coins,
-    int CurrentStreak, int LongestStreak, int TotalCompletions);
+    int CurrentStreak, int LongestStreak, int TotalCompletions, List<AchievementInfo> Achievements);
