@@ -10,11 +10,15 @@ public class FriendService : IFriendService
     private readonly IFriendshipRepository _friendships;
     private readonly IUserRepository _users;
     private readonly ILogger<FriendService> _logger;
+    private readonly ILeaderboardNotifier _notifier;
 
-    public FriendService(IFriendshipRepository friendships, IUserRepository users, ILogger<FriendService> logger)
+    public FriendService(
+        IFriendshipRepository friendships, IUserRepository users,
+        ILeaderboardNotifier notifier, ILogger<FriendService> logger)
     {
         _friendships = friendships;
         _users = users;
+        _notifier = notifier;
         _logger = logger;
     }
 
@@ -125,6 +129,8 @@ public class FriendService : IFriendService
 
         _logger.LogInformation("User {UserId} accepted friend request {RequestId}", userId, requestId);
 
+        await _notifier.NotifyAsync(userId, friendship.UserId);
+
         return new ServiceResult<FriendDto>(ServiceStatus.Ok, ToFriendDto(friendship.User!));
     }
 
@@ -153,6 +159,7 @@ public class FriendService : IFriendService
         await _friendships.SaveChangesAsync();
 
         _logger.LogInformation("User {UserId} removed friend {FriendId}", userId, friendId);
+        await _notifier.NotifyAsync(userId, friendId);
         return new ServiceResult<bool>(ServiceStatus.Ok, true);
     }
 

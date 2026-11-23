@@ -13,19 +13,22 @@ public class CompletionService : ICompletionService
     private readonly IAchievementService _achievements;
     private readonly TimeProvider _time;
     private readonly ILogger<CompletionService> _logger;
+    private readonly ILeaderboardNotifier _notifier;
 
     public CompletionService(
-        IHabitRepository habits,
-        IHabitCompletionRepository completions,
-        IUserRepository users,
-        IAchievementService achievements,
-        TimeProvider time,
-        ILogger<CompletionService> logger)
+     IHabitRepository habits,
+     IHabitCompletionRepository completions,
+     IUserRepository users,
+     IAchievementService achievements,
+     ILeaderboardNotifier notifier,
+     TimeProvider time,
+     ILogger<CompletionService> logger)
     {
         _habits = habits;
         _completions = completions;
         _users = users;
         _achievements = achievements;
+        _notifier = notifier;
         _time = time;
         _logger = logger;
     }
@@ -84,6 +87,8 @@ public class CompletionService : ICompletionService
         _logger.LogInformation(
            "User {UserId} completed habit {HabitId}: level {Level}, streak {Streak}, new achievements {Count}",
            userId, habitId, user.Level, user.CurrentStreak, newAchievements.Count);
+
+        await _notifier.NotifyAsync(userId);
 
         return new ServiceResult<CompleteHabitResultDto>(ServiceStatus.Ok, new CompleteHabitResultDto
         {

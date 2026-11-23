@@ -10,7 +10,10 @@ public class RegisterDto
     [Required, EmailAddress, StringLength(100)]
     public string Email { get; set; } = string.Empty;
 
-    [Required, StringLength(100, MinimumLength = 6)]
+    [Required]
+    [StringLength(100, MinimumLength = 6)]
+    [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\s]).+$",
+    ErrorMessage = "Parool peab sisaldama väiketähte, suurtähte, numbrit ja erimärki.")]
     public string Password { get; set; } = string.Empty;
 }
 
@@ -20,6 +23,7 @@ public class LoginDto
     public string Email { get; set; } = string.Empty;
 
     [Required]
+   
     public string Password { get; set; } = string.Empty;
 }
 
