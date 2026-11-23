@@ -66,7 +66,7 @@ public class AppDbContext : DbContext
             {
                 Id = 1,
                 Username = "admin",
-                Email = "admin@sproutly.local",
+                Email = "admin@pawly.local",
                 Role = "Admin",
                 PasswordHash = "$2b$11$k8fDIZHKppRuZV75my8dc.r0ns4zCq7DXr8YU3z8ZyjDxaRf/8UgC",
                 CreatedAt = created
@@ -75,7 +75,7 @@ public class AppDbContext : DbContext
             {
                 Id = 2,
                 Username = "service",
-                Email = "service@sproutly.local",
+                Email = "service@pawly.local",
                 Role = "Service",
                 PasswordHash = "$2b$11$qkitA4RIMQ0kNp.vc3Z.Cu.MEtCoV8WlYb.27iPmhk48hvlh4AW5K",
                 CreatedAt = created
