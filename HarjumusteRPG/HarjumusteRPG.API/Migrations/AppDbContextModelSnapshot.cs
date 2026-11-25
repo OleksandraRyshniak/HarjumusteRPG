@@ -41,6 +41,9 @@ namespace HarjumusteRPG.API.Migrations
                     b.Property<int>("RequiredValue")
                         .HasColumnType("int");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Achievements");
@@ -51,35 +54,40 @@ namespace HarjumusteRPG.API.Migrations
                             Id = 1,
                             Description = "Märgi esimene harjumus tehtuks",
                             Name = "Esimene samm",
-                            RequiredValue = 1
+                            RequiredValue = 1,
+                            Type = 0
                         },
                         new
                         {
                             Id = 2,
                             Description = "Hoia seeriat 7 päeva",
                             Name = "7 päeva järjest",
-                            RequiredValue = 7
+                            RequiredValue = 7,
+                            Type = 1
                         },
                         new
                         {
                             Id = 3,
                             Description = "Hoia seeriat 30 päeva",
                             Name = "30 päeva järjest",
-                            RequiredValue = 30
+                            RequiredValue = 30,
+                            Type = 1
                         },
                         new
                         {
                             Id = 4,
                             Description = "Jõua tasemeni 5",
                             Name = "Tase 5",
-                            RequiredValue = 5
+                            RequiredValue = 5,
+                            Type = 2
                         },
                         new
                         {
                             Id = 5,
                             Description = "Märgi 100 harjumust tehtuks",
                             Name = "100 täitmist",
-                            RequiredValue = 100
+                            RequiredValue = 100,
+                            Type = 0
                         });
                 });
 
@@ -95,6 +103,9 @@ namespace HarjumusteRPG.API.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("FriendId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -235,7 +246,7 @@ namespace HarjumusteRPG.API.Migrations
                             Coins = 0,
                             CreatedAt = new DateTime(2026, 11, 9, 0, 0, 0, 0, DateTimeKind.Utc),
                             CurrentStreak = 0,
-                            Email = "admin@sproutly.local",
+                            Email = "admin@pawly.local",
                             Level = 1,
                             LongestStreak = 0,
                             PasswordHash = "$2b$11$k8fDIZHKppRuZV75my8dc.r0ns4zCq7DXr8YU3z8ZyjDxaRf/8UgC",
@@ -249,7 +260,7 @@ namespace HarjumusteRPG.API.Migrations
                             Coins = 0,
                             CreatedAt = new DateTime(2026, 11, 9, 0, 0, 0, 0, DateTimeKind.Utc),
                             CurrentStreak = 0,
-                            Email = "service@sproutly.local",
+                            Email = "service@pawly.local",
                             Level = 1,
                             LongestStreak = 0,
                             PasswordHash = "$2b$11$qkitA4RIMQ0kNp.vc3Z.Cu.MEtCoV8WlYb.27iPmhk48hvlh4AW5K",
