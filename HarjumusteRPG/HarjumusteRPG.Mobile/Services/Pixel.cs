@@ -1,14 +1,57 @@
 ﻿namespace HarjumusteRPG.Mobile.Views;
 
-// Colors of the "Kommipood" theme (theme switching comes in #36).
+// One color theme of the app.
+public sealed record Theme(
+    string Name,
+    Color Bg, Color Card, Color Ink, Color Sub, Color Hero, Color Err,
+    Color Nav, Color NavText, Color NavMuted,
+    Color Mint, Color Pink, Color Gold);
+
+// Colors of the current theme. Properties read the selected theme every time,
+// so pages built after a theme change get the new colors.
 public static class Palette
 {
-    public static readonly Color Bg = Color.FromArgb("#FCE4EC");
-    public static readonly Color Card = Color.FromArgb("#FFFFFF");
-    public static readonly Color Ink = Color.FromArgb("#3D2C4F");
-    public static readonly Color Sub = Color.FromArgb("#614D79");
-    public static readonly Color Hero = Color.FromArgb("#C9B6F2");
-    public static readonly Color Err = Color.FromArgb("#B42318");
+    public static readonly Theme[] Themes =
+    {
+        new("candy",
+            Bg: Color.FromArgb("#FCE4EC"), Card: Color.FromArgb("#FFFFFF"), Ink: Color.FromArgb("#3D2C4F"),
+            Sub: Color.FromArgb("#614D79"), Hero: Color.FromArgb("#C9B6F2"), Err: Color.FromArgb("#B42318"),
+            Nav: Color.FromArgb("#3D2C4F"), NavText: Color.FromArgb("#FFFFFF"), NavMuted: Color.FromArgb("#B9A8D6"),
+            Mint: Color.FromArgb("#A8E6CF"), Pink: Color.FromArgb("#F27FA5"), Gold: Color.FromArgb("#FFD966")),
+        new("night",
+            Bg: Color.FromArgb("#231A33"), Card: Color.FromArgb("#35284D"), Ink: Color.FromArgb("#F4EAFE"),
+            Sub: Color.FromArgb("#C4B2E0"), Hero: Color.FromArgb("#7B5CC4"), Err: Color.FromArgb("#FF8A80"),
+            Nav: Color.FromArgb("#120C1E"), NavText: Color.FromArgb("#FFFFFF"), NavMuted: Color.FromArgb("#8E7BB0"),
+            Mint: Color.FromArgb("#2F7D62"), Pink: Color.FromArgb("#C2477A"), Gold: Color.FromArgb("#B8902B"))
+    };
+
+    private const string PrefKey = "theme";
+
+    private static Theme _current = Find(Preferences.Default.Get(PrefKey, "candy"));
+
+    private static Theme Find(string name) =>
+        Themes.FirstOrDefault(t => t.Name == name) ?? Themes[0];
+
+    public static string ThemeName => _current.Name;
+
+    public static void SetTheme(string name)
+    {
+        _current = Find(name);
+        Preferences.Default.Set(PrefKey, _current.Name);
+    }
+
+    public static Color Bg => _current.Bg;
+    public static Color Card => _current.Card;
+    public static Color Ink => _current.Ink;
+    public static Color Sub => _current.Sub;
+    public static Color Hero => _current.Hero;
+    public static Color Err => _current.Err;
+    public static Color Nav => _current.Nav;
+    public static Color NavText => _current.NavText;
+    public static Color NavMuted => _current.NavMuted;
+    public static Color Mint => _current.Mint;
+    public static Color Pink => _current.Pink;
+    public static Color Gold => _current.Gold;
 }
 
 // Small helpers for the pixel style: thick borders and hard shadows.

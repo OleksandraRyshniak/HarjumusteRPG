@@ -15,7 +15,7 @@ public partial class LeaderboardPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(LeaderboardViewModel.Title));
 
-        var heading = Pixel.Heading("EDETABEL", 16);
+        var heading = Pixel.Heading(AppResources.LeaderboardTitle, 16);
 
         // --- two tabs: ranking / friends ---
         var tabs = new Grid
@@ -23,9 +23,9 @@ public partial class LeaderboardPage : ContentPage
             ColumnSpacing = 10,
             ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) }
         };
-        tabs.Add(Ui.CommandButton("Edetabel", nameof(LeaderboardViewModel.ShowBoardTabCommand),
+        tabs.Add(Ui.CommandButton(AppResources.NavLeaderboard, nameof(LeaderboardViewModel.ShowBoardTabCommand),
             selectedPath: nameof(LeaderboardViewModel.ShowBoard)), 0);
-        tabs.Add(Ui.CommandButton("Sõbrad", nameof(LeaderboardViewModel.ShowFriendsTabCommand),
+        tabs.Add(Ui.CommandButton(AppResources.TabFriends, nameof(LeaderboardViewModel.ShowFriendsTabCommand),
             selectedPath: nameof(LeaderboardViewModel.ShowFriends)), 1);
 
         var error = Pixel.ErrorLabel(nameof(LeaderboardViewModel.ErrorMessage), nameof(LeaderboardViewModel.HasError));
@@ -43,19 +43,19 @@ public partial class LeaderboardPage : ContentPage
         BindableLayout.SetItemsSource(board, viewModel.Board);
         BindableLayout.SetItemTemplate(board, new DataTemplate(CreateBoardRow));
 
-        var onlyMe = Pixel.Body("Lisa sõpru vahekaardil Sõbrad, et edetabelis võistelda!", 16, color: Palette.Sub);
+        var onlyMe = Pixel.Body(AppResources.OnlyMeHint, 16, color: Palette.Sub);
         onlyMe.SetBinding(IsVisibleProperty, nameof(LeaderboardViewModel.OnlyMe));
 
         var boardSection = new VerticalStackLayout { Spacing = 12, Children = { board, onlyMe } };
         boardSection.SetBinding(IsVisibleProperty, nameof(LeaderboardViewModel.ShowBoard));
 
         // --- friends tab ---
-        var addTitle = Pixel.Heading("LISA SÕBER", 12);
-        var nameField = Pixel.Field("Sõbra kasutajanimi", nameof(LeaderboardViewModel.NewFriendName),
+        var addTitle = Pixel.Heading(AppResources.AddFriendTitle, 12);
+        var nameField = Pixel.Field(AppResources.FriendNameField, nameof(LeaderboardViewModel.NewFriendName),
             returnType: ReturnType.Done, returnCommandPath: nameof(LeaderboardViewModel.SendRequestCommand));
-        var sendButton = Pixel.PrimaryButton("Saada kutse", nameof(LeaderboardViewModel.SendRequestCommand));
+        var sendButton = Pixel.PrimaryButton(AppResources.SendInvite, nameof(LeaderboardViewModel.SendRequestCommand));
 
-        var requestsTitle = Pixel.Heading("KUTSED", 12);
+        var requestsTitle = Pixel.Heading(AppResources.InvitesTitle, 12);
         var requests = new VerticalStackLayout { Spacing = 12 };
         BindableLayout.SetItemsSource(requests, viewModel.Requests);
         BindableLayout.SetItemTemplate(requests, new DataTemplate(CreateRequestRow));
@@ -63,12 +63,12 @@ public partial class LeaderboardPage : ContentPage
         var requestsSection = new VerticalStackLayout { Spacing = 12, Children = { requestsTitle, requests } };
         requestsSection.SetBinding(IsVisibleProperty, nameof(LeaderboardViewModel.HasRequests));
 
-        var friendsTitle = Pixel.Heading("SÕBRAD", 12);
+        var friendsTitle = Pixel.Heading(AppResources.FriendsTitle, 12);
         var friends = new VerticalStackLayout { Spacing = 12 };
         BindableLayout.SetItemsSource(friends, viewModel.Friends);
         BindableLayout.SetItemTemplate(friends, new DataTemplate(CreateFriendRow));
 
-        var noFriends = Pixel.Body("Sul pole veel sõpru. Saada kutse kasutajanime järgi!", 16, color: Palette.Sub);
+        var noFriends = Pixel.Body(AppResources.NoFriends, 16, color: Palette.Sub);
         noFriends.SetBinding(IsVisibleProperty, nameof(LeaderboardViewModel.NoFriends));
 
         var friendsSection = new VerticalStackLayout
@@ -168,7 +168,7 @@ public partial class LeaderboardPage : ContentPage
             Children = { name, details }
         };
 
-        var remove = Ui.MakeButton("Eemalda", Palette.Card, 14);
+        var remove = Ui.MakeButton(AppResources.Remove, Palette.Card, 14);
         remove.SetBinding(Button.CommandProperty,
             new Binding(nameof(LeaderboardViewModel.RemoveCommand), source: BindingContext));
         remove.SetBinding(Button.CommandParameterProperty, Binding.SelfPath);
@@ -191,12 +191,12 @@ public partial class LeaderboardPage : ContentPage
         name.VerticalOptions = LayoutOptions.Center;
         name.SetBinding(Label.TextProperty, nameof(RequestRow.Name));
 
-        var accept = Ui.MakeButton("Jah", Palette.Hero, 14);
+        var accept = Ui.MakeButton(AppResources.Yes, Palette.Hero, 14);
         accept.SetBinding(Button.CommandProperty,
             new Binding(nameof(LeaderboardViewModel.AcceptCommand), source: BindingContext));
         accept.SetBinding(Button.CommandParameterProperty, Binding.SelfPath);
 
-        var decline = Ui.MakeButton("Ei", Palette.Card, 14);
+        var decline = Ui.MakeButton(AppResources.No, Palette.Card, 14);
         decline.SetBinding(Button.CommandProperty,
             new Binding(nameof(LeaderboardViewModel.DeclineCommand), source: BindingContext));
         decline.SetBinding(Button.CommandParameterProperty, Binding.SelfPath);

@@ -12,7 +12,7 @@ public record BarItem(string Label, string ValueText, double Height, double Widt
 
 public partial class StatisticsViewModel : BaseViewModel
 {
-    private static readonly CultureInfo Estonian = new("et-EE");
+    private static CultureInfo Estonian => Loc.Culture;
     private const double MaxBarHeight = 130;
 
     private readonly IAuthService _auth;
@@ -27,7 +27,7 @@ public partial class StatisticsViewModel : BaseViewModel
         _auth = auth;
         _habits = habits;
         _game = game;
-        Title = "Statistika";
+        Title = AppResources.NavStats;
     }
 
     public ObservableCollection<BarItem> Bars { get; } = new();
@@ -39,7 +39,7 @@ public partial class StatisticsViewModel : BaseViewModel
 
     public bool ShowWeek => !ShowMonth;
 
-    [ObservableProperty] private string chartTitle = "VIIMASED 7 PÄEVA";
+    [ObservableProperty] private string chartTitle = AppResources.Last7Days;
     [ObservableProperty] private string rangeText = string.Empty;
     [ObservableProperty] private string totalText = "0";
     [ObservableProperty] private string xpText = "0";
@@ -127,7 +127,7 @@ public partial class StatisticsViewModel : BaseViewModel
 
         var inRange = _all.Where(c => c.Date >= start && c.Date <= today).ToList();
 
-        ChartTitle = ShowMonth ? "VIIMASED 30 PÄEVA" : "VIIMASED 7 PÄEVA";
+        ChartTitle = ShowMonth ? AppResources.Last30Days : AppResources.Last7Days;
         RangeText = $"{Format(start)} - {Format(today)}";
         TotalText = inRange.Count.ToString();
         XpText = inRange.Sum(c => c.XpEarned).ToString();
@@ -145,7 +145,7 @@ public partial class StatisticsViewModel : BaseViewModel
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             await Task.Delay(300);

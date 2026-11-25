@@ -52,17 +52,17 @@ public partial class LoginViewModel : BaseViewModel
         var mail = Email.Trim();
         if (mail.Length == 0)
         {
-            ErrorMessage = "Sisesta e-posti aadress.";
+            ErrorMessage = AppResources.ErrEnterEmail;
             return;
         }
         if (!new EmailAddressAttribute().IsValid(mail))
         {
-            ErrorMessage = "E-posti aadress ei ole korrektne.";
+            ErrorMessage = AppResources.ErrEmailInvalid;
             return;
         }
         if (Password.Length == 0)
         {
-            ErrorMessage = "Sisesta parool.";
+            ErrorMessage = AppResources.ErrEnterPassword;
             return;
         }
 

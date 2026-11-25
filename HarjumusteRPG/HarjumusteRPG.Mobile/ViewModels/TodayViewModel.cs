@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace HarjumusteRPG.Mobile.ViewModels;
 
-// One row of the "Täna" list.
+// One row of the AppResources.NavToday list.
 public partial class TodayHabitItem : ObservableObject
 {
     public TodayHabitItem(int id, string name, bool done)
@@ -24,7 +24,7 @@ public partial class TodayHabitItem : ObservableObject
     public string? IconFile { get; init; }
     public bool HasIcon => !string.IsNullOrEmpty(IconFile);
     public bool HasNoIcon => !HasIcon;
-    public string Subtitle => "+20 XP · +5 münti";
+    public string Subtitle => AppResources.RewardHint;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CheckText))]
@@ -35,7 +35,7 @@ public partial class TodayHabitItem : ObservableObject
 
 public partial class TodayViewModel : BaseViewModel
 {
-    private static readonly CultureInfo Estonian = new("et-EE");
+    private static CultureInfo Estonian => Loc.Culture;
 
     private readonly IAuthService _auth;
     private readonly IGameApi _api;
@@ -44,9 +44,9 @@ public partial class TodayViewModel : BaseViewModel
     {
         _auth = auth;
         _api = api;
-        Title = "Täna";
-        SectionTitle = $"Toida {PetName} harjumustega";
-        PetLine = $"{PetName} ootab sind!";
+        Title = AppResources.NavToday;
+        SectionTitle = Loc.F(AppResources.FeedFormat, PetName);
+        PetLine = Loc.F(AppResources.PetWaitingFormat, PetName);
     }
 
     // The pet name is kept on the device.
@@ -122,16 +122,16 @@ public partial class TodayViewModel : BaseViewModel
 
     private void ShowCelebration(CompleteResult r)
     {
-        CelebrationTitle = r.LeveledUp ? "TASE TÕUSIS!" : "UUS SAAVUTUS!";
-        CelebrationLevel = r.LeveledUp ? $"TASE {r.Level}" : string.Empty;
-        CelebrationReward = $"+{r.XpEarned} XP  +{r.CoinsEarned} münti";
+        CelebrationTitle = r.LeveledUp ? AppResources.LevelUpTitle : AppResources.NewAchievementTitle;
+        CelebrationLevel = r.LeveledUp ? Loc.F(AppResources.LevelFormat, r.Level) : string.Empty;
+        CelebrationReward = Loc.F(AppResources.RewardFormat, r.XpEarned, r.CoinsEarned);
 
         var names = r.NewAchievements ?? new List<AchievementInfo>();
         CelebrationAchievements = names.Count == 0
             ? string.Empty
-            : (names.Count == 1 ? "Uus saavutus:" : "Uued saavutused:")
+            : (names.Count == 1 ? AppResources.NewAchievementOne : AppResources.NewAchievementMany)
               + Environment.NewLine
-              + string.Join(Environment.NewLine, names.Select(a => $"- {a.Name}"));
+              + string.Join(Environment.NewLine, names.Select(a => $"- {AchievementTexts.Name(a)}"));
 
         IsCelebrating = true;
     }
@@ -146,8 +146,8 @@ public partial class TodayViewModel : BaseViewModel
             return;
 
         DateText = DateTime.Today.ToString("dddd, d. MMM", Estonian).ToUpper(Estonian);
-        Greeting = $"Tere, {_auth.Username}!";
-        SectionTitle = $"Toida {PetName} harjumustega";
+        Greeting = Loc.F(AppResources.GreetingFormat, _auth.Username);
+        SectionTitle = Loc.F(AppResources.FeedFormat, PetName);
         PetImage = PetStore.Image(_auth.Username);
         IsBusy = true;
         try
@@ -211,8 +211,8 @@ public partial class TodayViewModel : BaseViewModel
             UpdatePetLine();
 
             RewardMessage = r.LeveledUp
-                ? $"TASE TÕUSIS! Nüüd tase {r.Level}  +{r.XpEarned} XP  +{r.CoinsEarned} münti"
-                : $"+{r.XpEarned} XP  +{r.CoinsEarned} münti";
+                ? Loc.F(AppResources.LevelUpMessageFormat, r.Level, r.XpEarned, r.CoinsEarned)
+                : Loc.F(AppResources.RewardFormat, r.XpEarned, r.CoinsEarned);
 
             if (r.LeveledUp || (r.NewAchievements?.Count ?? 0) > 0)
                 ShowCelebration(r);
@@ -225,6 +225,9 @@ public partial class TodayViewModel : BaseViewModel
 
     [RelayCommand]
     private Task AddHabit() => Shell.Current.GoToAsync("habit-edit");
+
+    [RelayCommand]
+    private Task OpenSettings() => Shell.Current.GoToAsync("settings");
 
     [RelayCommand]
     private Task Manage() => Shell.Current.GoToAsync("//habits");
@@ -243,22 +246,22 @@ public partial class TodayViewModel : BaseViewModel
         XpText = $"{xp}/{xpForNext} XP";
         XpFraction = xpForNext > 0 ? Math.Clamp((double)xp / xpForNext, 0, 1) : 0;
         CoinsText = coins.ToString();
-        StreakLine = streak > 0 ? $"{streak} päeva seeria" : "Alusta seeriat täna!";
+        StreakLine = streak > 0 ? Loc.F(AppResources.StreakFormat, streak) : AppResources.StreakStart;
     }
 
     // The pet is happy when all of today's habits are done.
     private void UpdatePetLine()
     {
         var done = Habits.Count(h => h.IsDone);
-        PetLine = Habits.Count > 0 && done == Habits.Count ? $"{PetName} on rõõmus!"
-                : done > 0 ? $"{PetName} on juba tubli!"
-                : $"{PetName} ootab sind!";
+        PetLine = Habits.Count > 0 && done == Habits.Count ? Loc.F(AppResources.PetHappyFormat, PetName)
+                : done > 0 ? Loc.F(AppResources.PetGoodFormat, PetName)
+                : Loc.F(AppResources.PetWaitingFormat, PetName);
     }
 
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             // Load runs while Shell is still finishing the navigation to this page.

@@ -12,7 +12,7 @@ public partial class PetChoice : ObservableObject
     {
         ImageKey = option.Image;
         ImageFile = option.Image + ".png";
-        Label = option.Label;
+        Label = option.Image == "kutsikas" ? AppResources.PetDog : AppResources.PetGreyCat;
     }
 
     public string ImageKey { get; }
@@ -58,7 +58,7 @@ public partial class PetSetupViewModel : BaseViewModel
         var name = PetName.Trim();
         if (name.Length is < 2 or > 20)
         {
-            ErrorMessage = "Nimi peab olema 2–20 märki.";
+            ErrorMessage = AppResources.ErrPetName;
             return;
         }
 

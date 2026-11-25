@@ -6,8 +6,8 @@ namespace HarjumusteRPG.Mobile.Services;
 
 public class GameApi : IGameApi
 {
-    private const string ConnectionError = "Serveriga ei saa ühendust. Kontrolli, et API töötab.";
-    private const string UnknownError = "Midagi läks valesti. Proovi uuesti.";
+    private static string ConnectionError => AppResources.ErrConnection;
+    private static string UnknownError => AppResources.ErrUnknown;
 
     private readonly HttpClient _http;
 
@@ -110,10 +110,10 @@ public class GameApi : IGameApi
 
     private static string ErrorFor(HttpStatusCode status) => status switch
     {
-        HttpStatusCode.Unauthorized => "Sessioon aegus. Logi uuesti sisse.",
-        HttpStatusCode.Conflict => "See harjumus on täna juba tehtud.",
-        HttpStatusCode.NotFound => "Harjumust ei leitud.",
-        HttpStatusCode.BadRequest => "Seda harjumust ei saa täna märkida.",
+        HttpStatusCode.Unauthorized => AppResources.ErrSessionExpired,
+        HttpStatusCode.Conflict => AppResources.ErrAlreadyDone,
+        HttpStatusCode.NotFound => AppResources.ErrHabitNotFound,
+        HttpStatusCode.BadRequest => AppResources.ErrCannotMarkToday,
         _ => UnknownError
     };
 }

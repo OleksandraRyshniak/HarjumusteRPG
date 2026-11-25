@@ -56,17 +56,17 @@ public partial class ProgressViewModel : BaseViewModel
             }
 
             var p = result.Value!;
-            LevelText = $"TASE {p.Level}";
+            LevelText = Loc.F(AppResources.LevelFormat, p.Level);
             XpText = $"{p.Xp}/{p.XpForNextLevel} XP";
             XpFraction = p.XpForNextLevel > 0 ? Math.Clamp((double)p.Xp / p.XpForNextLevel, 0, 1) : 0;
-            Hint = $"Järgmise tasemeni veel {Math.Max(p.XpForNextLevel - p.Xp, 0)} XP";
+            Hint = Loc.F(AppResources.NextLevelFormat, Math.Max(p.XpForNextLevel - p.Xp, 0));
             StreakText = p.CurrentStreak.ToString();
             LongestText = p.LongestStreak.ToString();
             TotalText = p.TotalCompletions.ToString();
             CoinsText = p.Coins.ToString();
 
             var all = p.Achievements ?? new();
-            AchievementsText = $"Saavutused: {all.Count(a => a.Unlocked)} / {all.Count}";
+            AchievementsText = Loc.F(AppResources.AchievementsSummary, all.Count(a => a.Unlocked), all.Count);
         }
         finally
         {
@@ -77,7 +77,7 @@ public partial class ProgressViewModel : BaseViewModel
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             await Task.Delay(300);

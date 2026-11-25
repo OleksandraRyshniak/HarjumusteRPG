@@ -16,14 +16,14 @@ public partial class HabitsPage : ContentPage
         this.SetBinding(TitleProperty, nameof(HabitsViewModel.Title));
 
         // --- top: back link and title ---
-        var back = Pixel.LinkButton("< Täna", nameof(HabitsViewModel.BackCommand));
+        var back = Pixel.LinkButton(AppResources.BackToday, nameof(HabitsViewModel.BackCommand));
         back.HorizontalOptions = LayoutOptions.Start;
         back.Padding = new Thickness(0);
 
-        var heading = Pixel.Heading("HARJUMUSED", 16);
+        var heading = Pixel.Heading(AppResources.HabitsTitle, 16);
 
         // --- search ---
-        var search = Pixel.Field("Otsi harjumust", nameof(HabitsViewModel.Search),
+        var search = Pixel.Field(AppResources.SearchHabit, nameof(HabitsViewModel.Search),
             returnType: ReturnType.Search, returnCommandPath: nameof(HabitsViewModel.RunSearchCommand));
 
         // --- filter: all / active / paused ---
@@ -37,11 +37,11 @@ public partial class HabitsPage : ContentPage
                 new ColumnDefinition(GridLength.Star)
             }
         };
-        filters.Add(Ui.CommandButton("Kõik", nameof(HabitsViewModel.SetFilterCommand), "all",
+        filters.Add(Ui.CommandButton(AppResources.FilterAll, nameof(HabitsViewModel.SetFilterCommand), "all",
             nameof(HabitsViewModel.AllSelected)), 0);
-        filters.Add(Ui.CommandButton("Aktiivsed", nameof(HabitsViewModel.SetFilterCommand), "active",
+        filters.Add(Ui.CommandButton(AppResources.FilterActive, nameof(HabitsViewModel.SetFilterCommand), "active",
             nameof(HabitsViewModel.ActiveSelected)), 1);
-        filters.Add(Ui.CommandButton("Peatatud", nameof(HabitsViewModel.SetFilterCommand), "inactive",
+        filters.Add(Ui.CommandButton(AppResources.Paused, nameof(HabitsViewModel.SetFilterCommand), "inactive",
             nameof(HabitsViewModel.InactiveSelected)), 2);
 
         // --- sorting and "new habit" ---
@@ -55,7 +55,7 @@ public partial class HabitsPage : ContentPage
             ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }
         };
         toolbar.Add(Ui.WithShadow(sort), 0);
-        toolbar.Add(Ui.CommandButton("+ Uus", nameof(HabitsViewModel.AddCommand), fill: Palette.Hero), 1);
+        toolbar.Add(Ui.CommandButton(AppResources.NewShort, nameof(HabitsViewModel.AddCommand), fill: Palette.Hero), 1);
 
         // --- messages ---
         var error = Pixel.ErrorLabel(nameof(HabitsViewModel.ErrorMessage), nameof(HabitsViewModel.HasError));
@@ -64,7 +64,7 @@ public partial class HabitsPage : ContentPage
         busy.SetBinding(ActivityIndicator.IsRunningProperty, nameof(HabitsViewModel.IsBusy));
         busy.SetBinding(IsVisibleProperty, nameof(HabitsViewModel.IsBusy));
 
-        var empty = Pixel.Body("Harjumusi ei leitud.", 17, color: Palette.Sub);
+        var empty = Pixel.Body(AppResources.HabitsNotFound, 17, color: Palette.Sub);
         empty.SetBinding(IsVisibleProperty, nameof(HabitsViewModel.IsEmpty));
 
         var count = Pixel.Body(string.Empty, 14, color: Palette.Sub);

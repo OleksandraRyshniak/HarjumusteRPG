@@ -67,12 +67,12 @@ public partial class RegisterViewModel : BaseViewModel
         var name = Username.Trim();
         var mail = Email.Trim();
 
-        if (name.Length is < 3 or > 50) return "Kasutajanimi peab olema 3–50 märki.";
-        if (mail.Length == 0) return "Sisesta e-posti aadress.";
-        if (mail.Length > 100) return "E-post võib olla kuni 100 märki.";
-        if (!new EmailAddressAttribute().IsValid(mail)) return "E-posti aadress ei ole korrektne.";
-        if (Password.Length is < 6 or > 100) return "Parool peab olema 6–100 märki.";
-        if (Password != ConfirmPassword) return "Paroolid ei kattu.";
+        if (name.Length is < 3 or > 50) return AppResources.ErrUsernameLength;
+        if (mail.Length == 0) return AppResources.ErrEnterEmail;
+        if (mail.Length > 100) return AppResources.ErrEmailTooLong;
+        if (!new EmailAddressAttribute().IsValid(mail)) return AppResources.ErrEmailInvalid;
+        if (Password.Length is < 6 or > 100) return AppResources.ErrPasswordLength;
+        if (Password != ConfirmPassword) return AppResources.ErrPasswordsMismatch;
         return null;
     }
 }

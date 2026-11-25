@@ -4,9 +4,10 @@ namespace HarjumusteRPG.Mobile.Views;
 
 public partial class TodayPage : ContentPage
 {
-    private static readonly Color Mint = Color.FromArgb("#A8E6CF");
-    private static readonly Color Pink = Color.FromArgb("#F27FA5");
-    private static readonly Color Gold = Color.FromArgb("#FFD966");
+
+    private static Color Mint => Palette.Mint;
+    private static Color Pink => Palette.Pink;
+    private static Color Gold => Palette.Gold;
     private static readonly Random Rng = new();
 
     private readonly Grid _root;
@@ -112,7 +113,7 @@ public partial class TodayPage : ContentPage
 
         var error = Pixel.ErrorLabel(nameof(TodayViewModel.ErrorMessage), nameof(TodayViewModel.HasError));
 
-        var empty = Pixel.Body("Täna pole ühtegi harjumust. Lisa uus harjumus!", 17, color: Palette.Sub);
+        var empty = Pixel.Body(AppResources.TodayEmpty, 17, color: Palette.Sub);
         empty.SetBinding(IsVisibleProperty, nameof(TodayViewModel.IsEmpty));
 
         var busy = new ActivityIndicator { Color = Palette.Ink };
@@ -138,9 +139,10 @@ public partial class TodayPage : ContentPage
                 busy,
                 list,
                 empty,
-                Pixel.PrimaryButton("Halda harjumusi", nameof(TodayViewModel.ManageCommand), primary: false),
-                Pixel.PrimaryButton("Logi välja", nameof(TodayViewModel.LogoutCommand), primary: false)
-                
+                               Pixel.PrimaryButton(AppResources.ManageHabits, nameof(TodayViewModel.ManageCommand), primary: false),
+                Pixel.PrimaryButton(AppResources.Settings, nameof(TodayViewModel.OpenSettingsCommand), primary: false),
+                Pixel.PrimaryButton(AppResources.Logout, nameof(TodayViewModel.LogoutCommand), primary: false)
+
             }
         };
 
@@ -194,7 +196,7 @@ public partial class TodayPage : ContentPage
         achievements.SetBinding(Label.TextProperty, nameof(TodayViewModel.CelebrationAchievements));
         achievements.SetBinding(IsVisibleProperty, nameof(TodayViewModel.HasCelebrationAchievements));
 
-        var close = Pixel.PrimaryButton("Jätka", nameof(TodayViewModel.CloseCelebrationCommand));
+        var close = Pixel.PrimaryButton(AppResources.Continue, nameof(TodayViewModel.CloseCelebrationCommand));
 
         var stack = new VerticalStackLayout
         {

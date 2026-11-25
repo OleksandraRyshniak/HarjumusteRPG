@@ -15,7 +15,7 @@ public partial class ProgressPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(ProgressViewModel.Title));
 
-        var heading = Pixel.Heading("LEMMIK", 16);
+        var heading = Pixel.Heading(AppResources.PetTitle, 16);
 
         // --- pet card: sprite, name, level and XP bar ---
         var pet = new Image
@@ -72,10 +72,10 @@ public partial class ProgressPage : ContentPage
             ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) },
             RowDefinitions = { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Auto) }
         };
-        stats.Add(Tile("ic_tuli.png", nameof(ProgressViewModel.StreakText), "päeva seeria"), 0, 0);
-        stats.Add(Tile("ic_taht.png", nameof(ProgressViewModel.LongestText), "pikim seeria"), 1, 0);
-        stats.Add(Tile("ic_kalender.png", nameof(ProgressViewModel.TotalText), "täitmist"), 0, 1);
-        stats.Add(Tile("ic_mynt.png", nameof(ProgressViewModel.CoinsText), "münti"), 1, 1);
+        stats.Add(Tile("ic_tuli.png", nameof(ProgressViewModel.StreakText), AppResources.StreakCaption), 0, 0);
+        stats.Add(Tile("ic_taht.png", nameof(ProgressViewModel.LongestText), AppResources.LongestStreakCaption), 1, 0);
+        stats.Add(Tile("ic_kalender.png", nameof(ProgressViewModel.TotalText), AppResources.CompletionsCaption), 0, 1);
+        stats.Add(Tile("ic_mynt.png", nameof(ProgressViewModel.CoinsText), AppResources.CoinsCaption), 1, 1);
 
         // --- achievements: how many earned + button to the full list ---
         var achievements = Pixel.Body(string.Empty, 16, bold: true);
@@ -97,7 +97,7 @@ public partial class ProgressPage : ContentPage
                 petCard,
                 stats,
                 achievements,
-                Pixel.PrimaryButton("Saavutused", nameof(ProgressViewModel.OpenAchievementsCommand), primary: false),
+                Pixel.PrimaryButton(AppResources.Achievements, nameof(ProgressViewModel.OpenAchievementsCommand), primary: false),
                 error,
                 busy
             }

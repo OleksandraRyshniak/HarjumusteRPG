@@ -1,0 +1,523 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavToday" xml:space="preserve">
+    <value>Täna</value>
+  </data>
+  <data name="NavPet" xml:space="preserve">
+    <value>Lemmik</value>
+  </data>
+  <data name="NavStats" xml:space="preserve">
+    <value>Statistika</value>
+  </data>
+  <data name="NavLeaderboard" xml:space="preserve">
+    <value>Edetabel</value>
+  </data>
+  <data name="NavShop" xml:space="preserve">
+    <value>Pood</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Viga</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>&lt; Tagasi</value>
+  </data>
+  <data name="BackToday" xml:space="preserve">
+    <value>&lt; Täna</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salvesta</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Tühista</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Jätka</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Alusta</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Jah</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ei</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Seaded</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>SEADED</value>
+  </data>
+  <data name="LanguageTitle" xml:space="preserve">
+    <value>KEEL</value>
+  </data>
+  <data name="ThemeTitle" xml:space="preserve">
+    <value>TEEMA</value>
+  </data>
+  <data name="ThemeCandy" xml:space="preserve">
+    <value>Hele</value>
+  </data>
+  <data name="ThemeNight" xml:space="preserve">
+    <value>Tume</value>
+  </data>
+  <data name="LoginTitle" xml:space="preserve">
+    <value>LOGI SISSE</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Logi sisse</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logi välja</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Parool</value>
+  </data>
+  <data name="GoRegister" xml:space="preserve">
+    <value>Pole kontot? Registreeru</value>
+  </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>REGISTREERU</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Registreeru</value>
+  </data>
+  <data name="UsernameField" xml:space="preserve">
+    <value>Kasutajanimi (3–50 märki)</value>
+  </data>
+  <data name="PasswordField" xml:space="preserve">
+    <value>Parool (vähemalt 6 märki)</value>
+  </data>
+  <data name="RepeatPassword" xml:space="preserve">
+    <value>Korda parooli</value>
+  </data>
+  <data name="GoLogin" xml:space="preserve">
+    <value>Konto olemas? Logi sisse</value>
+  </data>
+  <data name="ErrEnterEmail" xml:space="preserve">
+    <value>Sisesta e-posti aadress.</value>
+  </data>
+  <data name="ErrEmailInvalid" xml:space="preserve">
+    <value>E-posti aadress ei ole korrektne.</value>
+  </data>
+  <data name="ErrEnterPassword" xml:space="preserve">
+    <value>Sisesta parool.</value>
+  </data>
+  <data name="ErrUsernameLength" xml:space="preserve">
+    <value>Kasutajanimi peab olema 3–50 märki.</value>
+  </data>
+  <data name="ErrEmailTooLong" xml:space="preserve">
+    <value>E-post võib olla kuni 100 märki.</value>
+  </data>
+  <data name="ErrPasswordLength" xml:space="preserve">
+    <value>Parool peab olema 6–100 märki.</value>
+  </data>
+  <data name="ErrPasswordsMismatch" xml:space="preserve">
+    <value>Paroolid ei kattu.</value>
+  </data>
+  <data name="GreetingFormat" xml:space="preserve">
+    <value>Tere, {0}!</value>
+  </data>
+  <data name="PetSetupTitle" xml:space="preserve">
+    <value>VALI OMA LEMMIK</value>
+  </data>
+  <data name="PetSetupHint" xml:space="preserve">
+    <value>Vali loom ja anna talle nimi. Ta kasvab koos sinu harjumustega!</value>
+  </data>
+  <data name="PetNameField" xml:space="preserve">
+    <value>Lemmiku nimi (nt Muri)</value>
+  </data>
+  <data name="ErrPetName" xml:space="preserve">
+    <value>Nimi peab olema 2–20 märki.</value>
+  </data>
+  <data name="PetTitle" xml:space="preserve">
+    <value>LEMMIK</value>
+  </data>
+  <data name="LevelFormat" xml:space="preserve">
+    <value>TASE {0}</value>
+  </data>
+  <data name="NextLevelFormat" xml:space="preserve">
+    <value>Järgmise tasemeni veel {0} XP</value>
+  </data>
+  <data name="StreakCaption" xml:space="preserve">
+    <value>päeva seeria</value>
+  </data>
+  <data name="LongestStreakCaption" xml:space="preserve">
+    <value>pikim seeria</value>
+  </data>
+  <data name="CompletionsCaption" xml:space="preserve">
+    <value>täitmist</value>
+  </data>
+  <data name="CoinsCaption" xml:space="preserve">
+    <value>münti</value>
+  </data>
+  <data name="Achievements" xml:space="preserve">
+    <value>Saavutused</value>
+  </data>
+  <data name="AchievementsSummary" xml:space="preserve">
+    <value>Saavutused: {0} / {1}</value>
+  </data>
+  <data name="FeedFormat" xml:space="preserve">
+    <value>Toida {0} harjumustega</value>
+  </data>
+  <data name="PetWaitingFormat" xml:space="preserve">
+    <value>{0} ootab sind!</value>
+  </data>
+  <data name="PetHappyFormat" xml:space="preserve">
+    <value>{0} on rõõmus!</value>
+  </data>
+  <data name="PetGoodFormat" xml:space="preserve">
+    <value>{0} on juba tubli!</value>
+  </data>
+  <data name="StreakFormat" xml:space="preserve">
+    <value>{0} päeva seeria</value>
+  </data>
+  <data name="StreakStart" xml:space="preserve">
+    <value>Alusta seeriat täna!</value>
+  </data>
+  <data name="TodayEmpty" xml:space="preserve">
+    <value>Täna pole ühtegi harjumust. Lisa uus harjumus!</value>
+  </data>
+  <data name="ManageHabits" xml:space="preserve">
+    <value>Halda harjumusi</value>
+  </data>
+  <data name="RewardHint" xml:space="preserve">
+    <value>+20 XP · +5 münti</value>
+  </data>
+  <data name="LevelUpTitle" xml:space="preserve">
+    <value>TASE TÕUSIS!</value>
+  </data>
+  <data name="NewAchievementTitle" xml:space="preserve">
+    <value>UUS SAAVUTUS!</value>
+  </data>
+  <data name="RewardFormat" xml:space="preserve">
+    <value>+{0} XP  +{1} münti</value>
+  </data>
+  <data name="NewAchievementOne" xml:space="preserve">
+    <value>Uus saavutus:</value>
+  </data>
+  <data name="NewAchievementMany" xml:space="preserve">
+    <value>Uued saavutused:</value>
+  </data>
+  <data name="LevelUpMessageFormat" xml:space="preserve">
+    <value>TASE TÕUSIS! Nüüd tase {0}  +{1} XP  +{2} münti</value>
+  </data>
+  <data name="HabitsTitle" xml:space="preserve">
+    <value>HARJUMUSED</value>
+  </data>
+  <data name="SearchHabit" xml:space="preserve">
+    <value>Otsi harjumust</value>
+  </data>
+  <data name="FilterAll" xml:space="preserve">
+    <value>Kõik</value>
+  </data>
+  <data name="FilterActive" xml:space="preserve">
+    <value>Aktiivsed</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Aktiivne</value>
+  </data>
+  <data name="Paused" xml:space="preserve">
+    <value>Peatatud</value>
+  </data>
+  <data name="NewShort" xml:space="preserve">
+    <value>+ Uus</value>
+  </data>
+  <data name="HabitsNotFound" xml:space="preserve">
+    <value>Harjumusi ei leitud.</value>
+  </data>
+  <data name="SortName" xml:space="preserve">
+    <value>Sorteeri: nimi A-Z</value>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Sorteeri: uuemad enne</value>
+  </data>
+  <data name="PageFormat" xml:space="preserve">
+    <value>Lk {0}/{1}</value>
+  </data>
+  <data name="TotalFormat" xml:space="preserve">
+    <value>Kokku: {0}</value>
+  </data>
+  <data name="EveryDay" xml:space="preserve">
+    <value>Iga päev</value>
+  </data>
+  <data name="NewHabitTitle" xml:space="preserve">
+    <value>UUS HARJUMUS</value>
+  </data>
+  <data name="EditHabitTitle" xml:space="preserve">
+    <value>MUUDA HARJUMUST</value>
+  </data>
+  <data name="HabitName" xml:space="preserve">
+    <value>Harjumuse nimi</value>
+  </data>
+  <data name="Weekdays" xml:space="preserve">
+    <value>Nädalapäevad</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Ikoon</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Kustuta</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Kinnita kustutamine</value>
+  </data>
+  <data name="ErrHabitName" xml:space="preserve">
+    <value>Nimi peab olema 2–100 märki.</value>
+  </data>
+  <data name="ErrPickWeekday" xml:space="preserve">
+    <value>Vali vähemalt üks nädalapäev.</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Ajalugu</value>
+  </data>
+  <data name="HistoryTitle" xml:space="preserve">
+    <value>AJALUGU</value>
+  </data>
+  <data name="HistoryLegend" xml:space="preserve">
+    <value>Roosa ruut = harjumus tehtud</value>
+  </data>
+  <data name="HistoryEmpty" xml:space="preserve">
+    <value>Seda harjumust pole veel täidetud.</value>
+  </data>
+  <data name="HistorySummaryFormat" xml:space="preserve">
+    <value>Viimased {0} päeva: {1} täitmist</value>
+  </data>
+  <data name="AchievementsTitle" xml:space="preserve">
+    <value>SAAVUTUSED</value>
+  </data>
+  <data name="EarnedFormat" xml:space="preserve">
+    <value>Saadud {0}</value>
+  </data>
+  <data name="EarnedSummaryFormat" xml:space="preserve">
+    <value>Saadud {0} / {1}</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Lukus</value>
+  </data>
+  <data name="StatsTitle" xml:space="preserve">
+    <value>STATISTIKA</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Kuu</value>
+  </data>
+  <data name="TotalXp" xml:space="preserve">
+    <value>XP kokku</value>
+  </data>
+  <data name="Last7Days" xml:space="preserve">
+    <value>VIIMASED 7 PÄEVA</value>
+  </data>
+  <data name="Last30Days" xml:space="preserve">
+    <value>VIIMASED 30 PÄEVA</value>
+  </data>
+  <data name="LeaderboardTitle" xml:space="preserve">
+    <value>EDETABEL</value>
+  </data>
+  <data name="InvitesTitle" xml:space="preserve">
+    <value>KUTSED</value>
+  </data>
+  <data name="SendInvite" xml:space="preserve">
+    <value>Saada kutse</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Eemalda</value>
+  </data>
+  <data name="ErrFriendName" xml:space="preserve">
+    <value>Sisesta sõbra kasutajanimi (vähemalt 3 märki).</value>
+  </data>
+  <data name="InviteSentFormat" xml:space="preserve">
+    <value>Kutse saadetud kasutajale {0}.</value>
+  </data>
+  <data name="NowFriendsFormat" xml:space="preserve">
+    <value>{0} on nüüd sinu sõber.</value>
+  </data>
+  <data name="RemovedFriendFormat" xml:space="preserve">
+    <value>{0} eemaldati sõprade hulgast.</value>
+  </data>
+  <data name="YouFormat" xml:space="preserve">
+    <value>{0} (sina)</value>
+  </data>
+  <data name="LevelXpFormat" xml:space="preserve">
+    <value>TASE {0} · {1} XP</value>
+  </data>
+  <data name="DaysShortFormat" xml:space="preserve">
+    <value>{0} p</value>
+  </data>
+  <data name="FriendLevelStreakFormat" xml:space="preserve">
+    <value>TASE {0} · {1} päeva seeria</value>
+  </data>
+  <data name="ErrConnection" xml:space="preserve">
+    <value>Serveriga ei saa ühendust. Kontrolli, et API töötab.</value>
+  </data>
+  <data name="ErrUnknown" xml:space="preserve">
+    <value>Midagi läks valesti. Proovi uuesti.</value>
+  </data>
+  <data name="ErrSessionExpired" xml:space="preserve">
+    <value>Sessioon aegus. Logi uuesti sisse.</value>
+  </data>
+  <data name="ErrWrongCredentials" xml:space="preserve">
+    <value>Vale e-post või parool.</value>
+  </data>
+  <data name="ErrTaken" xml:space="preserve">
+    <value>See e-post või kasutajanimi on juba kasutusel.</value>
+  </data>
+  <data name="ErrCheckData" xml:space="preserve">
+    <value>Kontrolli sisestatud andmeid.</value>
+  </data>
+  <data name="ErrHabitExists" xml:space="preserve">
+    <value>Sul on juba selline harjumus.</value>
+  </data>
+  <data name="ErrHabitNotFound" xml:space="preserve">
+    <value>Harjumust ei leitud.</value>
+  </data>
+  <data name="ErrUserNotFound" xml:space="preserve">
+    <value>Sellist kasutajat ei leitud.</value>
+  </data>
+  <data name="ErrInviteExists" xml:space="preserve">
+    <value>Kutse on juba saadetud või te olete juba sõbrad.</value>
+  </data>
+  <data name="ErrFriendNameCheck" xml:space="preserve">
+    <value>Kontrolli kasutajanime (vähemalt 3 märki, mitte sinu enda).</value>
+  </data>
+  <data name="ErrInviteNotFound" xml:space="preserve">
+    <value>Kutset ei leitud.</value>
+  </data>
+  <data name="ErrFriendNotFound" xml:space="preserve">
+    <value>Sõpra ei leitud.</value>
+  </data>
+  <data name="ErrAlreadyDone" xml:space="preserve">
+    <value>See harjumus on täna juba tehtud.</value>
+  </data>
+  <data name="ErrCannotMarkToday" xml:space="preserve">
+    <value>Seda harjumust ei saa täna märkida.</value>
+  </data>
+  <data name="TabWeek" xml:space="preserve">
+    <value>Nädal</value>
+  </data>
+  <data name="StatsEmpty" xml:space="preserve">
+    <value>Sellel perioodil pole veel täitmisi.</value>
+  </data>
+  <data name="StatsActiveDays" xml:space="preserve">
+    <value>aktiivset päeva</value>
+  </data>
+  <data name="StatsBestDay" xml:space="preserve">
+    <value>parim päev</value>
+  </data>
+  <data name="TabFriends" xml:space="preserve">
+    <value>Sõbrad</value>
+  </data>
+  <data name="OnlyMeHint" xml:space="preserve">
+    <value>Lisa sõpru vahekaardil Sõbrad, et edetabelis võistelda!</value>
+  </data>
+  <data name="AddFriendTitle" xml:space="preserve">
+    <value>LISA SÕBER</value>
+  </data>
+  <data name="FriendNameField" xml:space="preserve">
+    <value>Sõbra kasutajanimi</value>
+  </data>
+  <data name="FriendsTitle" xml:space="preserve">
+    <value>SÕBRAD</value>
+  </data>
+  <data name="NoFriends" xml:space="preserve">
+    <value>Sul pole veel sõpru. Saada kutse kasutajanime järgi!</value>
+  </data>
+  <data name="WeekdayLetters" xml:space="preserve">
+    <value>P,E,T,K,N,R,L</value>
+  </data>
+  <data name="Achievement1Name" xml:space="preserve">
+    <value>Esimene samm</value>
+  </data>
+  <data name="Achievement1Desc" xml:space="preserve">
+    <value>Märgi esimene harjumus tehtuks</value>
+  </data>
+  <data name="Achievement2Name" xml:space="preserve">
+    <value>7 päeva järjest</value>
+  </data>
+  <data name="Achievement2Desc" xml:space="preserve">
+    <value>Hoia seeriat 7 päeva</value>
+  </data>
+  <data name="Achievement3Name" xml:space="preserve">
+    <value>30 päeva järjest</value>
+  </data>
+  <data name="Achievement3Desc" xml:space="preserve">
+    <value>Hoia seeriat 30 päeva</value>
+  </data>
+  <data name="Achievement4Name" xml:space="preserve">
+    <value>Tase 5</value>
+  </data>
+  <data name="Achievement4Desc" xml:space="preserve">
+    <value>Jõua tasemeni 5</value>
+  </data>
+  <data name="Achievement5Name" xml:space="preserve">
+    <value>100 täitmist</value>
+  </data>
+  <data name="Achievement5Desc" xml:space="preserve">
+    <value>Märgi 100 harjumust tehtuks</value>
+  </data>
+  <data name="PetGreyCat" xml:space="preserve">
+    <value>Hall kass</value>
+  </data>
+  <data name="PetDog" xml:space="preserve">
+    <value>Koer</value>
+  </data>
+</root>

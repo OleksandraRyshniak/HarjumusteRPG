@@ -17,11 +17,11 @@ public partial class HabitHistoryPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(HabitHistoryViewModel.Title));
 
-        var back = Pixel.LinkButton("< Tagasi", nameof(HabitHistoryViewModel.BackCommand));
+        var back = Pixel.LinkButton(AppResources.Back, nameof(HabitHistoryViewModel.BackCommand));
         back.HorizontalOptions = LayoutOptions.Start;
         back.Padding = new Thickness(0);
 
-        var heading = Pixel.Heading("AJALUGU", 16);
+        var heading = Pixel.Heading(AppResources.HistoryTitle, 16);
 
         // --- habit name with its icon ---
         var picture = new Image
@@ -53,7 +53,7 @@ public partial class HabitHistoryPage : ContentPage
         BindableLayout.SetItemsSource(calendar, viewModel.Days);
         BindableLayout.SetItemTemplate(calendar, new DataTemplate(CreateDay));
 
-        var legend = Pixel.Body("Roosa ruut = harjumus tehtud", 13, color: Palette.Sub);
+        var legend = Pixel.Body(AppResources.HistoryLegend, 13, color: Palette.Sub);
 
         var calendarCard = Pixel.Card(new VerticalStackLayout
         {
@@ -69,7 +69,7 @@ public partial class HabitHistoryPage : ContentPage
         BindableLayout.SetItemsSource(rows, viewModel.Rows);
         BindableLayout.SetItemTemplate(rows, new DataTemplate(CreateRow));
 
-        var empty = Pixel.Body("Seda harjumust pole veel täidetud.", 17, color: Palette.Sub);
+        var empty = Pixel.Body(AppResources.HistoryEmpty, 17, color: Palette.Sub);
         empty.SetBinding(IsVisibleProperty, nameof(HabitHistoryViewModel.IsEmpty));
 
         var error = Pixel.ErrorLabel(nameof(HabitHistoryViewModel.ErrorMessage), nameof(HabitHistoryViewModel.HasError));
@@ -142,7 +142,7 @@ public partial class HabitHistoryPage : ContentPage
 
     private sealed class StateColorConverter : IValueConverter
     {
-        private static readonly Color Done = Color.FromArgb("#F27FA5");
+        private static Color Done => Palette.Pink;
 
         public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture) =>
             value switch

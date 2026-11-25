@@ -81,6 +81,8 @@ namespace HarjumusteRPG.Mobile
             builder.Services.AddTransient<LeaderboardPage>();
             builder.Services.AddTransient<StatisticsViewModel>();
             builder.Services.AddTransient<StatisticsPage>();
+            builder.Services.AddTransient<SettingsViewModel>();
+            builder.Services.AddTransient<SettingsPage>();
 
             return builder.Build();
         }

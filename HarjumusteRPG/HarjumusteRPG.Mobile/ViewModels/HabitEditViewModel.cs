@@ -36,7 +36,7 @@ public partial class HabitEditViewModel : BaseViewModel
     {
         _api = api;
         _auth = auth;
-        Title = "UUS HARJUMUS";
+        Title = AppResources.NewHabitTitle;
 
         foreach (var day in Weekdays.Order)
             Days.Add(new WeekdayItem(day));
@@ -77,14 +77,14 @@ public partial class HabitEditViewModel : BaseViewModel
     [ObservableProperty]
     private bool isActive = true;
 
-    // First tap on "Kustuta" asks for confirmation, second tap deletes.
+    // First tap on AppResources.Delete asks for confirmation, second tap deletes.
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(DeleteText))]
     private bool confirmDelete;
 
     public bool IsEditing => int.TryParse(HabitId, out _);
     public bool ShowDays => !IsDaily;
-    public string DeleteText => ConfirmDelete ? "Kinnita kustutamine" : "Kustuta";
+    public string DeleteText => ConfirmDelete ? AppResources.ConfirmDelete : AppResources.Delete;
 
     partial void OnHabitIdChanged(string? value) => _ = LoadAsync(value);
 
@@ -93,7 +93,7 @@ public partial class HabitEditViewModel : BaseViewModel
         if (!int.TryParse(value, out var id))
             return;
 
-        Title = "MUUDA HARJUMUST";
+        Title = AppResources.EditHabitTitle;
         IsBusy = true;
         try
         {
@@ -126,14 +126,14 @@ public partial class HabitEditViewModel : BaseViewModel
         var trimmed = Name.Trim();
         if (trimmed.Length is < 2 or > 100)
         {
-            ErrorMessage = "Nimi peab olema 2–100 märki.";
+            ErrorMessage = AppResources.ErrHabitName;
             return;
         }
 
         var days = Days.Where(d => d.IsSelected).Select(d => d.Value).ToList();
         if (!IsDaily && days.Count == 0)
         {
-            ErrorMessage = "Vali vähemalt üks nädalapäev.";
+            ErrorMessage = AppResources.ErrPickWeekday;
             return;
         }
 
@@ -203,7 +203,7 @@ public partial class HabitEditViewModel : BaseViewModel
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             await Task.Delay(300);

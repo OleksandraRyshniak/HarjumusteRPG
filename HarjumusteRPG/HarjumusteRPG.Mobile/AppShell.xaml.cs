@@ -10,6 +10,9 @@
             Routing.RegisterRoute("habit-edit", typeof(Views.HabitEditPage));
             Routing.RegisterRoute("habit-history", typeof(Views.HabitHistoryPage));
             Routing.RegisterRoute("achievements", typeof(Views.AchievementsPage));
+            Routing.RegisterRoute("achievements", typeof(Views.AchievementsPage));
+            Routing.RegisterRoute("settings", typeof(Views.SettingsPage));
+
         }
     }
 }

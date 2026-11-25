@@ -18,7 +18,7 @@ public record HistoryRow(string DateText, string XpText);
 [QueryProperty(nameof(HabitId), "id")]
 public partial class HabitHistoryViewModel : BaseViewModel
 {
-    private static readonly CultureInfo Estonian = new("et-EE");
+    private static CultureInfo Estonian => Loc.Culture;
 
     private readonly IHabitApi _habits;
     private readonly IGameApi _api;
@@ -29,7 +29,7 @@ public partial class HabitHistoryViewModel : BaseViewModel
         _habits = habits;
         _api = api;
         _auth = auth;
-        Title = "Ajalugu";
+        Title = AppResources.History;
     }
 
     public ObservableCollection<CalendarDay> Days { get; } = new();
@@ -106,7 +106,7 @@ public partial class HabitHistoryViewModel : BaseViewModel
                     c.Date.ToDateTime(TimeOnly.MinValue).ToString("dddd, d. MMM", Estonian),
                     $"+{c.XpEarned} XP"));
 
-            Summary = $"Viimased {daysBack} päeva: {Rows.Count} täitmist";
+            Summary = Loc.F(AppResources.HistorySummaryFormat, daysBack, Rows.Count);
             IsEmpty = Rows.Count == 0;
         }
         finally
@@ -121,7 +121,7 @@ public partial class HabitHistoryViewModel : BaseViewModel
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             await Task.Delay(300);
