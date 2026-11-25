@@ -16,4 +16,5 @@ public interface IGameApi
     Task<ApiResult<List<TodayHabit>>> GetTodayAsync();
     Task<ApiResult<CompleteResult>> CompleteAsync(int habitId);
     Task<ApiResult<List<CompletionInfo>>> GetHistoryAsync(int habitId, int days);
+    Task<ApiResult<DailyGiftResult>> ClaimDailyGiftAsync();
 }

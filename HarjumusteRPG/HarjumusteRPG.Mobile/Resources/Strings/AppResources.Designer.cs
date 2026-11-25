@@ -185,4 +185,9 @@ public static class AppResources
     public static string Achievement5Desc => Get(nameof(Achievement5Desc));
     public static string PetGreyCat => Get(nameof(PetGreyCat));
     public static string PetDog => Get(nameof(PetDog));
+    public static string GiftTitle => Get(nameof(GiftTitle));
+    public static string GiftHint => Get(nameof(GiftHint));
+    public static string GiftClaimed => Get(nameof(GiftClaimed));
+    public static string GiftReceivedFormat => Get(nameof(GiftReceivedFormat));
+    public static string ErrGiftClaimed => Get(nameof(ErrGiftClaimed));
 }

@@ -520,4 +520,19 @@
   <data name="PetDog" xml:space="preserve">
     <value>Dog</value>
   </data>
+	<data name="GiftTitle" xml:space="preserve">
+    <value>Daily gift</value>
+  </data>
+	<data name="GiftHint" xml:space="preserve">
+    <value>Claim 20 coins every day</value>
+  </data>
+	<data name="GiftClaimed" xml:space="preserve">
+    <value>Back tomorrow</value>
+  </data>
+	<data name="GiftReceivedFormat" xml:space="preserve">
+    <value>Gift: +{0} coins!</value>
+  </data>
+	<data name="ErrGiftClaimed" xml:space="preserve">
+    <value>The daily gift is already claimed.</value>
+  </data>
 </root>

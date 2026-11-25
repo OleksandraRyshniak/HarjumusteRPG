@@ -42,5 +42,12 @@ public class ProgressDto
     public int CurrentStreak { get; set; }
     public int LongestStreak { get; set; }
     public int TotalCompletions { get; set; }
+    public bool DailyGiftAvailable { get; set; }
     public List<AchievementDto> Achievements { get; set; } = new();
+}
+
+public class DailyGiftDto
+{
+    public int CoinsEarned { get; set; }
+    public int Coins { get; set; }
 }

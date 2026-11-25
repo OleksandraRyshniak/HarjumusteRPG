@@ -120,6 +120,47 @@ public partial class TodayViewModel : BaseViewModel
     public bool HasCelebrationLevel => !string.IsNullOrEmpty(CelebrationLevel);
     public bool HasCelebrationAchievements => !string.IsNullOrEmpty(CelebrationAchievements);
 
+    // ---- daily gift ----
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(GiftClaimed))]
+    private bool giftAvailable;
+
+    public bool GiftClaimed => !GiftAvailable;
+
+    [RelayCommand]
+    private async Task ClaimGift()
+    {
+        if (IsBusy || !GiftAvailable)
+            return;
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            RewardMessage = null;
+
+            var result = await _api.ClaimDailyGiftAsync();
+            if (!result.Success)
+            {
+                // claimed on another device -> just hide the button
+                if (result.Error == AppResources.ErrGiftClaimed)
+                    GiftAvailable = false;
+
+                await HandleErrorAsync(result.Error!);
+                return;
+            }
+
+            GiftAvailable = false;
+            CoinsText = result.Value!.Coins.ToString();
+            RewardMessage = Loc.F(AppResources.GiftReceivedFormat, result.Value.CoinsEarned);
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
     private void ShowCelebration(CompleteResult r)
     {
         CelebrationTitle = r.LeveledUp ? AppResources.LevelUpTitle : AppResources.NewAchievementTitle;
@@ -162,7 +203,7 @@ public partial class TodayViewModel : BaseViewModel
             }
             ShowProgress(progress.Value!.Level, progress.Value.Xp, progress.Value.XpForNextLevel,
                 progress.Value.Coins, progress.Value.CurrentStreak);
-
+            GiftAvailable = progress.Value.DailyGiftAvailable;
             var today = await _api.GetTodayAsync();
             if (!today.Success)
             {

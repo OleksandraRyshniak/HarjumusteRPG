@@ -133,6 +133,7 @@ public partial class TodayPage : ContentPage
             {
                 header,
                 petCard,
+                BuildGiftCard(),
                 sectionRow,
                 reward,
                 error,
@@ -166,6 +167,47 @@ public partial class TodayPage : ContentPage
         };
 
         Content = _root;
+    }
+
+    // Daily gift: icon, texts and a button that is active until the gift is claimed.
+    private static Grid BuildGiftCard()
+    {
+        var texts = new VerticalStackLayout
+        {
+            Spacing = 2,
+            VerticalOptions = LayoutOptions.Center,
+            Children =
+            {
+                Pixel.Body(AppResources.GiftTitle, 18, bold: true),
+                Pixel.Body(AppResources.GiftHint, 14, color: Palette.Sub)
+            }
+        };
+
+        var claim = Ui.CommandButton("+20", nameof(TodayViewModel.ClaimGiftCommand), fill: Palette.Hero);
+        claim.SetBinding(VisualElement.IsVisibleProperty, nameof(TodayViewModel.GiftAvailable));
+
+        var doneButton = Ui.MakeButton(AppResources.GiftClaimed, Palette.Card, 14);
+        doneButton.IsEnabled = false;
+        var claimed = Ui.WithShadow(doneButton);
+        claimed.SetBinding(VisualElement.IsVisibleProperty, nameof(TodayViewModel.GiftClaimed));
+
+        var action = new Grid { VerticalOptions = LayoutOptions.Center, Children = { claim, claimed } };
+
+        var row = new Grid
+        {
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Auto),
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Auto)
+            },
+            ColumnSpacing = 12
+        };
+        row.Add(new Image { Source = "ic_kingitus.png", WidthRequest = 32, HeightRequest = 32, VerticalOptions = LayoutOptions.Center }, 0);
+        row.Add(texts, 1);
+        row.Add(action, 2);
+
+        return Pixel.Card(row, padding: new Thickness(12));
     }
 
     // Dark background, a card with a star, texts and a button, and confetti above.

@@ -7,6 +7,7 @@ public static class GameRules
     public const int XpPerCompletion = 20;
     public const int CoinsPerCompletion = 5;
     public const int CoinsPerLevelUp = 25;
+    public const int DailyGiftCoins = 20;
 
     public static int XpForNextLevel(int level) => 100 + (level - 1) * 50;
 
@@ -32,6 +33,9 @@ public static class GameRules
         var next = lastCompleted == today.AddDays(-1) ? current + 1 : 1;
         return (next, Math.Max(longest, next));
     }
+
+    // The gift can be claimed once per day.
+    public static bool IsGiftAvailable(DateOnly? lastGift, DateOnly today) => lastGift != today;
 
     public static bool IsScheduledFor(Habit habit, DateOnly date)
     {

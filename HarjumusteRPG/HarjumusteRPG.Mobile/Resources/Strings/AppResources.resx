@@ -520,4 +520,20 @@
   <data name="PetDog" xml:space="preserve">
     <value>Koer</value>
   </data>
+	<data name="GiftTitle" xml:space="preserve">
+    <value>Päeva kingitus</value>
+  </data>
+	<data name="GiftHint" xml:space="preserve">
+    <value>Võta iga päev 20 münti</value>
+  </data>
+	<data name="GiftClaimed" xml:space="preserve">
+    <value>Homme jälle</value>
+  </data>
+	<data name="GiftReceivedFormat" xml:space="preserve">
+    <value>Kingitus: +{0} münti!</value>
+  </data>
+	<data name="ErrGiftClaimed" xml:space="preserve">
+    <value>Päeva kingitus on juba kätte saadud.</value>
+  </data>
+	
 </root>

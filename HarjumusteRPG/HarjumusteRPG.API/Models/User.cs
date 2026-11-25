@@ -13,6 +13,7 @@ public class User
     public int CurrentStreak { get; set; }
     public int LongestStreak { get; set; }
     public DateOnly? LastCompletedDate { get; set; }
+    public DateOnly? LastGiftDate { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public List<Habit> Habits { get; set; } = new();

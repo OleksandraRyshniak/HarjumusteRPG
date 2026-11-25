@@ -76,6 +76,24 @@ public class GameApi : IGameApi
         }
     }
 
+    public async Task<ApiResult<DailyGiftResult>> ClaimDailyGiftAsync()
+    {
+        try
+        {
+            var response = await _http.PostAsync("api/me/daily-gift", null);
+            if (response.StatusCode == HttpStatusCode.Conflict)
+                return new ApiResult<DailyGiftResult>(default, AppResources.ErrGiftClaimed);
+            if (!response.IsSuccessStatusCode)
+                return new ApiResult<DailyGiftResult>(default, ErrorFor(response.StatusCode));
+
+            return new ApiResult<DailyGiftResult>(await response.Content.ReadFromJsonAsync<DailyGiftResult>());
+        }
+        catch (Exception ex) when (IsNetworkOrJson(ex))
+        {
+            return new ApiResult<DailyGiftResult>(default, ErrorFor(ex));
+        }
+    }
+
     public async Task<ApiResult<List<CompletionInfo>>> GetHistoryAsync(int habitId, int days)
     {
         try

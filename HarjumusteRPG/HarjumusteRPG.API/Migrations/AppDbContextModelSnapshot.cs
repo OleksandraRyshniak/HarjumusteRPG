@@ -206,6 +206,9 @@ namespace HarjumusteRPG.API.Migrations
                     b.Property<DateOnly?>("LastCompletedDate")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly?>("LastGiftDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("Level")
                         .HasColumnType("int");
 

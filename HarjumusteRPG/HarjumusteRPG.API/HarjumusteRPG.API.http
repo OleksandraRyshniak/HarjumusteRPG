@@ -169,6 +169,10 @@ Authorization: Bearer {{loginAlexa.response.body.$.token}}
 GET {{host}}/api/me/progress
 Authorization: Bearer {{loginAlexa.response.body.$.token}}
 
+### alexa POST: daily gift, +20 coins (200, second time the same day 409)
+POST {{host}}/api/me/daily-gift
+Authorization: Bearer {{loginAlexa.response.body.$.token}}
+
 ### alexa POST: friend request to mari (201)
 POST {{host}}/api/friends/requests
 Authorization: Bearer {{loginAlexa.response.body.$.token}}

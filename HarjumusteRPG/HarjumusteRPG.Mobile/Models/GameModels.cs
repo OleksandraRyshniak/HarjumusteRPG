@@ -16,4 +16,7 @@ public record CompleteResult(
 
 public record ProgressInfo(
     int Level, int Xp, int XpForNextLevel, int Coins,
-    int CurrentStreak, int LongestStreak, int TotalCompletions, List<AchievementInfo> Achievements);
+    int CurrentStreak, int LongestStreak, int TotalCompletions, List<AchievementInfo> Achievements,
+    bool DailyGiftAvailable);
+
+public record DailyGiftResult(int CoinsEarned, int Coins);
