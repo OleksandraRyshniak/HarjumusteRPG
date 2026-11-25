@@ -1,4 +1,9 @@
 <Solution>
+  <Project Path="HarjumusteRPG.Admin/HarjumusteRPG.Admin.csproj" Id="315b7e0b-a164-4020-9afa-910c069316d2" />
   <Project Path="HarjumusteRPG.API/HarjumusteRPG.API.csproj" />
-  <Project Path="HarjumusteRPG.Mobile/HarjumusteRPG.Mobile.csproj" Id="ff94eb27-fc1c-4155-b4f0-d606eb221100" />
+  <Project Path="HarjumusteRPG.Mobile/HarjumusteRPG.Mobile.csproj" Id="ff94eb27-fc1c-4155-b4f0-d606eb221100">
+    <Deploy Solution="Debug|*" />
+  </Project>
+  <Project Path="HarjumusteRPG.Tests/HarjumusteRPG.Tests.csproj" Id="d9a97b62-94c9-4ace-9219-1d3165ad33dd" />
+  <Project Path="HarjumusteRPG.Worker/HarjumusteRPG.Worker.csproj" Id="3082d331-6c84-49f1-b671-2dce3400a8ca" />
 </Solution>
