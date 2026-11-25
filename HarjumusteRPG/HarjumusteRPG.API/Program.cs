@@ -31,6 +31,7 @@ builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 builder.Services.AddScoped<IFriendService, FriendService>();
 builder.Services.AddSingleton<IConnectionRegistry, ConnectionRegistry>();
 builder.Services.AddScoped<ILeaderboardNotifier, LeaderboardNotifier>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 builder.Services.AddHttpContextAccessor();
 
