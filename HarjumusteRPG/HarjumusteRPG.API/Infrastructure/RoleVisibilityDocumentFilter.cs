@@ -55,11 +55,14 @@ public class RoleVisibilityDocumentFilter(IHttpContextAccessor accessor) : IDocu
         // guest: nothing else
         if (user?.Identity?.IsAuthenticated != true) return false;
 
-        // the Service account (Worker) sees only the Service endpoints
+        // Service and Admin accounts see only the endpoints of their own role
         if (user.IsInRole("Service"))
             return rules.Any(r => SplitRoles(r.Roles).Contains("Service"));
 
-        // User and Admin: every role restriction must be satisfied
+        if (user.IsInRole("Admin"))
+            return rules.Any(r => SplitRoles(r.Roles).Contains("Admin"));
+
+        // User: every role restriction must be satisfied
         return rules.All(r =>
         {
             var roles = SplitRoles(r.Roles);

@@ -4,6 +4,7 @@ namespace HarjumusteRPG.API.Dtos;
 
 public class SendFriendRequestDto
 {
+    /// <example>mari</example>
     [Required, StringLength(50, MinimumLength = 3)]
     public string Username { get; set; } = string.Empty;
 }

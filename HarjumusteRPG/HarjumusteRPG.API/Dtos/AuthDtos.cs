@@ -4,12 +4,15 @@ namespace HarjumusteRPG.API.Dtos;
 
 public class RegisterDto
 {
+    /// <example>alexa</example>
     [Required, StringLength(50, MinimumLength = 3)]
     public string Username { get; set; } = string.Empty;
 
+    /// <example>alexa@test.com</example>
     [Required, EmailAddress, StringLength(100)]
     public string Email { get; set; } = string.Empty;
 
+    /// <example>Test123!</example>
     [Required]
     [StringLength(100, MinimumLength = 6)]
     [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d\s]).+$",
@@ -19,11 +22,12 @@ public class RegisterDto
 
 public class LoginDto
 {
+    /// <example>alexa@test.com</example>
     [Required, EmailAddress]
     public string Email { get; set; } = string.Empty;
 
+    /// <example>Test123!</example>
     [Required]
-   
     public string Password { get; set; } = string.Empty;
 }
 

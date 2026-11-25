@@ -65,12 +65,4 @@ public class AuthController : ControllerBase
         username = User.Identity?.Name,
         role = User.FindFirstValue(ClaimTypes.Role)
     });
-
-    /// <summary>Test endpoint available only to the Admin role.</summary>
-    [Authorize(Roles = "Admin")]
-    [HttpGet("admin-check")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public IActionResult AdminCheck() => Ok(new { message = "You are Admin." });
 }
