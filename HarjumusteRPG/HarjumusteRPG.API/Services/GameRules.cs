@@ -8,6 +8,7 @@ public static class GameRules
     public const int CoinsPerCompletion = 5;
     public const int CoinsPerLevelUp = 25;
     public const int DailyGiftCoins = 20;
+    public const int MaxRewardedPerDay = 5;
 
     public static int XpForNextLevel(int level) => 100 + (level - 1) * 50;
 

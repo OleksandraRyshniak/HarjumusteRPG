@@ -535,4 +535,7 @@
 	<data name="ErrGiftClaimed" xml:space="preserve">
     <value>The daily gift is already claimed.</value>
   </data>
+	<data name="RewardLimit" xml:space="preserve">
+    <value>Daily reward limit reached (5 habits). The habit is done, but no more XP or coins today.</value>
+  </data>
 </root>

@@ -51,20 +51,39 @@ public class CompletionService : ICompletionService
         if (await _completions.ExistsAsync(habitId, today))
             return new ServiceResult<CompleteHabitResultDto>(ServiceStatus.Conflict, null, "This habit is already completed today.");
 
+        // new day: the daily reward counter starts again
+        if (user.RewardDate != today)
+        {
+            user.RewardDate = today;
+            user.RewardsToday = 0;
+        }
+
+        var rewarded = user.RewardsToday < GameRules.MaxRewardedPerDay;
+        var xpEarned = rewarded ? GameRules.XpPerCompletion : 0;
+        var coinsEarned = 0;
+        var gained = 0;
+
         var completion = new HabitCompletion
         {
             HabitId = habit.Id,
             Date = today,
-            XpEarned = GameRules.XpPerCompletion
+            XpEarned = xpEarned
         };
         await _completions.AddAsync(completion);
 
-        var (level, xp, gained) = GameRules.AddXp(user.Level, user.Xp, GameRules.XpPerCompletion);
-        var coinsEarned = GameRules.CoinsPerCompletion + gained * GameRules.CoinsPerLevelUp;
+        if (rewarded)
+        {
+            var (level, xp, levelsGained) = GameRules.AddXp(user.Level, user.Xp, xpEarned);
+            gained = levelsGained;
+            coinsEarned = GameRules.CoinsPerCompletion + gained * GameRules.CoinsPerLevelUp;
 
-        user.Level = level;
-        user.Xp = xp;
-        user.Coins += coinsEarned;
+            user.Level = level;
+            user.Xp = xp;
+            user.Coins += coinsEarned;
+            user.RewardsToday++;
+        }
+
+        // the streak and the history count even when the reward limit is reached
         (user.CurrentStreak, user.LongestStreak) =
             GameRules.NextStreak(user.LastCompletedDate, today, user.CurrentStreak, user.LongestStreak);
         user.LastCompletedDate = today;
@@ -85,16 +104,17 @@ public class CompletionService : ICompletionService
             return new ServiceResult<CompleteHabitResultDto>(ServiceStatus.Conflict, null, "This habit is already completed today.");
         }
         _logger.LogInformation(
-           "User {UserId} completed habit {HabitId}: level {Level}, streak {Streak}, new achievements {Count}",
-           userId, habitId, user.Level, user.CurrentStreak, newAchievements.Count);
+           "User {UserId} completed habit {HabitId}: rewarded {Rewarded}, level {Level}, streak {Streak}, new achievements {Count}",
+           userId, habitId, rewarded, user.Level, user.CurrentStreak, newAchievements.Count);
 
         await _notifier.NotifyAsync(userId);
 
         return new ServiceResult<CompleteHabitResultDto>(ServiceStatus.Ok, new CompleteHabitResultDto
         {
             Completion = ToDto(completion),
-            XpEarned = GameRules.XpPerCompletion,
+            XpEarned = xpEarned,
             CoinsEarned = coinsEarned,
+            RewardLimitReached = !rewarded,
             LeveledUp = gained > 0,
             Level = user.Level,
             Xp = user.Xp,
@@ -104,8 +124,9 @@ public class CompletionService : ICompletionService
             LongestStreak = user.LongestStreak,
             NewAchievements = newAchievements
         });
-       
     }
+       
+    
 
     public async Task<List<CompletionDto>?> GetHistoryAsync(int habitId, int userId, int days)
     {

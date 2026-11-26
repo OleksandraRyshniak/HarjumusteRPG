@@ -30,6 +30,7 @@ public class CompleteHabitResultDto
     public int Coins { get; set; }
     public int CurrentStreak { get; set; }
     public int LongestStreak { get; set; }
+    public bool RewardLimitReached { get; set; }
     public List<AchievementDto> NewAchievements { get; set; } = new();
 }
 

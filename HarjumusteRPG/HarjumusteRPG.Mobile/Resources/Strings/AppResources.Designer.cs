@@ -190,4 +190,5 @@ public static class AppResources
     public static string GiftClaimed => Get(nameof(GiftClaimed));
     public static string GiftReceivedFormat => Get(nameof(GiftReceivedFormat));
     public static string ErrGiftClaimed => Get(nameof(ErrGiftClaimed));
+    public static string RewardLimit => Get("RewardLimit");
 }

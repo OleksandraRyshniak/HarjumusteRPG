@@ -219,6 +219,12 @@ namespace HarjumusteRPG.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateOnly?>("RewardDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("RewardsToday")
+                        .HasColumnType("int");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -253,6 +259,7 @@ namespace HarjumusteRPG.API.Migrations
                             Level = 1,
                             LongestStreak = 0,
                             PasswordHash = "$2b$11$k8fDIZHKppRuZV75my8dc.r0ns4zCq7DXr8YU3z8ZyjDxaRf/8UgC",
+                            RewardsToday = 0,
                             Role = "Admin",
                             Username = "admin",
                             Xp = 0
@@ -267,6 +274,7 @@ namespace HarjumusteRPG.API.Migrations
                             Level = 1,
                             LongestStreak = 0,
                             PasswordHash = "$2b$11$qkitA4RIMQ0kNp.vc3Z.Cu.MEtCoV8WlYb.27iPmhk48hvlh4AW5K",
+                            RewardsToday = 0,
                             Role = "Service",
                             Username = "service",
                             Xp = 0

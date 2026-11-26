@@ -535,5 +535,7 @@
 	<data name="ErrGiftClaimed" xml:space="preserve">
     <value>Päeva kingitus on juba kätte saadud.</value>
   </data>
-	
+	<data name="RewardLimit" xml:space="preserve">
+    <value>Päeva tasu limiit täis (5 harjumust). Harjumus on tehtud, aga XP-d ja münte täna enam ei tule.</value>
+  </data>
 </root>

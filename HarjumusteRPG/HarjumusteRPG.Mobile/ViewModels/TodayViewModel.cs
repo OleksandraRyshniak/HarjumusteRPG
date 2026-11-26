@@ -251,8 +251,10 @@ public partial class TodayViewModel : BaseViewModel
             ShowProgress(r.Level, r.Xp, r.XpForNextLevel, r.Coins, r.CurrentStreak);
             UpdatePetLine();
 
-            RewardMessage = r.LeveledUp
-                ? Loc.F(AppResources.LevelUpMessageFormat, r.Level, r.XpEarned, r.CoinsEarned)
+            RewardMessage = r.RewardLimitReached
+                  ? AppResources.RewardLimit
+                  : r.LeveledUp
+                  ? Loc.F(AppResources.LevelUpMessageFormat, r.Level, r.XpEarned, r.CoinsEarned)
                 : Loc.F(AppResources.RewardFormat, r.XpEarned, r.CoinsEarned);
 
             if (r.LeveledUp || (r.NewAchievements?.Count ?? 0) > 0)

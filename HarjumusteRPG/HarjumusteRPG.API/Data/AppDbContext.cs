@@ -60,7 +60,8 @@ public class AppDbContext : DbContext
 
         var created = new DateTime(2026, 11, 9, 0, 0, 0, DateTimeKind.Utc);
 
-        // Dev-only seed accounts: Admin123! and Service123!
+        // Dev-only seed accounts: Admin123! and Service123!как
+
         b.Entity<User>().HasData(
             new User
             {
