@@ -67,7 +67,7 @@ public partial class AchievementsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private Task Back() => Shell.Current.GoToAsync("..");
+    private Task Back() => Nav.GoAsync("..");
 
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
@@ -76,7 +76,7 @@ public partial class AchievementsViewModel : BaseViewModel
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

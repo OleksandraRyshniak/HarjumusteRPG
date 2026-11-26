@@ -167,13 +167,13 @@ public partial class HabitsViewModel : BaseViewModel
 
     [RelayCommand]
     private Task Edit(HabitRow? row) =>
-        row is null ? Task.CompletedTask : Shell.Current.GoToAsync($"habit-edit?id={row.Id}");
+        row is null ? Task.CompletedTask : Nav.GoAsync($"habit-edit?id={row.Id}");
 
     [RelayCommand]
-    private Task Add() => Shell.Current.GoToAsync("habit-edit");
+    private Task Add() => Nav.GoAsync("habit-edit");
 
     [RelayCommand]
-    private Task Back() => Shell.Current.GoToAsync("//main");
+    private Task Back() => Nav.GoAsync("//main");
 
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
@@ -182,7 +182,7 @@ public partial class HabitsViewModel : BaseViewModel
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

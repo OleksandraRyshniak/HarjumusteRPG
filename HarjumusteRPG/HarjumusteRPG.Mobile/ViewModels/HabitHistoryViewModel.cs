@@ -75,7 +75,7 @@ public partial class HabitHistoryViewModel : BaseViewModel
             IconFile = HabitIcons.GetFile(_auth.Username, id);
 
             // The calendar shows 4 weeks, Monday first, the last row is the current week.
-            var today = DateOnly.FromDateTime(DateTime.Today);
+            var today = AppClock.Today;
             var sinceMonday = ((int)today.DayOfWeek + 6) % 7;
             var start = today.AddDays(-sinceMonday - 21);
             var daysBack = today.DayNumber - start.DayNumber + 1;
@@ -116,7 +116,7 @@ public partial class HabitHistoryViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private Task Back() => Shell.Current.GoToAsync("..");
+    private Task Back() => Nav.GoAsync("..");
 
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
@@ -125,7 +125,7 @@ public partial class HabitHistoryViewModel : BaseViewModel
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

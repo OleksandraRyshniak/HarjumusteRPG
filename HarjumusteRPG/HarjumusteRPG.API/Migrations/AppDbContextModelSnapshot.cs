@@ -308,6 +308,33 @@ namespace HarjumusteRPG.API.Migrations
                     b.ToTable("UserAchievements");
                 });
 
+            modelBuilder.Entity("HarjumusteRPG.API.Models.UserPet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BoughtAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PetKey")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "PetKey")
+                        .IsUnique();
+
+                    b.ToTable("UserPets");
+                });
+
             modelBuilder.Entity("HarjumusteRPG.API.Models.Friendship", b =>
                 {
                     b.HasOne("HarjumusteRPG.API.Models.User", "Friend")
@@ -368,6 +395,17 @@ namespace HarjumusteRPG.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HarjumusteRPG.API.Models.UserPet", b =>
+                {
+                    b.HasOne("HarjumusteRPG.API.Models.User", "User")
+                        .WithMany("Pets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HarjumusteRPG.API.Models.Achievement", b =>
                 {
                     b.Navigation("UserAchievements");
@@ -381,6 +419,8 @@ namespace HarjumusteRPG.API.Migrations
             modelBuilder.Entity("HarjumusteRPG.API.Models.User", b =>
                 {
                     b.Navigation("Habits");
+
+                    b.Navigation("Pets");
 
                     b.Navigation("UserAchievements");
                 });

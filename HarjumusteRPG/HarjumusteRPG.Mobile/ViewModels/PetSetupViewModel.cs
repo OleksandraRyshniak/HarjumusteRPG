@@ -66,6 +66,6 @@ public partial class PetSetupViewModel : BaseViewModel
         PetStore.Save(_auth.Username, chosen.ImageKey, name);
 
         ErrorMessage = null;
-        await Shell.Current.GoToAsync("//main");
+        await Nav.GoAsync("//main");
     }
 }

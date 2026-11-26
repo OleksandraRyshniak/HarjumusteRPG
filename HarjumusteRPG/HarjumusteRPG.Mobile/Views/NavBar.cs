@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Controls.Shapes;
+using HarjumusteRPG.Mobile.Services;
 
 namespace HarjumusteRPG.Mobile.Views;
 
@@ -14,7 +15,7 @@ public static class NavBar
         new(AppResources.NavPet, "ic_suda.png", "//progress"),
         new(AppResources.NavStats, "ic_statistika.png", "//statistics"),
         new(AppResources.NavLeaderboard, "ic_karikas.png", "//leaderboard"),
-        new(AppResources.NavShop, "ic_pood.png", null)
+        new(AppResources.NavShop, "ic_pood.png", "//shop")
     };
 
     private static bool _navigating;
@@ -60,7 +61,7 @@ public static class NavBar
                         _navigating = true;
                         try
                         {
-                            await Shell.Current.GoToAsync(route);
+                            await Nav.GoAsync(route);
                         }
                         catch (Exception ex)
                         {

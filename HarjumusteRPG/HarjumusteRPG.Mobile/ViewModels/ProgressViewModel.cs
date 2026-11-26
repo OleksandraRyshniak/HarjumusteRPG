@@ -1,11 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HarjumusteRPG.Mobile.Services;
+using System.Runtime.CompilerServices;
+
 
 namespace HarjumusteRPG.Mobile.ViewModels;
 
 public partial class ProgressViewModel : BaseViewModel
 {
+    // same as GameRules.FeedCost in the API
+    private const int FeedCost = 5;
+
     private readonly IAuthService _auth;
     private readonly IGameApi _api;
 
@@ -13,32 +19,102 @@ public partial class ProgressViewModel : BaseViewModel
     {
         _auth = auth;
         _api = api;
-        Title = "Lemmik";
+        Title = AppResources.NavPet;
     }
 
     [ObservableProperty] private string petImage = "kass_hall.png";
     [ObservableProperty] private string petName = string.Empty;
-    [ObservableProperty] private string levelText = "TASE 1";
-    [ObservableProperty] private string xpText = "0/100 XP";
-    [ObservableProperty] private double xpFraction;
-    [ObservableProperty] private string hint = string.Empty;
-    [ObservableProperty] private string streakText = "0";
-    [ObservableProperty] private string longestText = "0";
-    [ObservableProperty] private string totalText = "0";
-    [ObservableProperty] private string coinsText = "0";
-    [ObservableProperty] private string achievementsText = string.Empty;
+    [ObservableProperty] private string levelText = string.Empty;
+    [ObservableProperty] private string moodText = string.Empty;
+    [ObservableProperty] private bool isHappy;
+
+    // needs as 0..1 for the bars
+    [ObservableProperty] private double joyFraction;
+    [ObservableProperty] private double foodFraction;
+    [ObservableProperty] private double energyFraction;
+
+ 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasPetMessage))]
+    private string? petMessage;
+
+    public bool HasPetMessage => !string.IsNullOrEmpty(PetMessage);
+
+    public string FeedText => Loc.F(AppResources.PetFeedFormat, FeedCost);
+
+    // The page makes the pet jump when this fires.
+    public event Action? PetReacted;
 
     [RelayCommand]
-    private Task OpenAchievements() => Shell.Current.GoToAsync("achievements");
+    private Task OpenAchievements() => Nav.GoAsync("achievements");
 
+    // Pat: free, a little joy.
     [RelayCommand]
-    private Task ChangePet() => Shell.Current.GoToAsync("//pet");
+    private void Pat()
+    {
+        ShowMood(PetStore.ChangeMood(_auth.Username, joy: 5));
+        PetMessage = Loc.F(AppResources.PetPatMessage, PetName);
+        PetReacted?.Invoke();
+    }
+
+    // Play: free, more joy but uses energy.
+    [RelayCommand]
+    private void Play()
+    {
+        if (PetStore.Mood(_auth.Username).Energy < 10)
+        {
+            PetMessage = Loc.F(AppResources.PetTiredMessage, PetName);
+            return;
+        }
+
+        ShowMood(PetStore.ChangeMood(_auth.Username, joy: 8, energy: -10));
+        PetMessage = Loc.F(AppResources.PetPlayMessage, PetName);
+        PetReacted?.Invoke();
+    }
+
+    // Feed: costs coins on the server, fills food and gives energy.
+    [RelayCommand]
+    private async Task Feed()
+    {
+        if (IsBusy)
+            return;
+
+        if (PetStore.Mood(_auth.Username).Food >= 100)
+        {
+            PetMessage = Loc.F(AppResources.PetFullMessage, PetName);
+            return;
+        }
+
+        IsBusy = true;
+        try
+        {
+            ErrorMessage = null;
+            PetMessage = null;
+
+            var result = await _api.FeedPetAsync();
+            if (!result.Success)
+            {
+                await HandleErrorAsync(result.Error!);
+                return;
+            }
+
+            ShowMood(PetStore.ChangeMood(_auth.Username, food: 20, energy: 10));
+            PetMessage = Loc.F(AppResources.PetFedMessage, PetName, FeedCost);
+            PetReacted?.Invoke();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 
     [RelayCommand]
     private async Task Load()
     {
         PetImage = PetStore.Image(_auth.Username);
         PetName = PetStore.Name(_auth.Username);
+        ShowMood(PetStore.Mood(_auth.Username));
+        PetMessage = null;
 
         if (IsBusy)
             return;
@@ -55,23 +131,26 @@ public partial class ProgressViewModel : BaseViewModel
                 return;
             }
 
-            var p = result.Value!;
-            LevelText = Loc.F(AppResources.LevelFormat, p.Level);
-            XpText = $"{p.Xp}/{p.XpForNextLevel} XP";
-            XpFraction = p.XpForNextLevel > 0 ? Math.Clamp((double)p.Xp / p.XpForNextLevel, 0, 1) : 0;
-            Hint = Loc.F(AppResources.NextLevelFormat, Math.Max(p.XpForNextLevel - p.Xp, 0));
-            StreakText = p.CurrentStreak.ToString();
-            LongestText = p.LongestStreak.ToString();
-            TotalText = p.TotalCompletions.ToString();
-            CoinsText = p.Coins.ToString();
-
-            var all = p.Achievements ?? new();
-            AchievementsText = Loc.F(AppResources.AchievementsSummary, all.Count(a => a.Unlocked), all.Count);
+            LevelText = Loc.F(AppResources.LevelFormat, result.Value!.Level);
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    
+
+    private void ShowMood(PetMood mood)
+    {
+        JoyFraction = mood.Joy / 100.0;
+        FoodFraction = mood.Food / 100.0;
+        EnergyFraction = mood.Energy / 100.0;
+
+        IsHappy = mood.Joy >= 70;
+        MoodText = mood.Joy >= 70 ? AppResources.MoodHappy
+            : mood.Joy >= 40 ? AppResources.MoodCalm
+            : AppResources.MoodSad;
     }
 
     // Session expired -> back to login, other errors are shown on the screen.
@@ -81,7 +160,7 @@ public partial class ProgressViewModel : BaseViewModel
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

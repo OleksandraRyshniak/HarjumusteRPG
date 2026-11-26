@@ -46,7 +46,7 @@ public partial class RegisterViewModel : BaseViewModel
 
             Password = string.Empty;
             ConfirmPassword = string.Empty;
-            await Shell.Current.GoToAsync("//pet");
+            await Nav.GoAsync("//pet");
         }
         finally
         {
@@ -58,7 +58,7 @@ public partial class RegisterViewModel : BaseViewModel
     private Task GoToLogin()
     {
         ErrorMessage = null;
-        return Shell.Current.GoToAsync("//login");
+        return Nav.GoAsync("//login");
     }
 
     // Same rules as in the API: username 3-50, email up to 100, password 6-100.

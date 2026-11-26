@@ -83,7 +83,7 @@ public partial class HabitHistoryPage : ContentPage
             Padding = new Thickness(20, 16),
             Spacing = 14,
             HorizontalOptions = LayoutOptions.Center,
-            Children = { back, heading, nameRow, error, busy, calendarCard, summary, rows, empty }
+            Children = { back, Header.Row(heading), nameRow, error, busy, calendarCard, summary, rows, empty }
         };
 
         Content = new ScrollView { Content = _column };

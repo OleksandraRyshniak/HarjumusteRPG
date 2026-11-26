@@ -103,7 +103,7 @@ public partial class HabitsPage : ContentPage
             Padding = new Thickness(20, 16),
             Spacing = 12,
             HorizontalOptions = LayoutOptions.Center,
-            Children = { back, heading, search, filters, toolbar, error, busy, list, empty, count, paging }
+            Children = { back, Header.Row(heading), search, filters, toolbar, error, busy, list, empty, count, paging }
         };
 
         Content = new ScrollView { Content = _column };

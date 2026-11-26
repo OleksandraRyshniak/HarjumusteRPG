@@ -24,6 +24,6 @@ public partial class MainViewModel : BaseViewModel
     private async Task Logout()
     {
         _auth.Logout();
-        await Shell.Current.GoToAsync("//login");
+        await Nav.GoAsync("//login");
     }
 }

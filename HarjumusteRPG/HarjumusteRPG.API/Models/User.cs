@@ -20,4 +20,5 @@ public class User
 
     public List<Habit> Habits { get; set; } = new();
     public List<UserAchievement> UserAchievements { get; set; } = new();
+    public List<UserPet> Pets { get; set; } = new();
 }

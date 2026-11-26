@@ -39,6 +39,7 @@ public class ProgressService : IProgressService
             LongestStreak = user.LongestStreak,
             TotalCompletions = await _completions.CountForUserAsync(userId),
             DailyGiftAvailable = GameRules.IsGiftAvailable(user.LastGiftDate, today),
+            Today = today,
             Achievements = await _achievements.GetForUserAsync(userId)
         };
     }

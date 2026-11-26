@@ -82,7 +82,7 @@ public partial class LeaderboardPage : ContentPage
         {
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
-            Children = { heading, tabs, error, info, busy, boardSection, friendsSection }
+            Children = { Header.Row(heading), tabs, error, info, busy, boardSection, friendsSection }
         };
 
         _root = new Grid

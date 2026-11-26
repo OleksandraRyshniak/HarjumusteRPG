@@ -103,7 +103,7 @@ public partial class StatisticsViewModel : BaseViewModel
     private void Rebuild()
     {
         var days = ShowMonth ? 30 : 7;
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var today = AppClock.Today;
         var start = today.AddDays(-(days - 1));
 
         var perDay = Enumerable.Range(0, days)
@@ -149,7 +149,7 @@ public partial class StatisticsViewModel : BaseViewModel
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

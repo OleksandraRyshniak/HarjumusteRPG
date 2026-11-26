@@ -538,4 +538,106 @@
 	<data name="RewardLimit" xml:space="preserve">
     <value>Daily reward limit reached (5 habits). The habit is done, but no more XP or coins today.</value>
   </data>
+	<data name="ShopHint" xml:space="preserve">
+    <value>Buy new pets with coins.</value>
+  </data>
+	<data name="ShopCoinsFormat" xml:space="preserve">
+    <value>You have {0} coins</value>
+  </data>
+	<data name="BuyFormat" xml:space="preserve">
+    <value>Buy · {0}</value>
+  </data>
+	<data name="ChoosePet" xml:space="preserve">
+    <value>Choose</value>
+  </data>
+	<data name="PetActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+	<data name="PetBoughtFormat" xml:space="preserve">
+    <value>{0} is yours now!</value>
+  </data>
+	<data name="PetChosenFormat" xml:space="preserve">
+    <value>{0} is now your pet.</value>
+  </data>
+	<data name="ErrNotEnoughCoins" xml:space="preserve">
+    <value>Not enough coins.</value>
+  </data>
+	<data name="ErrPetOwned" xml:space="preserve">
+    <value>You already have this pet.</value>
+  </data>
+	<data name="PetJoy" xml:space="preserve">
+    <value>Rõõm</value>
+  </data>
+	<data name="PetFood" xml:space="preserve">
+    <value>Kõht</value>
+  </data>
+	<data name="PetEnergy" xml:space="preserve">
+    <value>Energia</value>
+  </data>
+	<data name="PetPat" xml:space="preserve">
+    <value>Paita</value>
+  </data>
+	<data name="PetPlay" xml:space="preserve">
+    <value>Mängi</value>
+  </data>
+	<data name="PetFeedFormat" xml:space="preserve">
+    <value>Toida · {0}</value>
+  </data>
+	<data name="MoodHappy" xml:space="preserve">
+    <value>Rõõmus</value>
+  </data>
+	<data name="MoodCalm" xml:space="preserve">
+    <value>Rahulik</value>
+  </data>
+	<data name="MoodSad" xml:space="preserve">
+    <value>Kurb</value>
+  </data>
+	<data name="StageEgg" xml:space="preserve">
+    <value>Muna</value>
+  </data>
+	<data name="StageBaby" xml:space="preserve">
+    <value>Beebi</value>
+  </data>
+	<data name="StageYoung" xml:space="preserve">
+    <value>Noor</value>
+  </data>
+	<data name="StageAdult" xml:space="preserve">
+    <value>Täiskasvanu</value>
+  </data>
+	<data name="PetLevelFormat" xml:space="preserve">
+    <value>Tase {0} · {1}</value>
+  </data>
+	<data name="PetInfo" xml:space="preserve">
+    <value>Iga täidetud harjumus teeb lemmiku rõõmsaks ja toidab teda. Kui päev jääb vahele, katkeb seeria ja lemmik muutub kurvaks.</value>
+  </data>
+	<data name="PetPatMessage" xml:space="preserve">
+    <value>{0} on õnnelik!</value>
+  </data>
+	<data name="PetPlayMessage" xml:space="preserve">
+    <value>{0} mängis rõõmuga!</value>
+  </data>
+	<data name="PetTiredMessage" xml:space="preserve">
+    <value>{0} on liiga väsinud. Toida teda või täida harjumusi!</value>
+  </data>
+	<data name="PetFedMessage" xml:space="preserve">
+    <value>{0} sai süüa! −{1} münti</value>
+  </data>
+	<data name="PetFullMessage" xml:space="preserve">
+    <value>{0} kõht on täis.</value>
+  </data>
+	<data name="DemoTitle" xml:space="preserve">
+    <value>Demo</value>
+  </data>
+	<data name="DemoHint" xml:space="preserve">
+    <value>Moves the API clock one day forward and runs the streak check (like the background service at 00:05).</value>
+  </data>
+	<data name="DemoNextDay" xml:space="preserve">
+    <value>Next day</value>
+  </data>
+	<data name="DemoReset" xml:space="preserve">
+    <value>Real today</value>
+  </data>
+	<data name="DemoDayFormat" xml:space="preserve">
+    <value>Day: {0} · streaks reset: {1}</value>
+  </data>
 </root>

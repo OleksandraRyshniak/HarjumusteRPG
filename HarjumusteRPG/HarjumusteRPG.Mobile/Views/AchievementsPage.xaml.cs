@@ -39,7 +39,7 @@ public partial class AchievementsPage : ContentPage
             Padding = new Thickness(20, 16),
             Spacing = 14,
             HorizontalOptions = LayoutOptions.Center,
-            Children = { back, heading, summary, error, busy, list }
+            Children = { back, Header.Row(heading), summary, error, busy, list }
         };
 
         Content = new ScrollView { Content = _column };

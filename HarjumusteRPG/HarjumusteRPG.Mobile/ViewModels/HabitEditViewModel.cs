@@ -155,7 +155,7 @@ public partial class HabitEditViewModel : BaseViewModel
             var savedId = IsEditing ? id : result.Value!.Id;
             HabitIcons.Set(_auth.Username, savedId, _iconKey);
 
-            await Shell.Current.GoToAsync("..");
+            await Nav.GoAsync("..");
         }
         finally
         {
@@ -186,7 +186,7 @@ public partial class HabitEditViewModel : BaseViewModel
                 return;
             }
             HabitIcons.Set(_auth.Username, id, null);
-            await Shell.Current.GoToAsync("..");
+            await Nav.GoAsync("..");
         }
         finally
         {
@@ -195,10 +195,10 @@ public partial class HabitEditViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private Task Cancel() => Shell.Current.GoToAsync("..");
+    private Task Cancel() => Nav.GoAsync("..");
 
     [RelayCommand]
-    private Task OpenHistory() => Shell.Current.GoToAsync($"habit-history?id={HabitId}");
+    private Task OpenHistory() => Nav.GoAsync($"habit-history?id={HabitId}");
 
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
@@ -207,7 +207,7 @@ public partial class HabitEditViewModel : BaseViewModel
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

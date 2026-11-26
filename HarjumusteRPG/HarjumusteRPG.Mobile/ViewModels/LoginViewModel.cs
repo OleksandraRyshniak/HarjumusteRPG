@@ -36,7 +36,7 @@ public partial class LoginViewModel : BaseViewModel
         try
         {
             if (await _auth.RestoreSessionAsync())
-                await Shell.Current.GoToAsync("//main");
+                await Nav.GoAsync("//main");
         }
         finally
         {
@@ -77,7 +77,7 @@ public partial class LoginViewModel : BaseViewModel
             }
 
             Password = string.Empty;
-            await Shell.Current.GoToAsync("//main");
+            await Nav.GoAsync("//main");
         }
         finally
         {
@@ -89,6 +89,6 @@ public partial class LoginViewModel : BaseViewModel
     private Task GoToRegister()
     {
         ErrorMessage = null;
-        return Shell.Current.GoToAsync("//register");
+        return Nav.GoAsync("//register");
     }
 }

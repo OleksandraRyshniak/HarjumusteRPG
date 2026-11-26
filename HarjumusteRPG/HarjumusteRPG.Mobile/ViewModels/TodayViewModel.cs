@@ -63,8 +63,7 @@ public partial class TodayViewModel : BaseViewModel
     [ObservableProperty]
     private string petLine = string.Empty;
 
-    [RelayCommand]
-    private Task ChangePet() => Shell.Current.GoToAsync("//pet");
+    
 
     [ObservableProperty]
     private string sectionTitle = string.Empty;
@@ -186,7 +185,7 @@ public partial class TodayViewModel : BaseViewModel
         if (IsBusy)
             return;
 
-        DateText = DateTime.Today.ToString("dddd, d. MMM", Estonian).ToUpper(Estonian);
+        DateText = AppClock.Today.ToDateTime(TimeOnly.MinValue).ToString("dddd, d. MMM", Estonian).ToUpper(Estonian);
         Greeting = Loc.F(AppResources.GreetingFormat, _auth.Username);
         SectionTitle = Loc.F(AppResources.FeedFormat, PetName);
         PetImage = PetStore.Image(_auth.Username);
@@ -248,6 +247,7 @@ public partial class TodayViewModel : BaseViewModel
 
             var r = result.Value!;
             item.IsDone = true;
+            PetStore.ChangeMood(_auth.Username, joy: 10, food: 15);
             ShowProgress(r.Level, r.Xp, r.XpForNextLevel, r.Coins, r.CurrentStreak);
             UpdatePetLine();
 
@@ -267,20 +267,20 @@ public partial class TodayViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private Task AddHabit() => Shell.Current.GoToAsync("habit-edit");
+    private Task AddHabit() => Nav.GoAsync("habit-edit");
 
     [RelayCommand]
-    private Task OpenSettings() => Shell.Current.GoToAsync("settings");
+    private Task OpenSettings() => Nav.GoAsync("settings");
 
     [RelayCommand]
-    private Task Manage() => Shell.Current.GoToAsync("//habits");
+    private Task Manage() => Nav.GoAsync("//habits");
 
     [RelayCommand]
     private async Task Logout()
     {
         _auth.Logout();
         Habits.Clear();
-        await Shell.Current.GoToAsync("//login");
+        await Nav.GoAsync("//login");
     }
 
     private void ShowProgress(int level, int xp, int xpForNext, int coins, int streak)
@@ -309,7 +309,7 @@ public partial class TodayViewModel : BaseViewModel
             _auth.Logout();
             // Load runs while Shell is still finishing the navigation to this page.
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

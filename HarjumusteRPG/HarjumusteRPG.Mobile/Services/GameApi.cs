@@ -21,7 +21,10 @@ public class GameApi : IGameApi
             if (!response.IsSuccessStatusCode)
                 return new ApiResult<ProgressInfo>(default, ErrorFor(response.StatusCode));
 
-            return new ApiResult<ProgressInfo>(await response.Content.ReadFromJsonAsync<ProgressInfo>());
+            var progress = await response.Content.ReadFromJsonAsync<ProgressInfo>();
+            if (progress is not null)
+                AppClock.SetServerToday(progress.Today);
+            return new ApiResult<ProgressInfo>(progress);
         }
         catch (Exception ex) when (IsNetworkOrJson(ex))
         {
@@ -38,8 +41,8 @@ public class GameApi : IGameApi
                 return new ApiResult<List<TodayHabit>>(default, ErrorFor(response.StatusCode));
 
             var page = await response.Content.ReadFromJsonAsync<PagedHabits>();
-            var weekday = (int)DateTime.Today.DayOfWeek; // 0 = Sunday, same as in the API
-            var today = DateOnly.FromDateTime(DateTime.Today);
+            var weekday = (int)AppClock.Today.DayOfWeek; // 0 = Sunday, same as in the API
+            var today = AppClock.Today;
 
             var scheduled = (page?.Items ?? new())
                 .Where(h => h.IsDaily || h.DaysOfWeek.Contains(weekday))
@@ -91,6 +94,84 @@ public class GameApi : IGameApi
         catch (Exception ex) when (IsNetworkOrJson(ex))
         {
             return new ApiResult<DailyGiftResult>(default, ErrorFor(ex));
+        }
+    }
+
+    public async Task<ApiResult<List<ShopPet>>> GetShopPetsAsync()
+    {
+        try
+        {
+            var response = await _http.GetAsync("api/me/pets");
+            if (!response.IsSuccessStatusCode)
+                return new ApiResult<List<ShopPet>>(default, ErrorFor(response.StatusCode));
+
+            var items = await response.Content.ReadFromJsonAsync<List<ShopPet>>() ?? new();
+            return new ApiResult<List<ShopPet>>(items);
+        }
+        catch (Exception ex) when (IsNetworkOrJson(ex))
+        {
+            return new ApiResult<List<ShopPet>>(default, ErrorFor(ex));
+        }
+    }
+
+    public async Task<ApiResult<BuyPetResult>> BuyPetAsync(string key)
+    {
+        try
+        {
+            var response = await _http.PostAsync($"api/me/pets/{key}/buy", null);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+                return new ApiResult<BuyPetResult>(default, AppResources.ErrNotEnoughCoins);
+            if (response.StatusCode == HttpStatusCode.Conflict)
+                return new ApiResult<BuyPetResult>(default, AppResources.ErrPetOwned);
+            if (!response.IsSuccessStatusCode)
+                return new ApiResult<BuyPetResult>(default, ErrorFor(response.StatusCode));
+
+            return new ApiResult<BuyPetResult>(await response.Content.ReadFromJsonAsync<BuyPetResult>());
+        }
+        catch (Exception ex) when (IsNetworkOrJson(ex))
+        {
+            return new ApiResult<BuyPetResult>(default, ErrorFor(ex));
+        }
+    }
+
+    public async Task<ApiResult<FeedResult>> FeedPetAsync()
+    {
+        try
+        {
+            var response = await _http.PostAsync("api/me/pet/feed", null);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+                return new ApiResult<FeedResult>(default, AppResources.ErrNotEnoughCoins);
+            if (!response.IsSuccessStatusCode)
+                return new ApiResult<FeedResult>(default, ErrorFor(response.StatusCode));
+
+            return new ApiResult<FeedResult>(await response.Content.ReadFromJsonAsync<FeedResult>());
+        }
+        catch (Exception ex) when (IsNetworkOrJson(ex))
+        {
+            return new ApiResult<FeedResult>(default, ErrorFor(ex));
+        }
+    }
+
+    public Task<ApiResult<DemoTimeResult>> DemoNextDayAsync() => DemoAsync("api/demo/next-day");
+
+    public Task<ApiResult<DemoTimeResult>> DemoResetAsync() => DemoAsync("api/demo/reset");
+
+    private async Task<ApiResult<DemoTimeResult>> DemoAsync(string url)
+    {
+        try
+        {
+            var response = await _http.PostAsync(url, null);
+            if (!response.IsSuccessStatusCode)
+                return new ApiResult<DemoTimeResult>(default, ErrorFor(response.StatusCode));
+
+            var result = await response.Content.ReadFromJsonAsync<DemoTimeResult>();
+            if (result is not null)
+                AppClock.SetServerToday(result.Today);
+            return new ApiResult<DemoTimeResult>(result);
+        }
+        catch (Exception ex) when (IsNetworkOrJson(ex))
+        {
+            return new ApiResult<DemoTimeResult>(default, ErrorFor(ex));
         }
     }
 

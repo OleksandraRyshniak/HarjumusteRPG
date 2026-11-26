@@ -80,7 +80,7 @@ public partial class StatisticsPage : ContentPage
         {
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
-            Children = { heading, tabs, error, busy, chartCard, stats }
+            Children = { Header.Row(heading), tabs, error, busy, chartCard, stats }
         };
 
         _root = new Grid

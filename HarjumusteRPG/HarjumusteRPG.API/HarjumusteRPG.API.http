@@ -173,6 +173,14 @@ Authorization: Bearer {{loginAlexa.response.body.$.token}}
 POST {{host}}/api/me/daily-gift
 Authorization: Bearer {{loginAlexa.response.body.$.token}}
 
+### alexa GET: shop pets with prices (200)
+GET {{host}}/api/me/pets
+Authorization: Bearer {{loginAlexa.response.body.$.token}}
+
+### alexa POST: buy a hamster for 50 coins (200, not enough coins 400, second time 409)
+POST {{host}}/api/me/pets/hamster_hele/buy
+Authorization: Bearer {{loginAlexa.response.body.$.token}}
+
 ### alexa POST: friend request to mari (201)
 POST {{host}}/api/friends/requests
 Authorization: Bearer {{loginAlexa.response.body.$.token}}
@@ -395,3 +403,14 @@ Authorization: Bearer {{loginAlexa.response.body.$.token}}
 ### mari DELETE: her habit (204)
 DELETE {{host}}/api/habits/{{listMari.response.body.$.items[0].id}}
 Authorization: Bearer {{loginMari.response.body.$.token}}
+
+### alexa POST: feed the pet, -5 coins (200, not enough coins 400)
+POST {{host}}/api/me/pet/feed
+Authorization: Bearer {{loginAlexa.response.body.$.token}}
+### alexa POST: demo - move the API clock one day forward + streak check (Development)
+POST {{host}}/api/demo/next-day
+Authorization: Bearer {{loginAlexa.response.body.$.token}}
+
+### alexa POST: demo - back to the real date
+POST {{host}}/api/demo/reset
+Authorization: Bearer {{loginAlexa.response.body.$.token}}

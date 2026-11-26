@@ -51,13 +51,40 @@ public partial class SettingsPage : ContentPage
             Spacing = 12,
             Children = { Pixel.Heading(AppResources.ThemeTitle, 12), themes }
         });
+        // --- demo: move the API clock forward to show the streak ---
+        var demoText = Pixel.Body(string.Empty, 16, bold: true);
+        demoText.SetBinding(Label.TextProperty, nameof(SettingsViewModel.DemoText));
+        demoText.SetBinding(IsVisibleProperty, nameof(SettingsViewModel.HasDemoText));
+
+        var demoError = Pixel.ErrorLabel(nameof(SettingsViewModel.ErrorMessage), nameof(SettingsViewModel.HasError));
+
+        var demoButtons = new Grid
+        {
+            ColumnSpacing = 12,
+            ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) }
+        };
+        demoButtons.Add(Ui.CommandButton(AppResources.DemoNextDay, nameof(SettingsViewModel.NextDayCommand), fill: Palette.Hero), 0);
+        demoButtons.Add(Ui.CommandButton(AppResources.DemoReset, nameof(SettingsViewModel.ResetTimeCommand)), 1);
+
+        var demoCard = Pixel.Card(new VerticalStackLayout
+        {
+            Spacing = 12,
+            Children =
+            {
+                Pixel.Heading(AppResources.DemoTitle, 12),
+                Pixel.Body(AppResources.DemoHint, 14, color: Palette.Sub),
+                demoButtons,
+                demoText,
+                demoError
+            }
+        });
 
         _column = new VerticalStackLayout
         {
             Padding = new Thickness(20),
             Spacing = 16,
             HorizontalOptions = LayoutOptions.Center,
-            Children = { back, Pixel.Heading(AppResources.SettingsTitle, 16), languageCard, themeCard }
+            Children = { back, Pixel.Heading(AppResources.SettingsTitle, 16), languageCard, themeCard, demoCard }
         };
 
         Content = new ScrollView { Content = _column };
