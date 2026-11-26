@@ -18,12 +18,12 @@ public partial class MainViewModel : BaseViewModel
     private string greeting = string.Empty;
 
     [RelayCommand]
-    private void Refresh() => Greeting = $"Tere, {_auth.Username}!";
+    private void Refresh() => Greeting = Loc.F(AppResources.GreetingFormat, _auth.Username);
 
     [RelayCommand]
     private async Task Logout()
     {
         _auth.Logout();
-        await Shell.Current.GoToAsync("//login");
+        await Nav.GoAsync("//login");
     }
 }

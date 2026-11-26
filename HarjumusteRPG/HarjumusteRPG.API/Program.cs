@@ -22,10 +22,14 @@ builder.Services.AddScoped<IHabitCompletionRepository, HabitCompletionRepository
 builder.Services.AddScoped<IHabitService, HabitService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddSingleton(TimeProvider.System);
+var demoTime = new DemoTimeProvider();
+builder.Services.AddSingleton(demoTime);
+builder.Services.AddSingleton<TimeProvider>(demoTime);
 builder.Services.AddScoped<IAchievementService, AchievementService>();
 builder.Services.AddScoped<ICompletionService, CompletionService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IDailyGiftService, DailyGiftService>();
+builder.Services.AddScoped<IPetService, PetService>();
 builder.Services.AddScoped<IStreakService, StreakService>();
 builder.Services.AddScoped<IFriendshipRepository, FriendshipRepository>();
 builder.Services.AddScoped<IFriendService, FriendService>();

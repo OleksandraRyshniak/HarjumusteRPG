@@ -32,7 +32,7 @@ public class UsersController : Controller
     {
         var result = await _api.DeleteUserAsync(id);
         if (result.Ok)
-            TempData["Message"] = "User deleted.";
+            TempData["Message"] = "Kasutaja kustutatud.";
         else
             TempData["Error"] = result.Error;
 

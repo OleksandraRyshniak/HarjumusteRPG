@@ -24,12 +24,12 @@ public partial class LoginPage : ContentPage
             Spacing = 14,
             Children =
             {
-                Pixel.Heading("LOGI SISSE", 14),
-                Pixel.Field("E-post", nameof(LoginViewModel.Email), keyboard: Keyboard.Email),
-                Pixel.Field("Parool", nameof(LoginViewModel.Password), password: true,
+                Pixel.Heading(AppResources.LoginTitle, 14),
+                Pixel.Field(AppResources.Email, nameof(LoginViewModel.Email), keyboard: Keyboard.Email),
+                Pixel.Field(AppResources.Password, nameof(LoginViewModel.Password), password: true,
                     returnType: ReturnType.Done, returnCommandPath: nameof(LoginViewModel.LoginCommand)),
                 Pixel.ErrorLabel(nameof(LoginViewModel.ErrorMessage), nameof(LoginViewModel.HasError)),
-                Pixel.PrimaryButton("Logi sisse", nameof(LoginViewModel.LoginCommand),
+                Pixel.PrimaryButton(AppResources.LoginButton, nameof(LoginViewModel.LoginCommand),
                     enabledPath: nameof(LoginViewModel.IsNotBusy)),
                 busy
             }
@@ -53,7 +53,7 @@ public partial class LoginPage : ContentPage
                 Pixel.Heading("PAWLY", 24, center: true),
                 Pixel.Body("Harjumuste RPG", 18, color: Palette.Sub, center: true),
                 Pixel.Card(form),
-                Pixel.LinkButton("Pole kontot? Registreeru", nameof(LoginViewModel.GoToRegisterCommand))
+                Pixel.LinkButton(AppResources.GoRegister, nameof(LoginViewModel.GoToRegisterCommand))
             }
         };
 

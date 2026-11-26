@@ -4,9 +4,10 @@ namespace HarjumusteRPG.Mobile.Views;
 
 public partial class TodayPage : ContentPage
 {
-    private static readonly Color Mint = Color.FromArgb("#A8E6CF");
-    private static readonly Color Pink = Color.FromArgb("#F27FA5");
-    private static readonly Color Gold = Color.FromArgb("#FFD966");
+
+    private static Color Mint => Palette.Mint;
+    private static Color Pink => Palette.Pink;
+    private static Color Gold => Palette.Gold;
     private static readonly Random Rng = new();
 
     private readonly Grid _root;
@@ -40,7 +41,8 @@ public partial class TodayPage : ContentPage
             Children =
             {
                 Chip(nameof(TodayViewModel.CoinsText), Palette.Card, "ic_mynt.png"),
-                Chip(nameof(TodayViewModel.LevelChip), Mint, "ic_taht.png")
+                Chip(nameof(TodayViewModel.LevelChip), Mint, "ic_taht.png"),
+                Header.SettingsButton()
             }
         };
 
@@ -112,7 +114,7 @@ public partial class TodayPage : ContentPage
 
         var error = Pixel.ErrorLabel(nameof(TodayViewModel.ErrorMessage), nameof(TodayViewModel.HasError));
 
-        var empty = Pixel.Body("Täna pole ühtegi harjumust. Lisa uus harjumus!", 17, color: Palette.Sub);
+        var empty = Pixel.Body(AppResources.TodayEmpty, 17, color: Palette.Sub);
         empty.SetBinding(IsVisibleProperty, nameof(TodayViewModel.IsEmpty));
 
         var busy = new ActivityIndicator { Color = Palette.Ink };
@@ -132,15 +134,15 @@ public partial class TodayPage : ContentPage
             {
                 header,
                 petCard,
+                BuildGiftCard(),
                 sectionRow,
                 reward,
                 error,
                 busy,
                 list,
                 empty,
-                Pixel.PrimaryButton("Halda harjumusi", nameof(TodayViewModel.ManageCommand), primary: false),
-                Pixel.PrimaryButton("Logi välja", nameof(TodayViewModel.LogoutCommand), primary: false)
-                
+                Pixel.PrimaryButton(AppResources.ManageHabits, nameof(TodayViewModel.ManageCommand), primary: false)
+
             }
         };
 
@@ -164,6 +166,47 @@ public partial class TodayPage : ContentPage
         };
 
         Content = _root;
+    }
+
+    // Daily gift: icon, texts and a button that is active until the gift is claimed.
+    private static Grid BuildGiftCard()
+    {
+        var texts = new VerticalStackLayout
+        {
+            Spacing = 2,
+            VerticalOptions = LayoutOptions.Center,
+            Children =
+            {
+                Pixel.Body(AppResources.GiftTitle, 18, bold: true),
+                Pixel.Body(AppResources.GiftHint, 14, color: Palette.Sub)
+            }
+        };
+
+        var claim = Ui.CommandButton("+20", nameof(TodayViewModel.ClaimGiftCommand), fill: Palette.Hero);
+        claim.SetBinding(VisualElement.IsVisibleProperty, nameof(TodayViewModel.GiftAvailable));
+
+        var doneButton = Ui.MakeButton(AppResources.GiftClaimed, Palette.Card, 14);
+        doneButton.IsEnabled = false;
+        var claimed = Ui.WithShadow(doneButton);
+        claimed.SetBinding(VisualElement.IsVisibleProperty, nameof(TodayViewModel.GiftClaimed));
+
+        var action = new Grid { VerticalOptions = LayoutOptions.Center, Children = { claim, claimed } };
+
+        var row = new Grid
+        {
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Auto),
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Auto)
+            },
+            ColumnSpacing = 12
+        };
+        row.Add(new Image { Source = "ic_kingitus.png", WidthRequest = 32, HeightRequest = 32, VerticalOptions = LayoutOptions.Center }, 0);
+        row.Add(texts, 1);
+        row.Add(action, 2);
+
+        return Pixel.Card(row, padding: new Thickness(12));
     }
 
     // Dark background, a card with a star, texts and a button, and confetti above.
@@ -194,7 +237,7 @@ public partial class TodayPage : ContentPage
         achievements.SetBinding(Label.TextProperty, nameof(TodayViewModel.CelebrationAchievements));
         achievements.SetBinding(IsVisibleProperty, nameof(TodayViewModel.HasCelebrationAchievements));
 
-        var close = Pixel.PrimaryButton("Jätka", nameof(TodayViewModel.CloseCelebrationCommand));
+        var close = Pixel.PrimaryButton(AppResources.Continue, nameof(TodayViewModel.CloseCelebrationCommand));
 
         var stack = new VerticalStackLayout
         {

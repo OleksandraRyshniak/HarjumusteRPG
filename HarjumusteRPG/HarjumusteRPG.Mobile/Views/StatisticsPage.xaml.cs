@@ -5,7 +5,7 @@ namespace HarjumusteRPG.Mobile.Views;
 
 public partial class StatisticsPage : ContentPage
 {
-    private static readonly Color Pink = Color.FromArgb("#F27FA5");
+    private static Color Pink => Palette.Pink;
 
     private readonly Grid _root;
 
@@ -18,7 +18,7 @@ public partial class StatisticsPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(StatisticsViewModel.Title));
 
-        var heading = Pixel.Heading("STATISTIKA", 16);
+        var heading = Pixel.Heading(AppResources.StatsTitle, 16);
 
         // --- two tabs: week / month ---
         var tabs = new Grid
@@ -26,9 +26,9 @@ public partial class StatisticsPage : ContentPage
             ColumnSpacing = 10,
             ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) }
         };
-        tabs.Add(Ui.CommandButton("Nädal", nameof(StatisticsViewModel.ShowWeekTabCommand),
+        tabs.Add(Ui.CommandButton(AppResources.TabWeek, nameof(StatisticsViewModel.ShowWeekTabCommand),
             selectedPath: nameof(StatisticsViewModel.ShowWeek)), 0);
-        tabs.Add(Ui.CommandButton("Kuu", nameof(StatisticsViewModel.ShowMonthTabCommand),
+        tabs.Add(Ui.CommandButton(AppResources.Month, nameof(StatisticsViewModel.ShowMonthTabCommand),
             selectedPath: nameof(StatisticsViewModel.ShowMonth)), 1);
 
         var error = Pixel.ErrorLabel(nameof(StatisticsViewModel.ErrorMessage), nameof(StatisticsViewModel.HasError));
@@ -54,7 +54,7 @@ public partial class StatisticsPage : ContentPage
         BindableLayout.SetItemsSource(bars, viewModel.Bars);
         BindableLayout.SetItemTemplate(bars, new DataTemplate(CreateBar));
 
-        var empty = Pixel.Body("Sellel perioodil pole veel täitmisi.", 15, color: Palette.Sub);
+        var empty = Pixel.Body(AppResources.StatsEmpty, 15, color: Palette.Sub);
         empty.SetBinding(IsVisibleProperty, nameof(StatisticsViewModel.IsEmpty));
 
         var chartCard = Pixel.Card(new VerticalStackLayout
@@ -71,16 +71,16 @@ public partial class StatisticsPage : ContentPage
             ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) },
             RowDefinitions = { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Auto) }
         };
-        stats.Add(Tile("ic_kalender.png", nameof(StatisticsViewModel.TotalText), "täitmist"), 0, 0);
-        stats.Add(Tile("ic_valk.png", nameof(StatisticsViewModel.XpText), "XP kokku"), 1, 0);
-        stats.Add(Tile("ic_tuli.png", nameof(StatisticsViewModel.DaysText), "aktiivset päeva"), 0, 1);
-        stats.Add(Tile("ic_taht.png", nameof(StatisticsViewModel.BestText), "parim päev"), 1, 1);
+        stats.Add(Tile("ic_kalender.png", nameof(StatisticsViewModel.TotalText), AppResources.CompletionsCaption), 0, 0);
+        stats.Add(Tile("ic_valk.png", nameof(StatisticsViewModel.XpText), AppResources.TotalXp), 1, 0);
+        stats.Add(Tile("ic_tuli.png", nameof(StatisticsViewModel.DaysText), AppResources.StatsActiveDays), 0, 1);
+        stats.Add(Tile("ic_taht.png", nameof(StatisticsViewModel.BestText), AppResources.StatsBestDay), 1, 1);
 
         var column = new VerticalStackLayout
         {
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
-            Children = { heading, tabs, error, busy, chartCard, stats }
+            Children = { Header.StatsRow(heading), tabs, error, busy, chartCard, stats }
         };
 
         _root = new Grid

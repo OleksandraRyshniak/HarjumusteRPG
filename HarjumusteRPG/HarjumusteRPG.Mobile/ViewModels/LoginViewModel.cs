@@ -36,7 +36,7 @@ public partial class LoginViewModel : BaseViewModel
         try
         {
             if (await _auth.RestoreSessionAsync())
-                await Shell.Current.GoToAsync("//main");
+                await Nav.GoAsync("//main");
         }
         finally
         {
@@ -52,17 +52,17 @@ public partial class LoginViewModel : BaseViewModel
         var mail = Email.Trim();
         if (mail.Length == 0)
         {
-            ErrorMessage = "Sisesta e-posti aadress.";
+            ErrorMessage = AppResources.ErrEnterEmail;
             return;
         }
         if (!new EmailAddressAttribute().IsValid(mail))
         {
-            ErrorMessage = "E-posti aadress ei ole korrektne.";
+            ErrorMessage = AppResources.ErrEmailInvalid;
             return;
         }
         if (Password.Length == 0)
         {
-            ErrorMessage = "Sisesta parool.";
+            ErrorMessage = AppResources.ErrEnterPassword;
             return;
         }
 
@@ -77,7 +77,7 @@ public partial class LoginViewModel : BaseViewModel
             }
 
             Password = string.Empty;
-            await Shell.Current.GoToAsync("//main");
+            await Nav.GoAsync("//main");
         }
         finally
         {
@@ -89,6 +89,6 @@ public partial class LoginViewModel : BaseViewModel
     private Task GoToRegister()
     {
         ErrorMessage = null;
-        return Shell.Current.GoToAsync("//register");
+        return Nav.GoAsync("//register");
     }
 }

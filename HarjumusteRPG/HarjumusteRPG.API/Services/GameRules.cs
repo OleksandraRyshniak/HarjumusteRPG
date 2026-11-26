@@ -7,6 +7,25 @@ public static class GameRules
     public const int XpPerCompletion = 20;
     public const int CoinsPerCompletion = 5;
     public const int CoinsPerLevelUp = 25;
+    public const int FeedCost = 5;
+    public const int DailyGiftCoins = 20;
+
+    // Pets in the shop: picture name -> price. Price 0 = free starter pet (cat, dog).
+    public static readonly IReadOnlyDictionary<string, int> PetPrices = new Dictionary<string, int>
+    {
+        ["kass_hall"] = 0,
+        ["kutsikas"] = 0,
+        ["hamster_hele"] = 50,
+        ["hiir"] = 50,
+        ["merisiga"] = 80,
+        ["kass_pruun"] = 80,
+        ["janes_valge"] = 120,
+        ["janes_luppkorv"] = 120,
+        ["kass_punane"] = 150,
+        ["tsintsilja"] = 150
+    };
+
+    public const int MaxRewardedPerDay = 5;
 
     public static int XpForNextLevel(int level) => 100 + (level - 1) * 50;
 
@@ -32,6 +51,9 @@ public static class GameRules
         var next = lastCompleted == today.AddDays(-1) ? current + 1 : 1;
         return (next, Math.Max(longest, next));
     }
+
+    // The gift can be claimed once per day.
+    public static bool IsGiftAvailable(DateOnly? lastGift, DateOnly today) => lastGift != today;
 
     public static bool IsScheduledFor(Habit habit, DateOnly date)
     {

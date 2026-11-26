@@ -15,11 +15,11 @@ public partial class AchievementsPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(AchievementsViewModel.Title));
 
-        var back = Pixel.LinkButton("< Tagasi", nameof(AchievementsViewModel.BackCommand));
+        var back = Pixel.LinkButton(AppResources.Back, nameof(AchievementsViewModel.BackCommand));
         back.HorizontalOptions = LayoutOptions.Start;
         back.Padding = new Thickness(0);
 
-        var heading = Pixel.Heading("SAAVUTUSED", 16);
+        var heading = Pixel.Heading(AppResources.AchievementsTitle, 16);
 
         var summary = Pixel.Body(string.Empty, 18, bold: true);
         summary.SetBinding(Label.TextProperty, nameof(AchievementsViewModel.Summary));
@@ -39,7 +39,7 @@ public partial class AchievementsPage : ContentPage
             Padding = new Thickness(20, 16),
             Spacing = 14,
             HorizontalOptions = LayoutOptions.Center,
-            Children = { back, heading, summary, error, busy, list }
+            Children = { back, Header.Row(heading), summary, error, busy, list }
         };
 
         Content = new ScrollView { Content = _column };

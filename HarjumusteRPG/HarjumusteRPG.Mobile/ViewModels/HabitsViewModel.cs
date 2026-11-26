@@ -58,7 +58,7 @@ public partial class HabitsViewModel : BaseViewModel
     public bool AllSelected => Filter == "all";
     public bool ActiveSelected => Filter == "active";
     public bool InactiveSelected => Filter == "inactive";
-    public string SortText => SortByName ? "Sorteeri: nimi A-Z" : "Sorteeri: uuemad enne";
+    public string SortText => SortByName ? AppResources.SortName : AppResources.SortNewest;
 
     [RelayCommand]
     private async Task Load()
@@ -108,18 +108,18 @@ public partial class HabitsViewModel : BaseViewModel
             Habits.Add(new HabitRow(h.Id, h.Name, h.Name.Length == 0 ? "?" : h.Name[..1].ToUpperInvariant(), Describe(h)));
 
         IsEmpty = Habits.Count == 0;
-        PageText = $"Lk {Page}/{TotalPages}";
-        CountText = $"Kokku: {data.TotalCount}";
+        PageText = Loc.F(AppResources.PageFormat, Page, TotalPages);
+        CountText = Loc.F(AppResources.TotalFormat, data.TotalCount);
         return false;
     }
 
     private static string Describe(HabitInfo h)
     {
         var text = h.IsDaily
-            ? "Iga päev"
+            ? AppResources.EveryDay
             : string.Join(", ", Weekdays.Order.Where(h.DaysOfWeek.Contains).Select(Weekdays.Letter));
 
-        return h.IsActive ? text : $"{text} · Peatatud";
+        return h.IsActive ? text : $"{text} · {AppResources.Paused}";
     }
 
     [RelayCommand]
@@ -167,22 +167,22 @@ public partial class HabitsViewModel : BaseViewModel
 
     [RelayCommand]
     private Task Edit(HabitRow? row) =>
-        row is null ? Task.CompletedTask : Shell.Current.GoToAsync($"habit-edit?id={row.Id}");
+        row is null ? Task.CompletedTask : Nav.GoAsync($"habit-edit?id={row.Id}");
 
     [RelayCommand]
-    private Task Add() => Shell.Current.GoToAsync("habit-edit");
+    private Task Add() => Nav.GoAsync("habit-edit");
 
     [RelayCommand]
-    private Task Back() => Shell.Current.GoToAsync("//main");
+    private Task Back() => Nav.GoAsync("//main");
 
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

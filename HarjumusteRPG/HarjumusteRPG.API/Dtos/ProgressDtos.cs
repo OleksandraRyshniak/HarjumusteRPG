@@ -30,6 +30,7 @@ public class CompleteHabitResultDto
     public int Coins { get; set; }
     public int CurrentStreak { get; set; }
     public int LongestStreak { get; set; }
+    public bool RewardLimitReached { get; set; }
     public List<AchievementDto> NewAchievements { get; set; } = new();
 }
 
@@ -42,5 +43,13 @@ public class ProgressDto
     public int CurrentStreak { get; set; }
     public int LongestStreak { get; set; }
     public int TotalCompletions { get; set; }
+    public bool DailyGiftAvailable { get; set; }
+    public DateOnly Today { get; set; }
     public List<AchievementDto> Achievements { get; set; } = new();
+}
+
+public class DailyGiftDto
+{
+    public int CoinsEarned { get; set; }
+    public int Coins { get; set; }
 }

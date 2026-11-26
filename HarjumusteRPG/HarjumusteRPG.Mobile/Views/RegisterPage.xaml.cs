@@ -25,14 +25,14 @@ public partial class RegisterPage : ContentPage
             Spacing = 8,
             Children =
             {
-                Pixel.Heading("REGISTREERU", 14),
-                Pixel.Field("Kasutajanimi (3–50 märki)", nameof(RegisterViewModel.Username)),
-                Pixel.Field("E-post", nameof(RegisterViewModel.Email), keyboard: Keyboard.Email),
-                Pixel.Field("Parool (vähemalt 6 märki)", nameof(RegisterViewModel.Password), password: true),
-                Pixel.Field("Korda parooli", nameof(RegisterViewModel.ConfirmPassword), password: true,
+                Pixel.Heading(AppResources.RegisterTitle, 14),
+                Pixel.Field(AppResources.UsernameField, nameof(RegisterViewModel.Username)),
+                Pixel.Field(AppResources.Email, nameof(RegisterViewModel.Email), keyboard: Keyboard.Email),
+                Pixel.Field(AppResources.PasswordField, nameof(RegisterViewModel.Password), password: true),
+                Pixel.Field(AppResources.RepeatPassword, nameof(RegisterViewModel.ConfirmPassword), password: true,
                     returnType: ReturnType.Done, returnCommandPath: nameof(RegisterViewModel.RegisterCommand)),
                 Pixel.ErrorLabel(nameof(RegisterViewModel.ErrorMessage), nameof(RegisterViewModel.HasError)),
-                Pixel.PrimaryButton("Registreeru", nameof(RegisterViewModel.RegisterCommand),
+                Pixel.PrimaryButton(AppResources.RegisterButton, nameof(RegisterViewModel.RegisterCommand),
                     enabledPath: nameof(RegisterViewModel.IsNotBusy)),
                 busy
             }
@@ -55,7 +55,7 @@ public partial class RegisterPage : ContentPage
                 },
                 Pixel.Heading("PAWLY", 24, center: true),
                 Pixel.Card(form, padding: new Thickness(12)),
-                Pixel.LinkButton("Konto olemas? Logi sisse", nameof(RegisterViewModel.GoToLoginCommand))
+                Pixel.LinkButton(AppResources.GoLogin, nameof(RegisterViewModel.GoToLoginCommand))
             }
         };
 

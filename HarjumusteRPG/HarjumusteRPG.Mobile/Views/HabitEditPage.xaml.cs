@@ -26,7 +26,7 @@ public partial class HabitEditPage : ContentPage
         var daysBox = new VerticalStackLayout
         {
             Spacing = 8,
-            Children = { Pixel.Body("Nädalapäevad", 16, bold: true), days }
+            Children = { Pixel.Body(AppResources.Weekdays, 16, bold: true), days }
         };
         daysBox.SetBinding(IsVisibleProperty, nameof(HabitEditViewModel.ShowDays));
 
@@ -38,10 +38,10 @@ public partial class HabitEditPage : ContentPage
         var iconsBox = new VerticalStackLayout
         {
             Spacing = 8,
-            Children = { Pixel.Body("Ikoon", 16, bold: true), icons }
+            Children = { Pixel.Body(AppResources.Icon, 16, bold: true), icons }
         };
 
-        var activeRow = SwitchRow("Aktiivne", nameof(HabitEditViewModel.IsActive));
+        var activeRow = SwitchRow(AppResources.ActiveLabel, nameof(HabitEditViewModel.IsActive));
         activeRow.SetBinding(IsVisibleProperty, nameof(HabitEditViewModel.IsEditing));
 
         var error = Pixel.ErrorLabel(nameof(HabitEditViewModel.ErrorMessage), nameof(HabitEditViewModel.HasError));
@@ -55,10 +55,10 @@ public partial class HabitEditPage : ContentPage
             Spacing = 14,
             Children =
             {
-                Pixel.Field("Harjumuse nimi", nameof(HabitEditViewModel.Name)),
+                Pixel.Field(AppResources.HabitName, nameof(HabitEditViewModel.Name)),
                
                 iconsBox,
-                SwitchRow("Iga päev", nameof(HabitEditViewModel.IsDaily)),
+                SwitchRow(AppResources.EveryDay, nameof(HabitEditViewModel.IsDaily)),
                 daysBox,
                 activeRow,
                 error,
@@ -72,7 +72,7 @@ public partial class HabitEditPage : ContentPage
         delete.SetBinding(Button.TextProperty, nameof(HabitEditViewModel.DeleteText));
         delete.SetBinding(Button.CommandProperty, nameof(HabitEditViewModel.DeleteCommand));
         var deleteBox = Ui.WithShadow(delete);
-        var history = Ui.CommandButton("Ajalugu", nameof(HabitEditViewModel.OpenHistoryCommand));
+        var history = Ui.CommandButton(AppResources.History, nameof(HabitEditViewModel.OpenHistoryCommand));
         history.SetBinding(IsVisibleProperty, nameof(HabitEditViewModel.IsEditing));
         deleteBox.SetBinding(IsVisibleProperty, nameof(HabitEditViewModel.IsEditing));
 
@@ -85,11 +85,11 @@ public partial class HabitEditPage : ContentPage
             {
                 heading,
                 Pixel.Card(form),
-                Pixel.PrimaryButton("Salvesta", nameof(HabitEditViewModel.SaveCommand),
+                Pixel.PrimaryButton(AppResources.Save, nameof(HabitEditViewModel.SaveCommand),
                     enabledPath: nameof(HabitEditViewModel.IsNotBusy)),
                 history,
                 deleteBox,
-                Pixel.LinkButton("Tühista", nameof(HabitEditViewModel.CancelCommand))
+                Pixel.LinkButton(AppResources.Cancel, nameof(HabitEditViewModel.CancelCommand))
             }
         };
 

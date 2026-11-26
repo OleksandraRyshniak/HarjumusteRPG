@@ -110,4 +110,38 @@ public class CompletionServiceTests
 
         Assert.Equal(ServiceStatus.NotFound, result.Status);
     }
+
+    [Fact]
+    public async Task CompleteAsync_DailyLimitReached_SavesCompletionButGivesNoReward()
+    {
+        var user = ArrangeHabitAndUser();
+        user.RewardDate = Today;
+        user.RewardsToday = GameRules.MaxRewardedPerDay;
+
+        var result = await CreateService().CompleteAsync(HabitId, UserId);
+
+        Assert.Equal(ServiceStatus.Ok, result.Status);
+        Assert.True(result.Value!.RewardLimitReached);
+        Assert.Equal(0, result.Value.XpEarned);
+        Assert.Equal(0, result.Value.CoinsEarned);
+        Assert.Equal(0, user.Xp);
+        Assert.Equal(0, user.Coins);
+        Assert.Equal(1, user.CurrentStreak);
+        _completions.Verify(c => c.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task CompleteAsync_NewDay_ResetsRewardCounter()
+    {
+        var user = ArrangeHabitAndUser();
+        user.RewardDate = Today.AddDays(-1);
+        user.RewardsToday = GameRules.MaxRewardedPerDay;
+
+        var result = await CreateService().CompleteAsync(HabitId, UserId);
+
+        Assert.False(result.Value!.RewardLimitReached);
+        Assert.Equal(GameRules.XpPerCompletion, user.Xp);
+        Assert.Equal(1, user.RewardsToday);
+        Assert.Equal(Today, user.RewardDate);
+    }
 }

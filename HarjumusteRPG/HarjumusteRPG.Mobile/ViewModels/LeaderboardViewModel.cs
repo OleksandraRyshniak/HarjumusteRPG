@@ -25,7 +25,7 @@ public partial class LeaderboardViewModel : BaseViewModel
         _auth = auth;
         _api = api;
         _realtime = realtime;
-        Title = "Edetabel";
+        Title = AppResources.NavLeaderboard;
     }
 
     public ObservableCollection<LeaderboardRow> Board { get; } = new();
@@ -92,7 +92,7 @@ public partial class LeaderboardViewModel : BaseViewModel
         if (name.Length < 3)
         {
             InfoMessage = null;
-            ErrorMessage = "Sisesta sõbra kasutajanimi (vähemalt 3 märki).";
+            ErrorMessage = AppResources.ErrFriendName;
             return;
         }
 
@@ -110,7 +110,7 @@ public partial class LeaderboardViewModel : BaseViewModel
             }
 
             NewFriendName = string.Empty;
-            InfoMessage = $"Kutse saadetud kasutajale {result.Value!.Username}.";
+            InfoMessage = Loc.F(AppResources.InviteSentFormat, result.Value!.Username);
         }
         finally
         {
@@ -137,7 +137,7 @@ public partial class LeaderboardViewModel : BaseViewModel
                 return;
             }
 
-            InfoMessage = $"{row.Name} on nüüd sinu sõber.";
+            InfoMessage = Loc.F(AppResources.NowFriendsFormat, row.Name);
             await ReloadAsync();
         }
         finally
@@ -192,7 +192,7 @@ public partial class LeaderboardViewModel : BaseViewModel
                 return;
             }
 
-            InfoMessage = $"{row.Name} eemaldati sõprade hulgast.";
+            InfoMessage = Loc.F(AppResources.RemovedFriendFormat, row.Name);
             await ReloadAsync();
         }
         finally
@@ -270,14 +270,14 @@ public partial class LeaderboardViewModel : BaseViewModel
         foreach (var e in board.Value ?? new())
             Board.Add(new LeaderboardRow(
                 $"{e.Rank}.",
-                e.IsMe ? $"{e.Username} (sina)" : e.Username,
-                $"TASE {e.Level} · {e.Xp} XP",
-                $"{e.CurrentStreak} p",
+                e.IsMe ? Loc.F(AppResources.YouFormat, e.Username) : e.Username,
+                Loc.F(AppResources.LevelXpFormat, e.Level, e.Xp),
+                Loc.F(AppResources.DaysShortFormat, e.CurrentStreak),
                 e.IsMe));
 
         Friends.Clear();
         foreach (var f in friends.Value ?? new())
-            Friends.Add(new FriendRow(f.Id, f.Username, $"TASE {f.Level} · {f.CurrentStreak} päeva seeria"));
+            Friends.Add(new FriendRow(f.Id, f.Username, Loc.F(AppResources.FriendLevelStreakFormat, f.Level, f.CurrentStreak)));
 
         Requests.Clear();
         foreach (var r in requests.Value ?? new())
@@ -291,11 +291,11 @@ public partial class LeaderboardViewModel : BaseViewModel
     // Session expired -> back to login, other errors are shown on the screen.
     private async Task HandleErrorAsync(string error)
     {
-        if (error.StartsWith("Sessioon aegus"))
+        if (error.StartsWith(AppResources.ErrSessionExpired))
         {
             _auth.Logout();
             await Task.Delay(300);
-            await Shell.Current.GoToAsync("//login");
+            await Nav.GoAsync("//login");
             return;
         }
         ErrorMessage = error;

@@ -6,8 +6,8 @@ namespace HarjumusteRPG.Mobile.Services;
 
 public class FriendApi : IFriendApi
 {
-    private const string ConnectionError = "Serveriga ei saa ühendust. Kontrolli, et API töötab.";
-    private const string UnknownError = "Midagi läks valesti. Proovi uuesti.";
+    private static string ConnectionError => AppResources.ErrConnection;
+    private static string UnknownError => AppResources.ErrUnknown;
 
     private readonly HttpClient _http;
 
@@ -27,26 +27,26 @@ public class FriendApi : IFriendApi
             () => _http.PostAsJsonAsync("api/friends/requests", new { username }),
             status => status switch
             {
-                HttpStatusCode.NotFound => "Sellist kasutajat ei leitud.",
-                HttpStatusCode.Conflict => "Kutse on juba saadetud või te olete juba sõbrad.",
-                HttpStatusCode.BadRequest => "Kontrolli kasutajanime (vähemalt 3 märki, mitte sinu enda).",
+                HttpStatusCode.NotFound => AppResources.ErrUserNotFound,
+                HttpStatusCode.Conflict => AppResources.ErrInviteExists,
+                HttpStatusCode.BadRequest => AppResources.ErrFriendNameCheck,
                 _ => DefaultError(status)
             });
 
     public Task<ApiResult<FriendInfo>> AcceptAsync(int requestId) =>
         RunAsync<FriendInfo>(
             () => _http.PostAsync($"api/friends/requests/{requestId}/accept", null),
-            status => status == HttpStatusCode.NotFound ? "Kutset ei leitud." : DefaultError(status));
+            status => status == HttpStatusCode.NotFound ? AppResources.ErrInviteNotFound : DefaultError(status));
 
     public Task<ApiResult<bool>> DeclineAsync(int requestId) =>
         RunAsync<bool>(
             () => _http.DeleteAsync($"api/friends/requests/{requestId}"),
-            status => status == HttpStatusCode.NotFound ? "Kutset ei leitud." : DefaultError(status));
+            status => status == HttpStatusCode.NotFound ? AppResources.ErrInviteNotFound : DefaultError(status));
 
     public Task<ApiResult<bool>> RemoveAsync(int friendId) =>
         RunAsync<bool>(
             () => _http.DeleteAsync($"api/friends/{friendId}"),
-            status => status == HttpStatusCode.NotFound ? "Sõpra ei leitud." : DefaultError(status));
+            status => status == HttpStatusCode.NotFound ? AppResources.ErrFriendNotFound : DefaultError(status));
 
     // Sends a request. Answers without a body (204) give true, other answers are read as JSON.
     private static async Task<ApiResult<T>> RunAsync<T>(
@@ -75,7 +75,7 @@ public class FriendApi : IFriendApi
 
     private static string DefaultError(HttpStatusCode status) => status switch
     {
-        HttpStatusCode.Unauthorized => "Sessioon aegus. Logi uuesti sisse.",
+        HttpStatusCode.Unauthorized => AppResources.ErrSessionExpired,
         _ => UnknownError
     };
 }

@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Achievement> Achievements => Set<Achievement>();
     public DbSet<UserAchievement> UserAchievements => Set<UserAchievement>();
     public DbSet<Friendship> Friendships => Set<Friendship>();
+    public DbSet<UserPet> UserPets => Set<UserPet>();
 
     protected override void OnModelCreating(ModelBuilder b)
     {
@@ -58,9 +59,18 @@ public class AppDbContext : DbContext
                 .HasForeignKey(x => x.FriendId).OnDelete(DeleteBehavior.Restrict);
         });
 
+        b.Entity<UserPet>(e =>
+        {
+            e.Property(x => x.PetKey).HasMaxLength(30);
+            e.HasIndex(x => new { x.UserId, x.PetKey }).IsUnique();
+            e.HasOne(x => x.User).WithMany(u => u.Pets)
+                .HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+        });
+
         var created = new DateTime(2026, 11, 9, 0, 0, 0, DateTimeKind.Utc);
 
-        // Dev-only seed accounts: Admin123! and Service123!
+        // Dev-only seed accounts: Admin123! and Service123!как
+
         b.Entity<User>().HasData(
             new User
             {

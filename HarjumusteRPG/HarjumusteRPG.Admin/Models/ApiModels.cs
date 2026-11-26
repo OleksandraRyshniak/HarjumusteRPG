@@ -49,24 +49,32 @@ public class Achievement
 
 public class AchievementEdit
 {
-    [Required, StringLength(100, MinimumLength = 2)]
+    [Display(Name = "Nimi")]
+    [Required(ErrorMessage = "Sisesta nimi.")]
+    [StringLength(100, MinimumLength = 2, ErrorMessage = "Nimi peab olema 2–100 tähemärki.")]
     public string Name { get; set; } = string.Empty;
 
-    [StringLength(300)]
+    [Display(Name = "Kirjeldus")]
+    [StringLength(300, ErrorMessage = "Kirjeldus võib olla kuni 300 tähemärki.")]
     public string? Description { get; set; }
 
-    [Required]
+    [Display(Name = "Tüüp")]
+    [Required(ErrorMessage = "Vali tüüp.")]
     public string Type { get; set; } = "TotalCompletions";
 
-    [Range(1, 100000)]
+    [Display(Name = "Nõutud väärtus")]
+    [Range(1, 100000, ErrorMessage = "Väärtus peab olema 1 kuni 100000.")]
     public int RequiredValue { get; set; } = 1;
 }
 
 public class LoginViewModel
 {
-    [Required, EmailAddress]
+    [Display(Name = "E-post")]
+    [Required(ErrorMessage = "Sisesta e-post.")]
+    [EmailAddress(ErrorMessage = "E-posti aadress ei ole korrektne.")]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
+    [Display(Name = "Parool")]
+    [Required(ErrorMessage = "Sisesta parool.")]
     public string Password { get; set; } = string.Empty;
 }

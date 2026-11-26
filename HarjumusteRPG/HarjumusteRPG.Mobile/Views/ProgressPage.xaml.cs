@@ -1,3 +1,4 @@
+using Microsoft.Maui.Controls.Shapes;
 using HarjumusteRPG.Mobile.ViewModels;
 
 namespace HarjumusteRPG.Mobile.Views;
@@ -5,6 +6,9 @@ namespace HarjumusteRPG.Mobile.Views;
 public partial class ProgressPage : ContentPage
 {
     private readonly Grid _root;
+    private readonly View _petView;
+
+    private static bool Night => Palette.ThemeName == "night";
 
     public ProgressPage(ProgressViewModel viewModel)
     {
@@ -15,77 +19,111 @@ public partial class ProgressPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(ProgressViewModel.Title));
 
-        var heading = Pixel.Heading("LEMMIK", 16);
+        var heading = Pixel.Heading(AppResources.PetTitle, 16);
 
-        // --- pet card: sprite, name, level and XP bar ---
-        var pet = new Image
+        // --- room: window, floor, bowl, ball and the pet in the middle ---
+        var room = new Grid { HeightRequest = 230, BackgroundColor = Color.FromArgb(Night ? "#2A2140" : "#FFE9D6") };
+
+        room.Add(new BoxView
         {
-            WidthRequest = 84,
-            HeightRequest = 114,
-            Aspect = Aspect.AspectFit,
-            VerticalOptions = LayoutOptions.Center
-        };
-        pet.SetBinding(Image.SourceProperty, nameof(ProgressViewModel.PetImage));
+            Color = Color.FromArgb(Night ? "#1A1326" : "#F4C9D6"),
+            HeightRequest = 54,
+            VerticalOptions = LayoutOptions.End
+        });
+        room.Add(new Border
+        {
+            Stroke = Palette.Ink,
+            StrokeThickness = 4,
+            StrokeShape = new Rectangle(),
+            BackgroundColor = Color.FromArgb(Night ? "#0E0A18" : "#DDEBFA"),
+            WidthRequest = 64,
+            HeightRequest = 48,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
+            Margin = new Thickness(20, 20, 0, 0)
+        });
+        room.Add(new Image
+        {
+            Source = "kauss.png",
+            WidthRequest = 44,
+            HeightRequest = 44,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.End,
+            Margin = new Thickness(24, 0, 0, 16)
+        });
+        room.Add(new Image
+        {
+            Source = "pall.png",
+            WidthRequest = 34,
+            HeightRequest = 34,
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.End,
+            Margin = new Thickness(0, 0, 26, 18)
+        });
 
-        var petName = Pixel.Body(string.Empty, 20, bold: true);
+        _petView = BuildPet();
+        room.Add(_petView);
+
+        var petName = Pixel.Heading(string.Empty, 13);
         petName.SetBinding(Label.TextProperty, nameof(ProgressViewModel.PetName));
 
-        var level = Pixel.Heading(string.Empty, 14);
+        var level = Pixel.Body(string.Empty, 16, color: Palette.Sub);
         level.SetBinding(Label.TextProperty, nameof(ProgressViewModel.LevelText));
 
-        var xp = Pixel.Body(string.Empty, 16, bold: true);
-        xp.SetBinding(Label.TextProperty, nameof(ProgressViewModel.XpText));
+        var mood = Pixel.Body(string.Empty, 16, bold: true, center: true);
+        mood.VerticalOptions = LayoutOptions.Center;
+        mood.SetBinding(Label.TextProperty, nameof(ProgressViewModel.MoodText));
+        var moodChip = Pixel.Card(mood, Palette.Mint, border: 3, shadow: 3, padding: new Thickness(10, 4));
+        moodChip.VerticalOptions = LayoutOptions.Center;
 
-        var bar = new ProgressBar { ProgressColor = Palette.Ink, BackgroundColor = Palette.Card, HeightRequest = 14 };
-        bar.SetBinding(ProgressBar.ProgressProperty, nameof(ProgressViewModel.XpFraction));
-
-        var hint = Pixel.Body(string.Empty, 14, color: Palette.Sub);
-        hint.SetBinding(Label.TextProperty, nameof(ProgressViewModel.Hint));
-
-        var info = new VerticalStackLayout
+        var nameRow = new Grid
         {
-            Spacing = 6,
-            VerticalOptions = LayoutOptions.Center,
-            Children = { petName, level, xp, bar, hint }
+            ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) },
+            Padding = new Thickness(14, 10),
+            ColumnSpacing = 8
         };
+        nameRow.Add(new VerticalStackLayout { Spacing = 4, Children = { petName, level } }, 0);
+        nameRow.Add(moodChip, 1);
 
-        var petGrid = new Grid
+        var roomCard = Pixel.Card(new VerticalStackLayout
         {
-            ColumnDefinitions = { new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star) },
-            ColumnSpacing = 14
-        };
-        petGrid.Add(pet, 0);
-        petGrid.Add(info, 1);
+            Children = { room, new BoxView { Color = Palette.Ink, HeightRequest = 4 }, nameRow }
+        }, padding: new Thickness(0));
 
-        var petCard = Pixel.Card(petGrid, Palette.Hero, padding: new Thickness(14));
-
-        // tap on the pet card -> choose another pet
-        var tapPet = new TapGestureRecognizer();
-        tapPet.SetBinding(TapGestureRecognizer.CommandProperty, nameof(ProgressViewModel.ChangePetCommand));
-        petCard.GestureRecognizers.Add(tapPet);
-
-        // --- four numbers ---
-        var stats = new Grid
+        // --- three actions ---
+        var actions = new Grid
         {
-            ColumnSpacing = 12,
-            RowSpacing = 12,
-            ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star) },
-            RowDefinitions = { new RowDefinition(GridLength.Auto), new RowDefinition(GridLength.Auto) }
+            ColumnSpacing = 10,
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Star),
+                new ColumnDefinition(GridLength.Star)
+            }
         };
-        stats.Add(Tile("ic_tuli.png", nameof(ProgressViewModel.StreakText), "päeva seeria"), 0, 0);
-        stats.Add(Tile("ic_taht.png", nameof(ProgressViewModel.LongestText), "pikim seeria"), 1, 0);
-        stats.Add(Tile("ic_kalender.png", nameof(ProgressViewModel.TotalText), "täitmist"), 0, 1);
-        stats.Add(Tile("ic_mynt.png", nameof(ProgressViewModel.CoinsText), "münti"), 1, 1);
+        actions.Add(Ui.CommandButton(AppResources.PetPat, nameof(ProgressViewModel.PatCommand)), 0);
+        actions.Add(Ui.CommandButton(AppResources.PetPlay, nameof(ProgressViewModel.PlayCommand)), 1);
+        actions.Add(Ui.CommandButton(viewModel.FeedText, nameof(ProgressViewModel.FeedCommand), fill: Palette.Hero), 2);
 
-        // --- achievements: how many earned + button to the full list ---
-        var achievements = Pixel.Body(string.Empty, 16, bold: true);
-        achievements.SetBinding(Label.TextProperty, nameof(ProgressViewModel.AchievementsText));
+        var message = Pixel.Body(string.Empty, 17, bold: true);
+        message.SetBinding(Label.TextProperty, nameof(ProgressViewModel.PetMessage));
+        message.SetBinding(IsVisibleProperty, nameof(ProgressViewModel.HasPetMessage));
 
         var error = Pixel.ErrorLabel(nameof(ProgressViewModel.ErrorMessage), nameof(ProgressViewModel.HasError));
 
-        var busy = new ActivityIndicator { Color = Palette.Ink };
-        busy.SetBinding(ActivityIndicator.IsRunningProperty, nameof(ProgressViewModel.IsBusy));
-        busy.SetBinding(IsVisibleProperty, nameof(ProgressViewModel.IsBusy));
+        // --- three bars ---
+        var bars = Pixel.Card(new VerticalStackLayout
+        {
+            Spacing = 12,
+            Children =
+            {
+                NeedRow("ic_suda.png", AppResources.PetJoy, nameof(ProgressViewModel.JoyFraction), Palette.Pink),
+                NeedRow("ic_kauss.png", AppResources.PetFood, nameof(ProgressViewModel.FoodFraction), Palette.Gold),
+                NeedRow("ic_valk.png", AppResources.PetEnergy, nameof(ProgressViewModel.EnergyFraction), Palette.Mint)
+            }
+        }, padding: new Thickness(14));
+
+        var info = Pixel.Body(AppResources.PetInfo, 15, color: Palette.Sub);
 
         var column = new VerticalStackLayout
         {
@@ -93,13 +131,14 @@ public partial class ProgressPage : ContentPage
             Spacing = 14,
             Children =
             {
-                heading,
-                petCard,
-                stats,
-                achievements,
-                Pixel.PrimaryButton("Saavutused", nameof(ProgressViewModel.OpenAchievementsCommand), primary: false),
+                Header.StatsRow(heading),
+                roomCard,
+                actions,
+                message,
                 error,
-                busy
+                bars,
+                info,
+                Pixel.PrimaryButton(AppResources.Achievements, nameof(ProgressViewModel.OpenAchievementsCommand), primary: false)
             }
         };
 
@@ -111,31 +150,73 @@ public partial class ProgressPage : ContentPage
         _root.Add(new ScrollView { Content = column }, 0, 0);
         _root.Add(NavBar.Build(1), 0, 1);
 
+        viewModel.PetReacted += () => _ = JumpAsync();
+
         Content = _root;
     }
 
-    // Icon, big number and a short caption.
-    private static Grid Tile(string icon, string valuePath, string caption)
+    // Heart (when happy) above the pet.
+    private static View BuildPet()
     {
-        var value = Pixel.Body(string.Empty, 24, bold: true);
-        value.SetBinding(Label.TextProperty, valuePath);
+        var heart = new Image { Source = "ic_suda.png", WidthRequest = 28, HeightRequest = 28, HorizontalOptions = LayoutOptions.Center };
+        heart.SetBinding(IsVisibleProperty, nameof(ProgressViewModel.IsHappy));
 
-        var text = new VerticalStackLayout
+        var pet = new Image
         {
-            Spacing = 2,
-            VerticalOptions = LayoutOptions.Center,
-            Children = { value, Pixel.Body(caption, 14, color: Palette.Sub) }
+            WidthRequest = 120,
+            HeightRequest = 120,
+            Aspect = Aspect.AspectFit,
+            HorizontalOptions = LayoutOptions.Center
         };
+        pet.SetBinding(Image.SourceProperty, nameof(ProgressViewModel.PetImage));
+
+        return new VerticalStackLayout
+        {
+            Spacing = 6,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.End,
+            Margin = new Thickness(0, 0, 0, 18),
+            Children = { heart, pet }
+        };
+    }
+
+    // Icon, name of the need and a bar.
+    private static Grid NeedRow(string icon, string text, string valuePath, Color color)
+    {
+        var label = Pixel.Body(text, 16, bold: true);
+        label.VerticalOptions = LayoutOptions.Center;
+        label.WidthRequest = 80;
+
+        var bar = new ProgressBar
+        {
+            ProgressColor = color,
+            BackgroundColor = Palette.Bg,
+            HeightRequest = 14,
+            VerticalOptions = LayoutOptions.Center
+        };
+        bar.SetBinding(ProgressBar.ProgressProperty, valuePath);
 
         var row = new Grid
         {
-            ColumnDefinitions = { new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star) },
+            ColumnDefinitions =
+            {
+                new ColumnDefinition(GridLength.Auto),
+                new ColumnDefinition(GridLength.Auto),
+                new ColumnDefinition(GridLength.Star)
+            },
             ColumnSpacing = 10
         };
-        row.Add(new Image { Source = icon, WidthRequest = 32, HeightRequest = 32, VerticalOptions = LayoutOptions.Center }, 0);
-        row.Add(text, 1);
+        row.Add(new Image { Source = icon, WidthRequest = 24, HeightRequest = 24, VerticalOptions = LayoutOptions.Center }, 0);
+        row.Add(label, 1);
+        row.Add(bar, 2);
+        return row;
+    }
 
-        return Pixel.Card(row, padding: new Thickness(12));
+    // The pet jumps a little after an action.
+    private async Task JumpAsync()
+    {
+        await _petView.TranslateTo(0, -20, 150, Easing.CubicOut);
+        await _petView.TranslateTo(0, 0, 300, Easing.BounceOut);
     }
 
     protected override void OnSizeAllocated(double width, double height)

@@ -12,8 +12,8 @@ public class AuthService : IAuthService
     private const string UsernameKey = "auth_username";
    
 
-    private const string ConnectionError = "Serveriga ei saa ühendust. Kontrolli, et API töötab.";
-    private const string UnknownError = "Midagi läks valesti. Proovi uuesti.";
+    private static string ConnectionError => AppResources.ErrConnection;
+    private static string UnknownError => AppResources.ErrUnknown;
 
     private readonly HttpClient _http;
     private string? _token;
@@ -105,9 +105,9 @@ public class AuthService : IAuthService
 
     private static string ErrorFor(HttpStatusCode status) => status switch
     {
-        HttpStatusCode.Unauthorized => "Vale e-post või parool.",
-        HttpStatusCode.Conflict => "See e-post või kasutajanimi on juba kasutusel.",
-        HttpStatusCode.BadRequest => "Kontrolli sisestatud andmeid.",
+        HttpStatusCode.Unauthorized => AppResources.ErrWrongCredentials,
+        HttpStatusCode.Conflict => AppResources.ErrTaken,
+        HttpStatusCode.BadRequest => AppResources.ErrCheckData,
         _ => UnknownError
     };
 

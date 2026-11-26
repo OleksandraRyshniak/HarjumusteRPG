@@ -206,6 +206,9 @@ namespace HarjumusteRPG.API.Migrations
                     b.Property<DateOnly?>("LastCompletedDate")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly?>("LastGiftDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("Level")
                         .HasColumnType("int");
 
@@ -215,6 +218,12 @@ namespace HarjumusteRPG.API.Migrations
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("RewardDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("RewardsToday")
+                        .HasColumnType("int");
 
                     b.Property<string>("Role")
                         .IsRequired()
@@ -250,6 +259,7 @@ namespace HarjumusteRPG.API.Migrations
                             Level = 1,
                             LongestStreak = 0,
                             PasswordHash = "$2b$11$k8fDIZHKppRuZV75my8dc.r0ns4zCq7DXr8YU3z8ZyjDxaRf/8UgC",
+                            RewardsToday = 0,
                             Role = "Admin",
                             Username = "admin",
                             Xp = 0
@@ -264,6 +274,7 @@ namespace HarjumusteRPG.API.Migrations
                             Level = 1,
                             LongestStreak = 0,
                             PasswordHash = "$2b$11$qkitA4RIMQ0kNp.vc3Z.Cu.MEtCoV8WlYb.27iPmhk48hvlh4AW5K",
+                            RewardsToday = 0,
                             Role = "Service",
                             Username = "service",
                             Xp = 0
@@ -295,6 +306,33 @@ namespace HarjumusteRPG.API.Migrations
                         .IsUnique();
 
                     b.ToTable("UserAchievements");
+                });
+
+            modelBuilder.Entity("HarjumusteRPG.API.Models.UserPet", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BoughtAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PetKey")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "PetKey")
+                        .IsUnique();
+
+                    b.ToTable("UserPets");
                 });
 
             modelBuilder.Entity("HarjumusteRPG.API.Models.Friendship", b =>
@@ -357,6 +395,17 @@ namespace HarjumusteRPG.API.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HarjumusteRPG.API.Models.UserPet", b =>
+                {
+                    b.HasOne("HarjumusteRPG.API.Models.User", "User")
+                        .WithMany("Pets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HarjumusteRPG.API.Models.Achievement", b =>
                 {
                     b.Navigation("UserAchievements");
@@ -370,6 +419,8 @@ namespace HarjumusteRPG.API.Migrations
             modelBuilder.Entity("HarjumusteRPG.API.Models.User", b =>
                 {
                     b.Navigation("Habits");
+
+                    b.Navigation("Pets");
 
                     b.Navigation("UserAchievements");
                 });

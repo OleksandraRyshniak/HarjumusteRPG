@@ -12,8 +12,18 @@ public record AchievementInfo(
 
 public record CompleteResult(
     int XpEarned, int CoinsEarned, bool LeveledUp, int Level, int Xp, int XpForNextLevel,
-    int Coins, int CurrentStreak, int LongestStreak, List<AchievementInfo> NewAchievements);
+    int Coins, int CurrentStreak, int LongestStreak, List<AchievementInfo> NewAchievements,
+    bool RewardLimitReached = false);
 
 public record ProgressInfo(
     int Level, int Xp, int XpForNextLevel, int Coins,
-    int CurrentStreak, int LongestStreak, int TotalCompletions, List<AchievementInfo> Achievements);
+    int CurrentStreak, int LongestStreak, int TotalCompletions, List<AchievementInfo> Achievements,
+    bool DailyGiftAvailable, DateOnly Today);
+
+public record DailyGiftResult(int CoinsEarned, int Coins);
+
+public record ShopPet(string Key, int Price, bool Owned);
+
+public record BuyPetResult(string Key, int Price, int Coins);
+public record FeedResult(int CoinsSpent, int Coins);
+public record DemoTimeResult(DateOnly Today, int DaysAhead, int StreaksReset);

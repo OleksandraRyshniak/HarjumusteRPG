@@ -16,8 +16,8 @@ public partial class PetSetupPage : ContentPage
         Shell.SetNavBarIsVisible(this, false);
         this.SetBinding(TitleProperty, nameof(PetSetupViewModel.Title));
 
-        var heading = Pixel.Heading("VALI OMA LEMMIK", 16, center: true);
-        var hint = Pixel.Body("Vali loom ja anna talle nimi. Ta kasvab koos sinu harjumustega!", 16,
+        var heading = Pixel.Heading(AppResources.PetSetupTitle, 16, center: true);
+        var hint = Pixel.Body(AppResources.PetSetupHint, 16,
             color: Palette.Sub, center: true);
 
         // --- grid of animals; the pink one is selected ---
@@ -29,7 +29,7 @@ public partial class PetSetupPage : ContentPage
         BindableLayout.SetItemsSource(grid, viewModel.Pets);
         BindableLayout.SetItemTemplate(grid, new DataTemplate(CreatePet));
 
-        var name = Pixel.Field("Lemmiku nimi (nt Muri)", nameof(PetSetupViewModel.PetName),
+        var name = Pixel.Field(AppResources.PetNameField, nameof(PetSetupViewModel.PetName),
             returnType: ReturnType.Done, returnCommandPath: nameof(PetSetupViewModel.SaveCommand));
 
         var error = Pixel.ErrorLabel(nameof(PetSetupViewModel.ErrorMessage), nameof(PetSetupViewModel.HasError));
@@ -46,7 +46,7 @@ public partial class PetSetupPage : ContentPage
                 grid,
                 name,
                 error,
-                Pixel.PrimaryButton("Alusta", nameof(PetSetupViewModel.SaveCommand))
+                Pixel.PrimaryButton(AppResources.Start, nameof(PetSetupViewModel.SaveCommand))
             }
         };
 
