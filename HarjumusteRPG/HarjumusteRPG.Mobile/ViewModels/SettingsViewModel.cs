@@ -106,6 +106,13 @@ public partial class SettingsViewModel : BaseViewModel
             r.Today.ToDateTime(TimeOnly.MinValue).ToString("d. MMM", Loc.Culture), r.StreaksReset);
 
     [RelayCommand]
+    private async Task Logout()
+    {
+        _auth.Logout();
+        await Nav.GoAsync("//login");
+    }
+
+    [RelayCommand]
     private Task Back() => Nav.GoAsync("..");
 
     // Pages are built in code with the current colors and texts,

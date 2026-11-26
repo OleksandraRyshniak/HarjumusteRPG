@@ -131,7 +131,7 @@ public partial class ProgressPage : ContentPage
             Spacing = 14,
             Children =
             {
-                Header.Row(heading),
+                Header.StatsRow(heading),
                 roomCard,
                 actions,
                 message,

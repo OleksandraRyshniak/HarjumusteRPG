@@ -1,6 +1,7 @@
 ﻿namespace HarjumusteRPG.Mobile.Services;
 
 public record PetOption(string Image, string Label);
+
 // Pet needs, each 0..100.
 public record PetMood(int Joy, int Food, int Energy);
 
@@ -13,34 +14,42 @@ public static class PetStore
         new("kutsikas", "Koer")
     };
 
-    // Needs are kept on the device and drop 2 points per hour.
+    // Needs are kept on the device; PetRules says how they change over time.
     private const int StartMood = 70;
-    private const int DropPerHour = 2;
 
+    // Current needs: the saved values with the hours passed since the last update.
     public static PetMood Mood(string? user)
     {
         var last = Preferences.Default.Get(Key(user, "mood_time"), DateTime.UtcNow);
-        var drop = (int)(Math.Max((DateTime.UtcNow - last).TotalHours, 0) * DropPerHour);
+        var saved = new PetMood(
+            Preferences.Default.Get(Key(user, "joy"), StartMood),
+            Preferences.Default.Get(Key(user, "food"), StartMood),
+            Preferences.Default.Get(Key(user, "energy"), StartMood));
 
-        return new PetMood(
-            Clamp(Preferences.Default.Get(Key(user, "joy"), StartMood) - drop),
-            Clamp(Preferences.Default.Get(Key(user, "food"), StartMood) - drop),
-            Clamp(Preferences.Default.Get(Key(user, "energy"), StartMood) - drop));
+        var hours = (int)Math.Max((DateTime.UtcNow - last).TotalHours, 0);
+        if (hours == 0)
+            return saved;
+
+        var now = PetRules.PassHours(saved, hours);
+        SaveMood(user, now, last.AddHours(hours));
+        return now;
     }
 
-    public static PetMood ChangeMood(string? user, int joy = 0, int food = 0, int energy = 0)
+    // Does an action (pat, play, feed, habit) and saves the result.
+    public static PetMood Apply(string? user, PetAction action)
     {
-        var now = Mood(user);
-        var next = new PetMood(Clamp(now.Joy + joy), Clamp(now.Food + food), Clamp(now.Energy + energy));
-
-        Preferences.Default.Set(Key(user, "joy"), next.Joy);
-        Preferences.Default.Set(Key(user, "food"), next.Food);
-        Preferences.Default.Set(Key(user, "energy"), next.Energy);
-        Preferences.Default.Set(Key(user, "mood_time"), DateTime.UtcNow);
+        var next = PetRules.Apply(Mood(user), action);
+        SaveMood(user, next, Preferences.Default.Get(Key(user, "mood_time"), DateTime.UtcNow));
         return next;
     }
 
-    private static int Clamp(int value) => Math.Clamp(value, 0, 100);
+    private static void SaveMood(string? user, PetMood mood, DateTime time)
+    {
+        Preferences.Default.Set(Key(user, "joy"), mood.Joy);
+        Preferences.Default.Set(Key(user, "food"), mood.Food);
+        Preferences.Default.Set(Key(user, "energy"), mood.Energy);
+        Preferences.Default.Set(Key(user, "mood_time"), time);
+    }
 
     private static string Key(string? user, string field) =>
         $"pet_{(user ?? string.Empty).Trim().ToLowerInvariant()}_{field}";
@@ -84,7 +93,7 @@ public static class PetStore
     public static void SetImage(string? user, string image) =>
         Preferences.Default.Set(Key(user, "image"), image);
 
-    // Demo: the needs drop as if this many hours had passed.
+    // Demo: the needs change as if this many hours had passed.
     public static void SkipHours(string? user, int hours)
     {
         var last = Preferences.Default.Get(Key(user, "mood_time"), DateTime.UtcNow);

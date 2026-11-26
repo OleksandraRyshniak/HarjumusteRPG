@@ -141,8 +141,7 @@ public partial class TodayPage : ContentPage
                 busy,
                 list,
                 empty,
-                Pixel.PrimaryButton(AppResources.ManageHabits, nameof(TodayViewModel.ManageCommand), primary: false),
-                Pixel.PrimaryButton(AppResources.Logout, nameof(TodayViewModel.LogoutCommand), primary: false)
+                Pixel.PrimaryButton(AppResources.ManageHabits, nameof(TodayViewModel.ManageCommand), primary: false)
 
             }
         };

@@ -2,19 +2,19 @@
 
 namespace HarjumusteRPG.Mobile.Views;
 
-// Settings button (gear) in the top right corner of the pages.
+// Page headers: settings button, and on the main pages also coins and level.
 public static class Header
 {
     private static bool _opening;
 
-    public static Grid SettingsButton()
+    public static Grid SettingsButton(double size = 44)
     {
         var gear = new ImageButton
         {
             Source = "ic_seaded.png",
-            WidthRequest = 44,
-            HeightRequest = 44,
-            Padding = new Thickness(8),
+            WidthRequest = size,
+            HeightRequest = size,
+            Padding = new Thickness(size / 5.5),
             BackgroundColor = Palette.Card,
             BorderColor = Palette.Ink,
             BorderWidth = 3,
@@ -28,7 +28,7 @@ public static class Header
                 _opening = true;
                 try
                 {
-                    await OpenSettingsAsync();
+                    await Nav.GoAsync("settings");
                 }
                 finally
                 {
@@ -40,13 +40,13 @@ public static class Header
         };
         SemanticProperties.SetDescription(gear, AppResources.Settings);
 
-        var grid = new Grid { VerticalOptions = LayoutOptions.Start, HorizontalOptions = LayoutOptions.End };
+        var grid = new Grid { VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.End };
         grid.Add(new BoxView { Color = Palette.Ink, Margin = new Thickness(3, 3, 0, 0) });
         grid.Add(gear);
         return grid;
     }
 
-    // Title on the left, settings button on the right.
+    // Title on the left, settings button on the right (pages opened from other pages).
     public static Grid Row(View title)
     {
         title.VerticalOptions = LayoutOptions.Center;
@@ -61,21 +61,51 @@ public static class Header
         return row;
     }
 
-    // Shell throws if another navigation is still running:
-    // wait a moment and try once more, then ignore the tap.
-    private static async Task OpenSettingsAsync()
+    // Main pages: title on the left; small coins, level and settings on the right.
+    public static Grid StatsRow(View title)
     {
-        for (var attempt = 0; attempt < 2; attempt++)
+        title.VerticalOptions = LayoutOptions.Center;
+        if (title is Label label)
+            label.FontSize = 13;
+
+        var right = new HorizontalStackLayout
         {
-            try
+            Spacing = 6,
+            VerticalOptions = LayoutOptions.Center,
+            Children =
             {
-                await Nav.GoAsync("settings");
-                return;
+                Chip(nameof(Player.CoinsText), Palette.Card, "ic_mynt.png"),
+                Chip(nameof(Player.LevelText), Palette.Mint, "ic_taht.png"),
+                SettingsButton(36)
             }
-            catch (InvalidOperationException)
+        };
+
+        var row = new Grid
+        {
+            ColumnDefinitions = { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) },
+            ColumnSpacing = 8
+        };
+        row.Add(title, 0);
+        row.Add(right, 1);
+        return row;
+    }
+
+    // Small card with an icon and a value from Player.Current.
+    private static Grid Chip(string path, Color fill, string icon)
+    {
+        var label = Pixel.Body(string.Empty, 15, bold: true, center: true);
+        label.VerticalOptions = LayoutOptions.Center;
+        label.SetBinding(Label.TextProperty, new Binding(path, source: Player.Current));
+
+        var content = new HorizontalStackLayout
+        {
+            Spacing = 4,
+            Children =
             {
-                await Task.Delay(300);
+                new Image { Source = icon, WidthRequest = 18, HeightRequest = 18, VerticalOptions = LayoutOptions.Center },
+                label
             }
-        }
+        };
+        return Pixel.Card(content, fill, border: 3, shadow: 3, padding: new Thickness(6, 4));
     }
 }

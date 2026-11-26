@@ -62,6 +62,8 @@ public partial class RegisterViewModel : BaseViewModel
     }
 
     // Same rules as in the API: username 3-50, email up to 100, password 6-100.
+    // Same rules as in the API: username 3-50, email up to 100,
+    // password 6-100 with a small letter, a capital letter, a number and a special character.
     private string? Validate()
     {
         var name = Username.Trim();
@@ -72,6 +74,10 @@ public partial class RegisterViewModel : BaseViewModel
         if (mail.Length > 100) return AppResources.ErrEmailTooLong;
         if (!new EmailAddressAttribute().IsValid(mail)) return AppResources.ErrEmailInvalid;
         if (Password.Length is < 6 or > 100) return AppResources.ErrPasswordLength;
+        if (!Password.Any(char.IsLower)) return AppResources.ErrPasswordLower;
+        if (!Password.Any(char.IsUpper)) return AppResources.ErrPasswordUpper;
+        if (!Password.Any(char.IsDigit)) return AppResources.ErrPasswordDigit;
+        if (Password.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c))) return AppResources.ErrPasswordSpecial;
         if (Password != ConfirmPassword) return AppResources.ErrPasswordsMismatch;
         return null;
     }

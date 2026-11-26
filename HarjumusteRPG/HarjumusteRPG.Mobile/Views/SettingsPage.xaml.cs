@@ -84,7 +84,15 @@ public partial class SettingsPage : ContentPage
             Padding = new Thickness(20),
             Spacing = 16,
             HorizontalOptions = LayoutOptions.Center,
-            Children = { back, Pixel.Heading(AppResources.SettingsTitle, 16), languageCard, themeCard, demoCard }
+            Children =
+            {
+                back,
+                Pixel.Heading(AppResources.SettingsTitle, 16),
+                languageCard,
+                themeCard,
+                demoCard,
+                Pixel.PrimaryButton(AppResources.Logout, nameof(SettingsViewModel.LogoutCommand), primary: false)
+            }
         };
 
         Content = new ScrollView { Content = _column };

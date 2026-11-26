@@ -1,6 +1,8 @@
-﻿using System.Net;
-using System.Net.Http.Json;
+﻿
+using CommunityToolkit.Mvvm.ComponentModel;
 using HarjumusteRPG.Mobile.Models;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace HarjumusteRPG.Mobile.Services;
 
@@ -23,7 +25,11 @@ public class GameApi : IGameApi
 
             var progress = await response.Content.ReadFromJsonAsync<ProgressInfo>();
             if (progress is not null)
+            {
                 AppClock.SetServerToday(progress.Today);
+                Player.Current.SetCoins(progress.Coins);
+                Player.Current.SetLevel(progress.Level);
+            }
             return new ApiResult<ProgressInfo>(progress);
         }
         catch (Exception ex) when (IsNetworkOrJson(ex))
@@ -214,5 +220,33 @@ public class GameApi : IGameApi
         HttpStatusCode.NotFound => AppResources.ErrHabitNotFound,
         HttpStatusCode.BadRequest => AppResources.ErrCannotMarkToday,
         _ => UnknownError
-    };
-}
+    }; }
+
+    // Coins and level of the logged-in user, shared by the headers of all main pages.
+    // GameApi updates them after every answer that contains coins or level.
+    public class Player : ObservableObject
+    {
+        public static Player Current { get; } = new();
+
+        private string _coinsText = "0";
+        private string _levelText = "LV 1";
+
+        public string CoinsText
+        {
+            get => _coinsText;
+            set => SetProperty(ref _coinsText, value);
+        }
+
+        public string LevelText
+        {
+            get => _levelText;
+            set => SetProperty(ref _levelText, value);
+        }
+
+        public void SetCoins(int coins) =>
+            MainThread.BeginInvokeOnMainThread(() => CoinsText = coins.ToString());
+
+        public void SetLevel(int level) =>
+            MainThread.BeginInvokeOnMainThread(() => LevelText = $"LV {level}");
+    }
+

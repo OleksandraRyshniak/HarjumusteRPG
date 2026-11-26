@@ -53,7 +53,7 @@ public partial class ShopPage : ContentPage
         {
             Padding = new Thickness(20, 20, 20, 12),
             Spacing = 14,
-            Children = { Header.Row(heading), coinsRow, hint, info, error, busy, list }
+            Children = { Header.StatsRow(heading), coinsRow, hint, info, error, busy, list }
         };
 
         _root = new Grid

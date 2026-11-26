@@ -640,4 +640,25 @@
 	<data name="DemoDayFormat" xml:space="preserve">
     <value>Day: {0} · streaks reset: {1}</value>
   </data>
+	<data name="MoodHungry" xml:space="preserve">
+    <value>Hungry</value>
+  </data>
+	<data name="MoodTired" xml:space="preserve">
+    <value>Tired</value>
+  </data>
+	<data name="PetTooHungryMessage" xml:space="preserve">
+    <value>{0} is too hungry to play. Feed it!</value>
+  </data>
+	<data name="ErrPasswordLower" xml:space="preserve">
+    <value>The password needs a small letter (a–z).</value>
+  </data>
+	<data name="ErrPasswordUpper" xml:space="preserve">
+    <value>The password needs a capital letter (A–Z).</value>
+  </data>
+	<data name="ErrPasswordDigit" xml:space="preserve">
+    <value>The password needs a number (0–9).</value>
+  </data>
+	<data name="ErrPasswordSpecial" xml:space="preserve">
+    <value>The password needs a special character, e.g. ! ? # @.</value>
+  </data>
 </root>

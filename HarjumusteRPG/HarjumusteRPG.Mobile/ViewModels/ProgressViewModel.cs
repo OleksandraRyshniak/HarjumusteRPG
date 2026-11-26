@@ -2,16 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HarjumusteRPG.Mobile.Services;
-using System.Runtime.CompilerServices;
-
 
 namespace HarjumusteRPG.Mobile.ViewModels;
 
 public partial class ProgressViewModel : BaseViewModel
 {
-    // same as GameRules.FeedCost in the API
-    private const int FeedCost = 5;
-
     private readonly IAuthService _auth;
     private readonly IGameApi _api;
 
@@ -33,14 +28,13 @@ public partial class ProgressViewModel : BaseViewModel
     [ObservableProperty] private double foodFraction;
     [ObservableProperty] private double energyFraction;
 
- 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasPetMessage))]
     private string? petMessage;
 
     public bool HasPetMessage => !string.IsNullOrEmpty(PetMessage);
 
-    public string FeedText => Loc.F(AppResources.PetFeedFormat, FeedCost);
+    public string FeedText => Loc.F(AppResources.PetFeedFormat, PetRules.FeedCost);
 
     // The page makes the pet jump when this fires.
     public event Action? PetReacted;
@@ -48,42 +42,18 @@ public partial class ProgressViewModel : BaseViewModel
     [RelayCommand]
     private Task OpenAchievements() => Nav.GoAsync("achievements");
 
-    // Pat: free, a little joy.
     [RelayCommand]
-    private void Pat()
-    {
-        ShowMood(PetStore.ChangeMood(_auth.Username, joy: 5));
-        PetMessage = Loc.F(AppResources.PetPatMessage, PetName);
-        PetReacted?.Invoke();
-    }
+    private void Pat() => DoFree(PetAction.Pat, AppResources.PetPatMessage);
 
-    // Play: free, more joy but uses energy.
     [RelayCommand]
-    private void Play()
-    {
-        if (PetStore.Mood(_auth.Username).Energy < 10)
-        {
-            PetMessage = Loc.F(AppResources.PetTiredMessage, PetName);
-            return;
-        }
+    private void Play() => DoFree(PetAction.Play, AppResources.PetPlayMessage);
 
-        ShowMood(PetStore.ChangeMood(_auth.Username, joy: 8, energy: -10));
-        PetMessage = Loc.F(AppResources.PetPlayMessage, PetName);
-        PetReacted?.Invoke();
-    }
-
-    // Feed: costs coins on the server, fills food and gives energy.
+    // Feed: checked first (no coins are taken if the pet is full), then paid on the server.
     [RelayCommand]
     private async Task Feed()
     {
-        if (IsBusy)
+        if (IsBusy || ShowBlocker(PetAction.Feed))
             return;
-
-        if (PetStore.Mood(_auth.Username).Food >= 100)
-        {
-            PetMessage = Loc.F(AppResources.PetFullMessage, PetName);
-            return;
-        }
 
         IsBusy = true;
         try
@@ -98,8 +68,8 @@ public partial class ProgressViewModel : BaseViewModel
                 return;
             }
 
-            ShowMood(PetStore.ChangeMood(_auth.Username, food: 20, energy: 10));
-            PetMessage = Loc.F(AppResources.PetFedMessage, PetName, FeedCost);
+            ShowMood(PetStore.Apply(_auth.Username, PetAction.Feed));
+            PetMessage = Loc.F(AppResources.PetFedMessage, PetName, PetRules.FeedCost);
             PetReacted?.Invoke();
         }
         finally
@@ -139,7 +109,31 @@ public partial class ProgressViewModel : BaseViewModel
         }
     }
 
-    
+    // Pat and play: free actions on the device.
+    private void DoFree(PetAction action, string message)
+    {
+        if (ShowBlocker(action))
+            return;
+
+        ErrorMessage = null;
+        ShowMood(PetStore.Apply(_auth.Username, action));
+        PetMessage = Loc.F(message, PetName);
+        PetReacted?.Invoke();
+    }
+
+    // Shows why the action is not possible now (hungry, tired, full).
+    private bool ShowBlocker(PetAction action)
+    {
+        var mood = PetStore.Mood(_auth.Username);
+        ShowMood(mood);
+
+        var blocker = PetRules.Blocker(mood, action);
+        if (blocker is null)
+            return false;
+
+        PetMessage = Loc.F(blocker, PetName);
+        return true;
+    }
 
     private void ShowMood(PetMood mood)
     {
@@ -147,10 +141,16 @@ public partial class ProgressViewModel : BaseViewModel
         FoodFraction = mood.Food / 100.0;
         EnergyFraction = mood.Energy / 100.0;
 
-        IsHappy = mood.Joy >= 70;
-        MoodText = mood.Joy >= 70 ? AppResources.MoodHappy
-            : mood.Joy >= 40 ? AppResources.MoodCalm
-            : AppResources.MoodSad;
+        var state = PetRules.State(mood);
+        IsHappy = state == PetState.Happy;
+        MoodText = state switch
+        {
+            PetState.Happy => AppResources.MoodHappy,
+            PetState.Hungry => AppResources.MoodHungry,
+            PetState.Tired => AppResources.MoodTired,
+            PetState.Sad => AppResources.MoodSad,
+            _ => AppResources.MoodCalm
+        };
     }
 
     // Session expired -> back to login, other errors are shown on the screen.

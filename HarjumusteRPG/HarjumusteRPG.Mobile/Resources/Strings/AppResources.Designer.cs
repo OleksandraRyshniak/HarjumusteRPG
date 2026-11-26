@@ -225,4 +225,11 @@ public static class AppResources
     public static string DemoNextDay => Get(nameof(DemoNextDay));
     public static string DemoReset => Get(nameof(DemoReset));
     public static string DemoDayFormat => Get(nameof(DemoDayFormat));
+    public static string MoodHungry => Get(nameof(MoodHungry));
+    public static string MoodTired => Get(nameof(MoodTired));
+    public static string PetTooHungryMessage => Get(nameof(PetTooHungryMessage));
+    public static string ErrPasswordLower => Get(nameof(ErrPasswordLower));
+    public static string ErrPasswordUpper => Get(nameof(ErrPasswordUpper));
+    public static string ErrPasswordDigit => Get(nameof(ErrPasswordDigit));
+    public static string ErrPasswordSpecial => Get(nameof(ErrPasswordSpecial));
 }

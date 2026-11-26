@@ -247,7 +247,7 @@ public partial class TodayViewModel : BaseViewModel
 
             var r = result.Value!;
             item.IsDone = true;
-            PetStore.ChangeMood(_auth.Username, joy: 10, food: 15);
+            PetStore.Apply(_auth.Username, PetAction.Habit);
             ShowProgress(r.Level, r.Xp, r.XpForNextLevel, r.Coins, r.CurrentStreak);
             UpdatePetLine();
 

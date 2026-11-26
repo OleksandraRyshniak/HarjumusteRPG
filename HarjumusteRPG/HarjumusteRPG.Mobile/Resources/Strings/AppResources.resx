@@ -640,4 +640,25 @@
 	<data name="DemoDayFormat" xml:space="preserve">
     <value>Päev: {0} · katkestatud seeriaid: {1}</value>
   </data>
+	<data name="MoodHungry" xml:space="preserve">
+    <value>Näljane</value>
+  </data>
+	<data name="MoodTired" xml:space="preserve">
+    <value>Väsinud</value>
+  </data>
+	<data name="PetTooHungryMessage" xml:space="preserve">
+    <value>{0} on liiga näljane, et mängida. Toida teda!</value>
+  </data>
+	<data name="ErrPasswordLower" xml:space="preserve">
+    <value>Paroolis peab olema väiketäht (a–z).</value>
+  </data>
+	<data name="ErrPasswordUpper" xml:space="preserve">
+    <value>Paroolis peab olema suurtäht (A–Z).</value>
+  </data>
+	<data name="ErrPasswordDigit" xml:space="preserve">
+    <value>Paroolis peab olema number (0–9).</value>
+  </data>
+	<data name="ErrPasswordSpecial" xml:space="preserve">
+    <value>Paroolis peab olema erimärk, nt ! ? # @.</value>
+  </data>
 </root>
