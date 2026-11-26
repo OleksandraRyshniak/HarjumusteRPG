@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="et">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,12 +13,12 @@
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Index">Users</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Achievements" asp-action="Index">Achievements</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Users" asp-action="Index">Kasutajad</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Achievements" asp-action="Index">Saavutused</a></li>
                 </ul>
                 <form asp-controller="Account" asp-action="Logout" method="post" class="d-flex align-items-center">
                     <span class="navbar-text me-3">@User.Identity.Name</span>
-                    <button type="submit" class="btn btn-outline-light btn-sm">Log out</button>
+                    <button type="submit" class="btn btn-outline-light btn-sm">Logi välja</button>
                 </form>
             }
         </div>

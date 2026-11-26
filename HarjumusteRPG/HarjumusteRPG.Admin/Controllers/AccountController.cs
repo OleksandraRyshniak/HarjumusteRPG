@@ -29,14 +29,14 @@ public class AccountController : Controller
         var result = await _api.LoginAsync(model.Email, model.Password);
         if (!result.Ok)
         {
-            ModelState.AddModelError(string.Empty, result.Error ?? "Login failed.");
+            ModelState.AddModelError(string.Empty, result.Error ?? "Sisselogimine ebaõnnestus.");
             return View(model);
         }
 
         var auth = result.Value!;
         if (auth.User.Role != "Admin")
         {
-            ModelState.AddModelError(string.Empty, "Only administrators can use this site.");
+            ModelState.AddModelError(string.Empty, "Seda lehte saavad kasutada ainult administraatorid.");
             return View(model);
         }
 

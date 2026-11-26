@@ -28,25 +28,25 @@ public class AchievementsController : Controller
     [HttpGet]
     public IActionResult Create()
     {
-        ViewData["Title"] = "New achievement";
+        ViewData["Title"] = "Uus saavutus";
         return View("Form", new AchievementEdit());
     }
 
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(AchievementEdit model)
     {
-        ViewData["Title"] = "New achievement";
+        ViewData["Title"] = "Uus saavutus";
         if (!ModelState.IsValid)
             return View("Form", model);
 
         var result = await _api.CreateAchievementAsync(model);
         if (!result.Ok)
         {
-            ModelState.AddModelError(string.Empty, result.Error ?? "Could not create the achievement.");
+            ModelState.AddModelError(string.Empty, result.Error ?? "Saavutust ei õnnestunud luua.");
             return View("Form", model);
         }
 
-        TempData["Message"] = "Achievement created.";
+        TempData["Message"] = "Saavutus loodud.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -58,7 +58,7 @@ public class AchievementsController : Controller
         if (achievement is null)
             return NotFound();
 
-        ViewData["Title"] = "Edit achievement";
+        ViewData["Title"] = "Muuda saavutust";
         return View("Form", new AchievementEdit
         {
             Name = achievement.Name,
@@ -71,18 +71,18 @@ public class AchievementsController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, AchievementEdit model)
     {
-        ViewData["Title"] = "Edit achievement";
+        ViewData["Title"] = "Muuda saavutust";
         if (!ModelState.IsValid)
             return View("Form", model);
 
         var result = await _api.UpdateAchievementAsync(id, model);
         if (!result.Ok)
         {
-            ModelState.AddModelError(string.Empty, result.Error ?? "Could not update the achievement.");
+            ModelState.AddModelError(string.Empty, result.Error ?? "Saavutust ei õnnestunud muuta.");
             return View("Form", model);
         }
 
-        TempData["Message"] = "Achievement updated.";
+        TempData["Message"] = "Saavutus muudetud.";
         return RedirectToAction(nameof(Index));
     }
 
@@ -91,7 +91,7 @@ public class AchievementsController : Controller
     {
         var result = await _api.DeleteAchievementAsync(id);
         if (result.Ok)
-            TempData["Message"] = "Achievement deleted.";
+            TempData["Message"] = "Saavutus kustutatud.";
         else
             TempData["Error"] = result.Error;
 

@@ -82,7 +82,7 @@ public class AdminApiClient
         }
         catch (HttpRequestException)
         {
-            return new ApiResult<T>(false, default, "Cannot reach the API. Is it running?");
+            return new ApiResult<T>(false, default, "API-ga ei saa ühendust. Kas API töötab?");
         }
     }
 
@@ -111,10 +111,10 @@ public class AdminApiClient
 
         return response.StatusCode switch
         {
-            HttpStatusCode.Unauthorized => "Session expired. Log out and log in again.",
-            HttpStatusCode.Forbidden => "You do not have permission.",
-            HttpStatusCode.NotFound => "Not found.",
-            _ => $"Request failed ({(int)response.StatusCode})."
+            HttpStatusCode.Unauthorized => "Sessioon on aegunud. Logi välja ja uuesti sisse.",
+            HttpStatusCode.Forbidden => "Sul ei ole selleks õigust.",
+            HttpStatusCode.NotFound => "Ei leitud.",
+            _ => $"Päring ebaõnnestus ({(int)response.StatusCode})."
         };
     }
 }

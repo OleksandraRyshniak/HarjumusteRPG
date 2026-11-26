@@ -1,11 +1,11 @@
 ﻿@model PagedResult<AdminUser>
 @{
-    ViewData["Title"] = "Users";
+    ViewData["Title"] = "Kasutajad";
     string? search = ViewBag.Search;
     string? role = ViewBag.Role;
 }
 
-<h1 class="h3 mb-3">Users</h1>
+<h1 class="h3 mb-3">Kasutajad</h1>
 
 @if (ViewBag.Message is not null)
 {
@@ -18,19 +18,19 @@
 
 <form method="get" class="row g-2 mb-3">
     <div class="col-md-5">
-        <input name="search" value="@search" class="form-control" placeholder="Search by username or email" />
+        <input name="search" value="@search" class="form-control" placeholder="Otsi kasutajanime või e-posti järgi" />
     </div>
     <div class="col-md-3">
         <select name="role" class="form-select">
-            <option value="" selected="@string.IsNullOrEmpty(role)">All roles</option>
-            <option value="User" selected="@(role == "User")">User</option>
+            <option value="" selected="@string.IsNullOrEmpty(role)">Kõik rollid</option>
+            <option value="User" selected="@(role == "User")">User (kasutaja)</option>
             <option value="Admin" selected="@(role == "Admin")">Admin</option>
-            <option value="Service" selected="@(role == "Service")">Service</option>
+            <option value="Service" selected="@(role == "Service")">Service (teenus)</option>
         </select>
     </div>
     <div class="col-auto">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+        <button type="submit" class="btn btn-primary">Otsi</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Tühjenda</a>
     </div>
 </form>
 
@@ -38,13 +38,13 @@
     <thead>
         <tr>
             <th>Id</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Level</th>
+            <th>Kasutajanimi</th>
+            <th>E-post</th>
+            <th>Roll</th>
+            <th>Tase</th>
             <th>XP</th>
-            <th>Streak</th>
-            <th>Created</th>
+            <th>Seeria</th>
+            <th>Loodud</th>
             <th></th>
         </tr>
     </thead>
@@ -60,7 +60,7 @@
                 {
                     <td>@u.Level</td>
                     <td>@u.Xp</td>
-                    <td>@u.CurrentStreak (best @u.LongestStreak)</td>
+                    <td>@u.CurrentStreak (parim @u.LongestStreak)</td>
                 }
                 else
                 {
@@ -72,12 +72,12 @@
                 <td class="text-end">
                     @if (u.Role == "User")
                     {
-                        <form asp-action="Delete" method="post" onsubmit="return confirm('Delete user @u.Username?');">
+                        <form asp-action="Delete" method="post" onsubmit="return confirm('Kas kustutada kasutaja @u.Username?');">
                             <input type="hidden" name="id" value="@u.Id" />
                             <input type="hidden" name="search" value="@search" />
                             <input type="hidden" name="role" value="@role" />
                             <input type="hidden" name="page" value="@Model.Page" />
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Kustuta</button>
                         </form>
                     }
                 </td>
@@ -85,23 +85,23 @@
         }
         @if (Model.Items.Count == 0)
         {
-            <tr><td colspan="9" class="text-center text-muted">No users found.</td></tr>
+            <tr><td colspan="9" class="text-center text-muted">Kasutajaid ei leitud.</td></tr>
         }
     </tbody>
 </table>
 
 <div class="d-flex justify-content-between align-items-center">
-    <span class="text-muted">Total: @Model.TotalCount, page @Model.Page of @Math.Max(Model.TotalPages, 1)</span>
+    <span class="text-muted">Kokku: @Model.TotalCount, lehekülg @Model.Page / @Math.Max(Model.TotalPages, 1)</span>
     <div>
         @if (Model.Page > 1)
         {
             <a class="btn btn-outline-primary btn-sm" asp-action="Index"
-               asp-route-search="@search" asp-route-role="@role" asp-route-page="@(Model.Page - 1)">Previous</a>
+               asp-route-search="@search" asp-route-role="@role" asp-route-page="@(Model.Page - 1)">Eelmine</a>
         }
         @if (Model.Page < Model.TotalPages)
         {
             <a class="btn btn-outline-primary btn-sm" asp-action="Index"
-               asp-route-search="@search" asp-route-role="@role" asp-route-page="@(Model.Page + 1)">Next</a>
+               asp-route-search="@search" asp-route-role="@role" asp-route-page="@(Model.Page + 1)">Järgmine</a>
         }
     </div>
 </div>
