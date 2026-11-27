@@ -8,6 +8,18 @@ public class GameRulesTests
 {
     private static readonly DateOnly Today = new(2026, 11, 23); // Monday
 
+    // a daily habit: every day is planned
+    private static readonly Habit[] Daily =
+    {
+        new Habit { IsDaily = true, IsActive = true, CreatedAt = new DateTime(2026, 1, 1) }
+    };
+
+    // Monday-Friday only: Saturday and Sunday are not planned
+    private static readonly Habit[] Weekdays =
+    {
+        new Habit { IsDaily = false, DaysOfWeek = "1,2,3,4,5", IsActive = true, CreatedAt = new DateTime(2026, 1, 1) }
+    };
+
     [Theory]
     [InlineData(1, 100)]
     [InlineData(2, 150)]
@@ -51,7 +63,7 @@ public class GameRulesTests
     [Fact]
     public void NextStreak_CompletedYesterday_ExtendsStreak()
     {
-        var (current, longest) = GameRules.NextStreak(Today.AddDays(-1), Today, 3, 3);
+        var (current, longest) = GameRules.NextStreak(Today.AddDays(-1), Today, 3, 3, Daily);
 
         Assert.Equal(4, current);
         Assert.Equal(4, longest);
@@ -60,16 +72,26 @@ public class GameRulesTests
     [Fact]
     public void NextStreak_MissedDay_StartsOverAndKeepsLongest()
     {
-        var (current, longest) = GameRules.NextStreak(Today.AddDays(-3), Today, 5, 7);
+        var (current, longest) = GameRules.NextStreak(Today.AddDays(-3), Today, 5, 7, Daily);
 
         Assert.Equal(1, current);
         Assert.Equal(7, longest);
     }
 
     [Fact]
+    public void NextStreak_WeekendWithoutPlannedHabits_ContinuesStreak()
+    {
+        // last completion on Friday, today is Monday, nothing planned on Sat/Sun
+        var (current, longest) = GameRules.NextStreak(Today.AddDays(-3), Today, 5, 7, Weekdays);
+
+        Assert.Equal(6, current);
+        Assert.Equal(7, longest);
+    }
+
+    [Fact]
     public void NextStreak_FirstEverCompletion_StartsStreakOfOne()
     {
-        var (current, longest) = GameRules.NextStreak(null, Today, 0, 0);
+        var (current, longest) = GameRules.NextStreak(null, Today, 0, 0, Daily);
 
         Assert.Equal(1, current);
         Assert.Equal(1, longest);
@@ -78,7 +100,7 @@ public class GameRulesTests
     [Fact]
     public void NextStreak_AlreadyCompletedToday_ChangesNothing()
     {
-        var (current, longest) = GameRules.NextStreak(Today, Today, 4, 6);
+        var (current, longest) = GameRules.NextStreak(Today, Today, 4, 6, Daily);
 
         Assert.Equal(4, current);
         Assert.Equal(6, longest);
@@ -108,7 +130,14 @@ public class GameRulesTests
     [InlineData(2, 0, false)] // there is no streak to break
     public void IsStreakBroken_DependsOnLastCompletedDate(int daysAgo, int streak, bool expected)
     {
-        Assert.Equal(expected, GameRules.IsStreakBroken(Today.AddDays(-daysAgo), Today, streak));
+        Assert.Equal(expected, GameRules.IsStreakBroken(Today.AddDays(-daysAgo), Today, streak, Daily));
+    }
+
+    [Fact]
+    public void IsStreakBroken_WeekendWithoutPlannedHabits_IsNotBroken()
+    {
+        // last completion on Friday, Sat/Sun had nothing planned
+        Assert.False(GameRules.IsStreakBroken(Today.AddDays(-3), Today, 5, Weekdays));
     }
 
     [Fact]

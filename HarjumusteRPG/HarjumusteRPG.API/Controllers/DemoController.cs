@@ -38,11 +38,9 @@ public class DemoController : ControllerBase
         return Ok(Current(reset.Count));
     }
 
-    /// <summary>Development only: puts the API clock back to the real time.</summary>
+    // Used only by the "Tänane päev" button in the mobile app, so it is hidden from Swagger.
     [HttpPost("reset")]
-    [ProducesResponseType(typeof(DemoTimeDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public ActionResult<DemoTimeDto> Reset()
     {
         if (!_env.IsDevelopment())

@@ -84,8 +84,9 @@ public class CompletionService : ICompletionService
         }
 
         // the streak and the history count even when the reward limit is reached
+        var userHabits = await _habits.GetByUserAsync(userId);
         (user.CurrentStreak, user.LongestStreak) =
-            GameRules.NextStreak(user.LastCompletedDate, today, user.CurrentStreak, user.LongestStreak);
+            GameRules.NextStreak(user.LastCompletedDate, today, user.CurrentStreak, user.LongestStreak, userHabits);
         user.LastCompletedDate = today;
 
         // +1 because the new completion is not saved yet

@@ -72,6 +72,9 @@ public partial class LoginPage : ContentPage
     {
         base.OnAppearing();
 
+        // Let Shell finish showing the login page before navigating away from it.
+        await Task.Delay(200);
+
         // If a saved session exists, skip the login screen.
         if (BindingContext is LoginViewModel vm)
             await vm.RestoreSessionCommand.ExecuteAsync(null);

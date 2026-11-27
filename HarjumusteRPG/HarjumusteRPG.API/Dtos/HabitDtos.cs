@@ -1,10 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace HarjumusteRPG.API.Dtos;
 
+/// <summary>Field used to sort the habit list.</summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum HabitSortBy
 {
+    /// <summary>By creation time.</summary>
     CreatedAt,
+
+    /// <summary>By habit name (A–Z).</summary>
     Name
 }
 
@@ -64,17 +70,29 @@ public class UpdateHabitDto : CreateHabitDto
 
 public class HabitQueryParams
 {
-    /// <summary>Part of the habit name.</summary>
+    /// <summary>Part of the habit name. Leave empty to show all habits.</summary>
+    /// <example>water</example>
     public string? Search { get; set; }
 
+    /// <summary>true = only active habits, false = only inactive. Empty = all.</summary>
     public bool? IsActive { get; set; }
+
+    /// <summary>true = only daily habits, false = only weekday habits. Empty = all.</summary>
     public bool? IsDaily { get; set; }
+
+    /// <summary>Sort field: CreatedAt (by creation time) or Name (A–Z). Default: CreatedAt.</summary>
     public HabitSortBy SortBy { get; set; } = HabitSortBy.CreatedAt;
+
+    /// <summary>true = reverse order (newest first or Z–A). Default: false.</summary>
     public bool Descending { get; set; }
 
+    /// <summary>Page number, starting from 1.</summary>
+    /// <example>1</example>
     [Range(1, int.MaxValue)]
     public int Page { get; set; } = 1;
 
+    /// <summary>Habits per page (1–50). Default: 10.</summary>
+    /// <example>10</example>
     [Range(1, 50)]
     public int PageSize { get; set; } = 10;
 }

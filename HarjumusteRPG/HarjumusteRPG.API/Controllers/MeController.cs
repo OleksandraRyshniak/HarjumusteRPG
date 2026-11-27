@@ -54,6 +54,7 @@ public class MeController : ControllerBase
     }
 
     /// <summary>Shop: all pets with their price and whether the user already has them.</summary>
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpGet("pets")]
     [ProducesResponseType(typeof(List<ShopPetDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -65,7 +66,7 @@ public class MeController : ControllerBase
     }
 
     /// <summary>Buys a pet with coins. 400 = not enough coins, 409 = the pet is already owned.</summary>
-    /// <param name="key">Pet key, e.g. "hamster_hele".</param>
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpPost("pets/{key}/buy")]
     [ProducesResponseType(typeof(BuyPetDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -85,6 +86,7 @@ public class MeController : ControllerBase
     }
 
     /// <summary>Feeds the pet. Costs 5 coins; 400 if the user does not have enough coins.</summary>
+    [ApiExplorerSettings(IgnoreApi = true)]
     [HttpPost("pet/feed")]
     [ProducesResponseType(typeof(FeedDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -44,13 +44,7 @@ public static class GameRules
         return (level, xp, gained);
     }
 
-    public static (int Current, int Longest) NextStreak(DateOnly? lastCompleted, DateOnly today, int current, int longest)
-    {
-        if (lastCompleted == today) return (current, longest);
 
-        var next = lastCompleted == today.AddDays(-1) ? current + 1 : 1;
-        return (next, Math.Max(longest, next));
-    }
 
     // The gift can be claimed once per day.
     public static bool IsGiftAvailable(DateOnly? lastGift, DateOnly today) => lastGift != today;
@@ -63,8 +57,35 @@ public static class GameRules
         return habit.DaysOfWeek.Split(',').Select(int.Parse).Contains((int)date.DayOfWeek);
     }
 
-    public static bool IsStreakBroken(DateOnly? lastCompleted, DateOnly today, int currentStreak) =>
-        currentStreak > 0 && (lastCompleted is null || lastCompleted < today.AddDays(-1));
+    public static (int Current, int Longest) NextStreak(
+      DateOnly? lastCompleted, DateOnly today, int current, int longest, IEnumerable<Habit> habits)
+    {
+        if (lastCompleted == today) return (current, longest);
+
+        var continues = lastCompleted is not null && !HasMissedDay(habits, lastCompleted.Value, today);
+        var next = continues ? current + 1 : 1;
+        return (next, Math.Max(longest, next));
+    }
+
+    public static bool IsStreakBroken(
+        DateOnly? lastCompleted, DateOnly today, int currentStreak, IEnumerable<Habit> habits) =>
+        currentStreak > 0 &&
+        (lastCompleted is null || HasMissedDay(habits, lastCompleted.Value, today));
+
+    // A day is "missed" only if the user had at least one active habit planned for it.
+    // Days with nothing planned (e.g. weekends for Mon-Fri habits) are neutral.
+    public static bool HasMissedDay(IEnumerable<Habit> habits, DateOnly lastCompleted, DateOnly today)
+    {
+        var active = habits.Where(h => h.IsActive).ToList();
+
+        for (var day = lastCompleted.AddDays(1); day < today; day = day.AddDays(1))
+        {
+            if (active.Any(h => DateOnly.FromDateTime(h.CreatedAt) <= day && IsScheduledFor(h, day)))
+                return true;
+        }
+
+        return false;
+    }
 
     public static bool IsEarned(Achievement achievement, int level, int streak, int totalCompletions) =>
         achievement.Type switch
